@@ -5,6 +5,7 @@ import userRouter from './users/routers/index.js';
 const router = express.Router();
 
 
+router.use('/users', userRouter);
 
 
 router.use('/health', (req, res) => {

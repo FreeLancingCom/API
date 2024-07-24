@@ -29,5 +29,5 @@
 │       ├── services
 │       ├── validation
 │       └── permissions.js
-├── index.js
+└── index.js
 ```
