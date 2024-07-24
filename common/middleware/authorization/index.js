@@ -29,8 +29,6 @@ export default class Authorization {
           errorCode: errorCodes.USER_NOT_AUTHORIZED.code
         });
 
-        console.log('hello')
-
 
       if (
         !user.isVerified &&
