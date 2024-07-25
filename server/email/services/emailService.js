@@ -47,7 +47,9 @@ class EmailService{
         } catch (error) {
             logger.error(serviceName, functionName, error);
             throw new ErrorResponse(
-                error
+                emailError.EMAIL_NOT_SENT.message,
+                StatusCodes.INTERNAL_SERVER_ERROR,
+                emailError.EMAIL_NOT_SENT.code
             );
          
         }
