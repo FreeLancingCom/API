@@ -2,7 +2,6 @@ import Joi from 'joi';
 import { CONTROLLERS } from '../helpers/constants.js';
 
 export default {
-
   [CONTROLLERS.LIST_NOTIFICATIONS]: {
     query: Joi.object()
       .keys({
@@ -34,10 +33,9 @@ export default {
           otherwise: Joi.forbidden() // Ensures message is not allowed when contentType is not 'message'
         }),
         sender: Joi.forbidden(),
-        date: Joi.forbidden(),
+        date: Joi.forbidden()
       })
       .required()
-
   },
   [CONTROLLERS.DELETE_NOTIFICATION]: {
     params: Joi.object()

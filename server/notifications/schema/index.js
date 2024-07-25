@@ -24,7 +24,7 @@ const notificationSchema = new mongoose.Schema(
       default: () => nanoid()
     },
     targets: {
-      type: [targetSchema],
+      type: [targetSchema]
     },
     contentType: {
       type: String,

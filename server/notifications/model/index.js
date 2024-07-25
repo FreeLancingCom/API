@@ -1,4 +1,4 @@
-import  NotificationsSchema from '../schema/index.js';
+import NotificationsSchema from '../schema/index.js';
 
 class Notifications {
   async find(selectors = {}, options = {}, populationList = []) {
@@ -28,7 +28,7 @@ class Notifications {
     return result;
   }
 
-  async update(selector={}, newParams, options = {}) {
+  async update(selector = {}, newParams, options = {}) {
     const result = await NotificationsSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,

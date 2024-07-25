@@ -1,49 +1,42 @@
 import NotificationModel from '../model/index.js';
 import usersService from '../../users/services/usersService.js';
-import advertisementService from '../../advertisements/services/advertisementService.js'
+import advertisementService from '../../advertisements/services/advertisementService.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
-import { notificationsErrors } from '../helpers/constants.js'
+import { notificationsErrors } from '../helpers/constants.js';
 
 import { StatusCodes } from 'http-status-codes';
-import logger from '../../../common/utils/logger.js'
-import CONTROLLERS from '../helpers/constants.js';
-import {getPaginationParams} from '../../../common/utils/pagination/index.js';
-
+import logger from '../../../common/utils/logger.js';
+import { getPaginationParams } from '../../../common/utils/pagination/index.js';
 
 const { BAD_REQUEST } = StatusCodes;
 
-const serviceName = 'notifications.services.index'
-
 class NotificationService {
-  
   async listNotifications(userId, query) {
-
     try {
-
       const { page, limit, skip, sortBy, sortOrder, ..._query } = query;
 
       const options = getPaginationParams(query);
 
       const notifications = await NotificationModel.find(
-        { targets: { "$elemMatch": { userId } } }, options, ['adId']);
+        { targets: { $elemMatch: { userId } } },
+        options,
+        ['adId']
+      );
 
       const notificationIds = notifications.map(notification => notification._id);
 
       await NotificationModel.updateMany(
         { _id: { $in: notificationIds } },
-        { $set: { "targets.$[elem].read": true } },
-        { arrayFilters: [{ "elem.userId": userId }] }
+        { $set: { 'targets.$[elem].read': true } },
+        { arrayFilters: [{ 'elem.userId': userId }] }
       );
 
-      return { notifications,options ,total: notifications.length };
-
-    }
-    catch (e) {
+      return { notifications, options, total: notifications.length };
+    } catch (e) {
       logger.error(e);
       throw e;
     }
   }
-
 
   async getNotification(notificationId, options) {
     try {
@@ -57,8 +50,7 @@ class NotificationService {
         );
 
       return notification;
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
@@ -66,10 +58,11 @@ class NotificationService {
 
   async countUnreadNotifications(userId, options) {
     try {
-      const count = await NotificationModel.count({ targets: { "$elemMatch": { userId, read: false } } });
+      const count = await NotificationModel.count({
+        targets: { $elemMatch: { userId, read: false } }
+      });
       return count;
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
@@ -77,22 +70,23 @@ class NotificationService {
 
   async countNotifications(userId, options) {
     try {
-      const count = await NotificationModel.count({ targets: { "$elemMatch": { userId } } });
+      const count = await NotificationModel.count({ targets: { $elemMatch: { userId } } });
 
       return count;
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
   }
 
   async createNotification(userId, notificationData) {
-    notificationData['sender'] = userId
+    notificationData['sender'] = userId;
     try {
-
       if (notificationData['targets']) {
-        const users = await usersService.listUsers({ _id: { $in: notificationData['targets'] } }, CREATE_NOTIFICATION)
+        const users = await usersService.listUsers(
+          { _id: { $in: notificationData['targets'] } },
+          CREATE_NOTIFICATION
+        );
         if (!users || users.length !== notificationData['targets'].length)
           throw new ErrorResponse(
             notificationsErrors.USERS_NOT_FOUND.message,
@@ -102,7 +96,9 @@ class NotificationService {
       }
 
       if (notificationData['contentType'] === 'ad') {
-        const advertisement = await advertisementService.getAdvertisement({ _id: notificationData['adId'] })
+        const advertisement = await advertisementService.getAdvertisement({
+          _id: notificationData['adId']
+        });
         if (!advertisement)
           throw new ErrorResponse(
             notificationsErrors.ADVERTISEMENT_NOT_FOUND.message,
@@ -115,8 +111,7 @@ class NotificationService {
 
       const notification = await NotificationModel.create(notificationData);
       return notification;
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
@@ -124,19 +119,20 @@ class NotificationService {
 
   async clearNotifications(userId, query) {
     try {
-      const count  = await this.countNotifications(userId);
+      const count = await this.countNotifications(userId);
 
       const iterations = Math.ceil(count / 100);
 
       for (let i = 1; i <= iterations; i++) {
-
         const options = getPaginationAndSortingOptions({
           page: i,
           limit: 100
         });
 
         const notifications = await NotificationModel.find(
-          { targets: { "$elemMatch": { userId } } }, options);
+          { targets: { $elemMatch: { userId } } },
+          options
+        );
 
         const notificationIds = notifications.map(notification => notification._id);
 
@@ -145,25 +141,23 @@ class NotificationService {
           { $pull: { targets: { userId } } }
         );
 
-        await NotificationModel.deleteMany({ _id: { $in: notificationIds }, targets: { $exists: true, $size: 0 } });
-
+        await NotificationModel.deleteMany({
+          _id: { $in: notificationIds },
+          targets: { $exists: true, $size: 0 }
+        });
       }
 
       return;
-
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
   }
 
-
   async deleteNotification(notificationId) {
-    const functionName = DELETE_NOTIFICATION;
 
     try {
-      const notification = await NotificationModel.findOne({ _id: notificationId })
+      const notification = await NotificationModel.findOne({ _id: notificationId });
       if (!notification)
         throw new ErrorResponse(
           notificationsErrors.NOTIFICATION_NOT_FOUND.message,
@@ -171,15 +165,11 @@ class NotificationService {
           notificationsErrors.NOTIFICATION_NOT_FOUND.code
         );
       return await NotificationModel.delete({ _id: notificationId });
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
   }
 }
-
-
-
 
 export default new NotificationService();

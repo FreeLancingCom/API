@@ -2,15 +2,14 @@ import _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { CONTROLLERS } from '../helpers/constants.js';
 import notificationService from '../services/notificationsService.js';
-import logger from '../../../common/utils/logger/index.js'
+import logger from '../../../common/utils/logger/index.js';
 
 const { OK } = StatusCodes;
 
 export default {
   [CONTROLLERS.LIST_NOTIFICATIONS]: async (req, res, next) => {
     try {
-
-      const userId = _.get(req, 'user._id', null)
+      const userId = _.get(req, 'user._id', null);
       const data = await notificationService.listNotifications(userId, req.query);
       return res.status(OK).json({
         success: true,
@@ -35,7 +34,7 @@ export default {
   },
   [CONTROLLERS.COUNT_NOTIFICATIONS]: async (req, res, next) => {
     try {
-      const userId = _.get(req, 'user._id', null)
+      const userId = _.get(req, 'user._id', null);
       const data = await notificationService.countNotifications(userId, req.query);
       return res.status(OK).json({
         success: true,
@@ -62,14 +61,13 @@ export default {
   },
   [CONTROLLERS.CLEAR_NOTIFICATIONS]: async (req, res, next) => {
     try {
-
-      const userId = _.get(req, 'user._id', null)
+      const userId = _.get(req, 'user._id', null);
       const data = await notificationService.clearNotifications(userId, req.query);
       return res.status(OK).json({
         success: true,
         data
       });
-    }catch (error) {
+    } catch (error) {
       logger.error(error);
       next(error);
     }
@@ -81,7 +79,7 @@ export default {
         success: true,
         data
       });
-    }catch (error) {
+    } catch (error) {
       logger.error(error);
       next(error);
     }
