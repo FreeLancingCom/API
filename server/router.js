@@ -2,10 +2,15 @@ import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import userRouter from './users/routers/index.js';
 
+import notificationRouter from './notifications/routers/index.js';
+
 const router = express.Router();
 
 
 router.use('/users', userRouter);
+
+
+router.use('/notification', notificationRouter);
 
 
 router.use('/health', (req, res) => {
