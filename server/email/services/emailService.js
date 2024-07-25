@@ -45,7 +45,7 @@ class EmailService{
             });
             return { status: 'Email sent successfully' };
         } catch (error) {
-            logger.error(serviceName, functionName, error);
+            logger.error(error);
             throw new ErrorResponse(
                 emailError.EMAIL_NOT_SENT.message,
                 StatusCodes.INTERNAL_SERVER_ERROR,
