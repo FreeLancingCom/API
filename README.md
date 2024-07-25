@@ -12,8 +12,8 @@
 │   ├── services
 │   └── utils
 ├── config
-│   └── db
-│       └── mongo
+│   ├── db
+│   └── env
 ├── package.json
 ├── package-lock.json
 ├── README.md
