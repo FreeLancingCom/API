@@ -21,7 +21,6 @@ router.get(
   '/count',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.COUNT_NOTIFICATIONS]),
-  validateRequest(validationSchemas[CONTROLLERS.COUNT_NOTIFICATIONS]),
   Controller[CONTROLLERS.COUNT_NOTIFICATIONS]
 );
 

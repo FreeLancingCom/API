@@ -10,6 +10,8 @@ export default {
   [CONTROLLERS.LIST_NOTIFICATIONS]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
+      console.log(`userId: ${userId}`); // K5N19tAIVr the admin user id
+
       const data = await notificationService.listNotifications(userId, req.query);
       return res.status(OK).json({
         success: true,
@@ -35,8 +37,15 @@ export default {
   [CONTROLLERS.COUNT_NOTIFICATIONS]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'User ID is required'
+        });
+      }
+
       const data = await notificationService.countNotifications(userId, req.query);
-      return res.status(OK).json({
+      return res.status(200).json({
         success: true,
         data
       });

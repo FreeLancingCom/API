@@ -1,12 +1,12 @@
 import NotificationModel from '../model/index.js';
 import usersService from '../../users/services/usersService.js';
-import advertisementService from '../../advertisements/services/advertisementService.js';
+// import advertisementService from '../../advertisements/services/advertisementService.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import { notificationsErrors } from '../helpers/constants.js';
 
 import { StatusCodes } from 'http-status-codes';
-import logger from '../../../common/utils/logger.js';
-import { getPaginationParams } from '../../../common/utils/pagination/index.js';
+import logger from '../../../common/utils/logger/index.js';
+import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 
 const { BAD_REQUEST } = StatusCodes;
 
@@ -15,12 +15,17 @@ class NotificationService {
     try {
       const { page, limit, skip, sortBy, sortOrder, ..._query } = query;
 
-      const options = getPaginationParams(query);
-
-      const notifications = await NotificationModel.find(
-        { targets: { $elemMatch: { userId } } },
-        options,
-        ['adId']
+      const options = getPaginationAndSortingOptions(query);
+      let notifications = await NotificationModel.find(
+        {
+          targets: {
+            $elemMatch: {
+              userId,
+            }
+          }
+        },
+        options
+        // ad['adId'],
       );
 
       const notificationIds = notifications.map(notification => notification._id);
@@ -29,8 +34,7 @@ class NotificationService {
         { _id: { $in: notificationIds } },
         { $set: { 'targets.$[elem].read': true } },
         { arrayFilters: [{ 'elem.userId': userId }] }
-      );
-
+      ); 
       return { notifications, options, total: notifications.length };
     } catch (e) {
       logger.error(e);
@@ -71,7 +75,6 @@ class NotificationService {
   async countNotifications(userId, options) {
     try {
       const count = await NotificationModel.count({ targets: { $elemMatch: { userId } } });
-
       return count;
     } catch (e) {
       logger.error(e);
@@ -81,13 +84,15 @@ class NotificationService {
 
   async createNotification(userId, notificationData) {
     notificationData['sender'] = userId;
+    //prevent the sender to send notification to himself
+    // notificationData['targets'] = notificationData['targets'].filter(target => target !== userId);
     try {
       if (notificationData['targets']) {
-        const users = await usersService.listUsers(
-          { _id: { $in: notificationData['targets'] } },
-          CREATE_NOTIFICATION
-        );
-        if (!users || users.length !== notificationData['targets'].length)
+        const users = await usersService.listUsers({ _id: { $in: notificationData['targets'] } });
+
+        const resultOfObject = users;
+
+        if (!users || resultOfObject.users.length !== notificationData['targets'].length)
           throw new ErrorResponse(
             notificationsErrors.USERS_NOT_FOUND.message,
             BAD_REQUEST,
@@ -95,17 +100,17 @@ class NotificationService {
           );
       }
 
-      if (notificationData['contentType'] === 'ad') {
-        const advertisement = await advertisementService.getAdvertisement({
-          _id: notificationData['adId']
-        });
-        if (!advertisement)
-          throw new ErrorResponse(
-            notificationsErrors.ADVERTISEMENT_NOT_FOUND.message,
-            BAD_REQUEST,
-            notificationsErrors.ADVERTISEMENT_NOT_FOUND.code
-          );
-      }
+      // if (notificationData['contentType'] === 'ad') {
+      //   const advertisement = await advertisementService.getAdvertisement({
+      //     _id: notificationData['adId']
+      //   });
+      //   if (!advertisement)
+      //     throw new ErrorResponse(
+      //       notificationsErrors.ADVERTISEMENT_NOT_FOUND.message,
+      //       BAD_REQUEST,
+      //       notificationsErrors.ADVERTISEMENT_NOT_FOUND.code
+      //     );
+      // }
 
       notificationData['targets'] = notificationData['targets'].map(userId => ({ userId }));
 
@@ -155,7 +160,6 @@ class NotificationService {
   }
 
   async deleteNotification(notificationId) {
-
     try {
       const notification = await NotificationModel.findOne({ _id: notificationId });
       if (!notification)

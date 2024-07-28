@@ -22,11 +22,11 @@ export default {
       .keys({
         targets: Joi.array().unique().optional(),
         contentType: Joi.string().valid('ad', 'message').required(),
-        adId: Joi.string().when('contentType', {
-          is: 'ad',
-          then: Joi.required(),
-          otherwise: Joi.forbidden() // Ensures adId is not allowed when contentType is not 'ad'
-        }),
+        // adId: Joi.string().when('contentType', {
+        //   is: 'ad',
+        //   then: Joi.required(),
+        //   otherwise: Joi.forbidden() // Ensures adId is not allowed when contentType is not 'ad'
+        // }),
         message: Joi.string().when('contentType', {
           is: 'message',
           then: Joi.required(),
