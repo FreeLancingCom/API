@@ -10,7 +10,6 @@ export default {
   [CONTROLLERS.LIST_NOTIFICATIONS]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
-      console.log(`userId: ${userId}`); // K5N19tAIVr the admin user id
 
       const data = await notificationService.listNotifications(userId, req.query);
       return res.status(OK).json({
