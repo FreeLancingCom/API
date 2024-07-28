@@ -11,7 +11,7 @@ const router = express.Router();
 router.use('/users', userRouter);
 router.use('/email', emailRouter);
 
-router.use('/notification', notificationRouter);
+router.use('/notifications', notificationRouter);
 
 
 router.use('/health', (req, res) => {
