@@ -4,7 +4,7 @@ import UserModel from '../models/index.js';
 import { usersErrors } from '../helpers/constants.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
-import { getPaginationParams } from '../../../common/utils/pagination/index.js';
+import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
 //import EmailsService from '../../email/services/index.js';
 //import { EMAIL_TEMPLATES_DETAILS } from '../../email/helpers/constant.js';
@@ -16,7 +16,7 @@ class UserService {
     try {
       const { page, limit, skip, sortBy, sortOrder, ..._query } = query;
 
-      const options = getPaginationParams(query);
+      const options = getPaginationAndSortingOptions(query);
 
       const users = await UserModel.find(_query, options);
 
@@ -76,7 +76,7 @@ class UserService {
         );
       }
 
-      const token = await generateToken(user)
+      const token = await generateToken(user);
       delete user.password;
 
       return { user, token };
@@ -140,9 +140,7 @@ class UserService {
         );
       }
       // Validate phone number
-      const isValidPhoneNumber = UserService.validatePhoneNumber(
-        userData.phoneNumber
-      );
+      const isValidPhoneNumber = UserService.validatePhoneNumber(userData.phoneNumber);
       if (!isValidPhoneNumber) {
         throw new ErrorResponse(
           usersErrors.INVALID_PHONE_NUMBER.message,
@@ -176,10 +174,8 @@ class UserService {
   static validatePhoneNumber(phoneNumber) {
     const egyptLocalNumberPattern = /^(010|011|012|015)\d{8}$/;
 
-    return (
-      egyptLocalNumberPattern.test(phoneNumber)
-      // || validator.isMobilePhone(phoneNumber, 'any', { strictMode: false })
-    );
+    return egyptLocalNumberPattern.test(phoneNumber);
+    // || validator.isMobilePhone(phoneNumber, 'any', { strictMode: false })
   }
 
   async updateUser(userId, userData) {
@@ -195,9 +191,7 @@ class UserService {
       }
 
       if (userData['phoneNumber']) {
-        const isValidPhoneNumber = UserService.validatePhoneNumber(
-          userData.phoneNumber
-        );
+        const isValidPhoneNumber = UserService.validatePhoneNumber(userData.phoneNumber);
         if (!isValidPhoneNumber) {
           throw new ErrorResponse(
             usersErrors.INVALID_PHONE_NUMBER.message,
@@ -273,7 +267,6 @@ class UserService {
 
   async countUsers(query = {}, options) {
     try {
-
       const usersQuery = { ...query };
       return await UserModel.count(usersQuery);
     } catch (e) {
@@ -434,7 +427,6 @@ class UserService {
   //     throw new Error(error.message);
   //   }
   // }
-
 }
 
 export default new UserService();
