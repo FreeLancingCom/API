@@ -20,7 +20,7 @@ class NotificationService {
         {
           targets: {
             $elemMatch: {
-              userId,
+              userId
             }
           }
         },
@@ -34,7 +34,7 @@ class NotificationService {
         { _id: { $in: notificationIds } },
         { $set: { 'targets.$[elem].read': true } },
         { arrayFilters: [{ 'elem.userId': userId }] }
-      ); 
+      );
       return { notifications, options, total: notifications.length };
     } catch (e) {
       logger.error(e);
@@ -88,11 +88,11 @@ class NotificationService {
     // notificationData['targets'] = notificationData['targets'].filter(target => target !== userId);
     try {
       if (notificationData['targets']) {
-        const users = await usersService.listUsers({ _id: { $in: notificationData['targets'] } });
+        const usersCount = await usersService.countUsers({
+          _id: { $in: notificationData['targets'] }
+        });
 
-        const resultOfObject = users;
-
-        if (!users || resultOfObject.users.length !== notificationData['targets'].length)
+        if (!usersCount || usersCount !== notificationData['targets'].length)
           throw new ErrorResponse(
             notificationsErrors.USERS_NOT_FOUND.message,
             BAD_REQUEST,
