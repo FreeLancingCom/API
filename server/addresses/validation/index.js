@@ -1,25 +1,5 @@
 import Joi from 'joi';
 import { CONTROLLERS } from '../helper/constant.js';
-
-// import CountryModel from '../../../countries/models/countryModel.js';
-// import CityModel from '../../../cities/models/cityModel.js';
-
-// const validateCountryId = async (value, helpers) => {
-//   const country = await CountryModel.findOne(value);
-//   if (!country) {
-//     return helpers.error('any.invalid', { message: 'Country not found' });
-//   }
-//   return value;
-// };
-
-// const validateCityId = async (value, helpers) => {
-//   const city = await CityModel.findById(value);
-//   if (!city) {
-//     return helpers.error('any.invalid', { message: 'City not found' });
-//   }
-//   return value;
-// }
-
 export default {
   [CONTROLLERS.LIST_ADDRESSES]: {
     query: Joi.object()
@@ -40,8 +20,8 @@ export default {
     body: Joi.object()
       .keys({
         name: Joi.string().required(),
-        countryId: Joi.string().required() /*.custom(validateCountryId),*/,
-        cityId: Joi.string().required() /*custom(validateCityId)*/,
+        countryId: Joi.string().required(),
+        cityId: Joi.string().required(),
         firstLine: Joi.string().required(),
         secondLine: Joi.string().optional(),
         googleMapsLink: Joi.string().optional()
