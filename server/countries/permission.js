@@ -1,0 +1,10 @@
+import { CONTROLLER } from './helpers/constant.js';
+import { USER_ROLES } from '../../common/helpers/constants.js';
+
+export default {
+  [CONTROLLER.LIST_COUNTRIES]: [USER_ROLES.ADMIN],
+  [CONTROLLER.GET_COUNTRY]: [USER_ROLES.ADMIN],
+  [CONTROLLER.CREATE_COUNTRY]: [USER_ROLES.ADMIN],
+  [CONTROLLER.UPDATE_COUNTRY]: [USER_ROLES.ADMIN],
+  [CONTROLLER.DELETE_COUNTRY]: [USER_ROLES.ADMIN]
+};
