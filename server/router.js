@@ -5,6 +5,7 @@ import emailRouter from './email/routes/index.js';
 
 import addressRouter from './addresses/routers/index.js';
 import notificationRouter from './notifications/routers/index.js';
+import countryRouter from './countries/routers/index.js';
 
 const router = express.Router();
 
@@ -12,6 +13,8 @@ router.use('/users', userRouter);
 router.use('/email', emailRouter);
 
 router.use('/addresses', addressRouter);
+router.use('/countries', countryRouter);
+
 router.use('/notifications', notificationRouter);
 
 router.use('/health', (req, res) => {

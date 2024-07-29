@@ -11,7 +11,6 @@ const addressSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true
     },
     countryId: {
       type: String,
