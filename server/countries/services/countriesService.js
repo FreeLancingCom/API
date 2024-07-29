@@ -16,8 +16,15 @@ class CountriesService {
     return { data, options };
   }
 
-  async getCountry(id) {
-    const data = await Country.findOne({ _id: id });
+  async getCountry(countryId) {
+    const data = await Country.findOne({ _id: countryId });
+    if (!data) {
+      throw new ErrorResponse(
+        countryError.COUNTRY_NOT_FOUND.message,
+        BAD_REQUEST,
+        countryError.COUNTRY_NOT_FOUND.code
+      );
+    }
     return data;
   }
 
