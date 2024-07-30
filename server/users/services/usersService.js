@@ -287,7 +287,6 @@ class UserService {
         verificationCodeTTL: ttl
       };
 
-      console.log('hello')
       const updatedUser = await this.updateUser(user._id, updates);
 
       await EmailsService.sendEmail(
