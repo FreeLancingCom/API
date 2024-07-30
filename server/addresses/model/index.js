@@ -30,7 +30,6 @@ class AddressModel {
 
   async delete(selector) {
     const data = await AddressSchema.deleteOne(selector);
-    console.log(data);
     return data;
   }
 }

@@ -6,8 +6,8 @@ import logger from '../../../common/utils/logger/index.js';
 export default {
   [CONTROLLER.LIST_COUNTRIES]: async (req, res, next) => {
     try {
-      const { data, options } = await countriesService.listCountries(req.query);
-      res.status(StatusCodes.OK).json({ success: true, data, options });
+      const  data  = await countriesService.listCountries(req.query);
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
