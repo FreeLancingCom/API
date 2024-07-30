@@ -9,35 +9,35 @@ import Permissions from '../permissions.js';
 
 const router = express.Router();
 
-// router.get(
-//   '/generate-code',
-//   Authenticate,
-//   Authorization.Authorize(
-//     Permissions[CONTROLLERS.GENERATE_EMAIL_VERIFICATION_CODE],
-//     CONTROLLERS.GENERATE_EMAIL_VERIFICATION_CODE
-//   ),
-//   Controller[CONTROLLERS.GENERATE_EMAIL_VERIFICATION_CODE]
-// );
+router.get(
+  '/generate-code',
+  Authenticate,
+  Authorization.Authorize(
+    Permissions[CONTROLLERS.GENERATE_EMAIL_VERIFICATION_CODE],
+    CONTROLLERS.GENERATE_EMAIL_VERIFICATION_CODE
+  ),
+  Controller[CONTROLLERS.GENERATE_EMAIL_VERIFICATION_CODE]
+);
 
-// router.post(
-//   '/verify-email',
-//   Authenticate,
-//   Authorization.Authorize(Permissions[CONTROLLERS.VERIFY_EMAIL], CONTROLLERS.VERIFY_EMAIL),
-//   validateRequest(validationSchemas[CONTROLLERS.VERIFY_EMAIL]),
-//   Controller[CONTROLLERS.VERIFY_EMAIL]
-// );
+router.post(
+  '/verify-email',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.VERIFY_EMAIL], CONTROLLERS.VERIFY_EMAIL),
+  validateRequest(validationSchemas[CONTROLLERS.VERIFY_EMAIL]),
+  Controller[CONTROLLERS.VERIFY_EMAIL]
+);
 
-// router.post(
-//   '/reset-password',
-//   validateRequest(validationSchemas[CONTROLLERS.RESET_PASSWORD]),
-//   Controller[CONTROLLERS.RESET_PASSWORD]
-// );
+router.post(
+  '/reset-password',
+  validateRequest(validationSchemas[CONTROLLERS.RESET_PASSWORD]),
+  Controller[CONTROLLERS.RESET_PASSWORD]
+);
 
-// router.post(
-//   '/verify-reset-password',
-//   validateRequest(validationSchemas[CONTROLLERS.RESET_PASSWORD_CODE_VERIFICATION]),
-//   Controller[CONTROLLERS.RESET_PASSWORD_CODE_VERIFICATION]
-// );
+router.post(
+  '/verify-reset-password',
+  validateRequest(validationSchemas[CONTROLLERS.RESET_PASSWORD_CODE_VERIFICATION]),
+  Controller[CONTROLLERS.RESET_PASSWORD_CODE_VERIFICATION]
+);
 
 // CRUD
 

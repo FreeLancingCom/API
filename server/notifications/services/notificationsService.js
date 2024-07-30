@@ -13,19 +13,15 @@ const { BAD_REQUEST } = StatusCodes;
 class NotificationService {
   async listNotifications(userId, query) {
     try {
-      const { page, limit, skip, sortBy, sortOrder, ..._query } = query;
+      const { contentType } = query;
 
       const options = getPaginationAndSortingOptions(query);
       let notifications = await NotificationModel.find(
         {
-          targets: {
-            $elemMatch: {
-              userId
-            }
-          }
+          targets: { "$elemMatch": { userId } }, ...(contentType && { contentType })
         },
-        options
-        // ad['adId'],
+        options,
+        //['adId']
       );
 
       const notificationIds = notifications.map(notification => notification._id);
@@ -35,7 +31,7 @@ class NotificationService {
         { $set: { 'targets.$[elem].read': true } },
         { arrayFilters: [{ 'elem.userId': userId }] }
       );
-      return { notifications, options, total: notifications.length };
+      return { notifications, options };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -62,9 +58,26 @@ class NotificationService {
 
   async countUnreadNotifications(userId, options) {
     try {
-      const count = await NotificationModel.count({
-        targets: { $elemMatch: { userId, read: false } }
-      });
+      const counts = await NotificationModel.aggregate([
+        {
+          $match: {
+            targets: { "$elemMatch": { userId, read: false } }
+          }
+        },
+        {
+          $group: {
+            _id: "$contentType",
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+
+      const count = counts.reduce((acc, { _id, count }) => {
+        acc[_id] = count;
+        acc.total = (acc.total || 0) + count; // Sum the counts for total
+        return acc;
+      }, {});
+
       return count;
     } catch (e) {
       logger.error(e);
@@ -72,9 +85,15 @@ class NotificationService {
     }
   }
 
-  async countNotifications(userId, options) {
+  async countNotifications(userId, query) {
     try {
-      const count = await NotificationModel.count({ targets: { $elemMatch: { userId } } });
+      const { contentType } = query;
+
+      const count = await NotificationModel.count({
+        targets: { "$elemMatch": { userId } },
+        ...(contentType && { contentType })
+      });
+
       return count;
     } catch (e) {
       logger.error(e);
