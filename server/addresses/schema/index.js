@@ -10,7 +10,7 @@ const addressSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
+      required: true
     },
     countryId: {
       type: String,

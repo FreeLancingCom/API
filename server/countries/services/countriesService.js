@@ -71,9 +71,7 @@ class CountriesService {
           countryError.COUNTRY_NOT_FOUND.code
         );
       }
-      await Country.update({ _id: countryId }, body);
-      const data = await Country.findOne({ _id: countryId });
-
+      const data = await Country.update({ _id: countryId }, body);
       return data;
     } catch (e) {
       logger.error(e);

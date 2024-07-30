@@ -6,7 +6,7 @@ import logger from '../../../common/utils/logger/index.js';
 export default {
   [CONTROLLERS.LIST_ADDRESSES]: async (req, res, next) => {
     try {
-      const  data  = await addressesService.listAddresses(req.query);
+      const data = await addressesService.listAddresses(req.query);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -16,7 +16,7 @@ export default {
   [CONTROLLERS.GET_ADDRESS]: async (req, res, next) => {
     try {
       const data = await addressesService.getAddress(req.params.id);
-      return res.status(StatusCodes.OK).json({ data });
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);

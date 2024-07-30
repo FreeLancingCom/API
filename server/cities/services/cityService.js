@@ -99,9 +99,7 @@ class CitiesService {
         }
       }
 
-      await CityModel.update({ _id: cityId }, body);
-      const data = await CityModel.findOne({ _id: cityId });
-
+      const data = await CityModel.update({ _id: cityId }, body);
       return data;
     } catch (e) {
       logger.error(e);

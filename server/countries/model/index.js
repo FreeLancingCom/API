@@ -22,18 +22,12 @@ class Country {
     const result = await CountrySchema.create(payload);
     return result;
   }
-
   async update(selector, newParams, options = {}) {
-    const result = await CountrySchema.findOneAndUpdate(selector, newParams, {
+    const result = await AddressSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,
       ...options
     });
-    return result;
-  }
-
-  async update(payload, options = {}) {
-    const result = await CountrySchema.updateOne(payload, options);
     return result;
   }
 

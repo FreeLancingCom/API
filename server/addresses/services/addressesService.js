@@ -21,7 +21,6 @@ class AddressesService {
       const data = await addressesModel.find(_query, options);
       data.options = options;
       return data;
-
     } catch (e) {
       logger.error(e);
       throw e;
@@ -92,7 +91,7 @@ class AddressesService {
   async updateAddress(addressId, body) {
     try {
       const isExistAddress = await addressesModel.findOne({ _id: addressId });
-  
+
       if (!isExistAddress) {
         throw new ErrorResponse(
           addressError.ADDRESS_NOT_FOUND.message,
@@ -100,10 +99,10 @@ class AddressesService {
           addressError.ADDRESS_NOT_FOUND.code
         );
       }
-  
+
       if (body['countryId']) {
         const isExistCountry = await Country.findOne({ _id: body.countryId });
-  
+
         if (!isExistCountry) {
           throw new ErrorResponse(
             countryError.COUNTRY_NOT_FOUND.message,
@@ -112,10 +111,10 @@ class AddressesService {
           );
         }
       }
-  
+
       if (body['cityId']) {
         const isExistCity = await City.findOne({ _id: body.cityId });
-  
+
         if (!isExistCity) {
           throw new ErrorResponse(
             cityErrors.CITY_NOT_FOUND.message,
@@ -124,18 +123,14 @@ class AddressesService {
           );
         }
       }
-  
-      await addressesModel.update({ _id: addressId }, body);
-      const data = await addressesModel.findOne({ _id: addressId });
-     
+
+      const data = await addressesModel.update({ _id: addressId }, body);
       return data;
-      
     } catch (e) {
       logger.error(e);
       throw e;
     }
   }
-  
 
   async deleteAddress(addressId) {
     try {

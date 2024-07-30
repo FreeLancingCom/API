@@ -24,16 +24,11 @@ class City {
   }
 
   async update(selector, newParams, options = {}) {
-    const result = await CitySchema.findOneAndUpdate(selector, newParams, {
+    const result = await AddressSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,
       ...options
     });
-    return result;
-  }
-
-  async update(payload, options = {}) {
-    const result = await CitySchema.updateOne(payload, options);
     return result;
   }
 

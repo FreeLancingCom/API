@@ -18,9 +18,13 @@ class AddressModel {
     return data;
   }
 
-  async update(selector, body) {
-    const data = await AddressSchema.updateOne(selector, body);
-    return data;
+  async update(selector, newParams, options = {}) {
+    const result = await AddressSchema.findOneAndUpdate(selector, newParams, {
+      runValidators: true,
+      new: true,
+      ...options
+    });
+    return result;
   }
 
   async findOne(selector) {
