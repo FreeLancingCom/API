@@ -6,8 +6,8 @@ import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
-//import EmailsService from '../../email/services/index.js';
-//import { EMAIL_TEMPLATES_DETAILS } from '../../email/helpers/constant.js';
+import EmailsService from '../../email/services/emailService.js';
+import { EMAIL_TEMPLATES_DETAILS } from '../../email/helpers/constant.js';
 import { generateToken } from '../../../common/utils/jwt/index.js';
 
 const { BAD_REQUEST } = StatusCodes;
@@ -160,9 +160,9 @@ class UserService {
       const _user = await UserModel.create({ ...userData, role });
       const { password, ...user } = _user.toObject();
       const token = await generateToken(user);
-      // if (user.role == USER_ROLES.CLIENT) {
-      //   await this.generateVerificationCode(user);
-      // }
+      if (user.role == USER_ROLES.CLIENT) {
+        await this.generateVerificationCode(user);
+      }
 
       return { user, token };
     } catch (e) {
@@ -275,158 +275,163 @@ class UserService {
     }
   }
 
-  // async generateVerificationCode(user) {
-  //   try {
-  //     const verificationCode = Math.floor(
-  //       1000 + Math.random() * 9000
-  //     ).toString();
-  //     const ttl = Date.now() + 3600000; // 1 hour
+  async generateVerificationCode(user) {
+    try {
+      const verificationCode = Math.floor(
+        1000 + Math.random() * 9000
+      ).toString();
+      const ttl = Date.now() + 3600000; // 1 hour
 
-  //     const updates = {
-  //       verificationCode: verificationCode,
-  //       verificationCodeTTL: ttl
-  //     };
-  //     const updatedUser = await this.updateUser(user._id, updates);
+      const updates = {
+        verificationCode: verificationCode,
+        verificationCodeTTL: ttl
+      };
 
-  //     await EmailsService.sendEmail(
-  //       [user.email],
-  //       EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL,
-  //       {
-  //         username: updatedUser.fullName,
-  //         otp: verificationCode
-  //       }
-  //     );
-  //     logger.info(
-  //       `[generateVerificationCode] email sent to ${updatedUser.email}`
-  //     );
-  //     return true;
-  //   } catch (error) {
-  //     throw new Error(`[generateVerificationCode] An error happened: ${error}`);
-  //   }
-  // }
+      const updatedUser = await this.updateUser(user._id, updates);
 
-  // async verifyEmail(user, body) {
-  //   try {
-  //     const { verificationCode } = body;
-  //     if (!user.verificationCode)
-  //       throw new ErrorResponse(
-  //         usersErrors.REQUEST_VERIFICATION_CODE.message,
-  //         BAD_REQUEST,
-  //         usersErrors.REQUEST_VERIFICATION_CODE.code
-  //       );
+      await EmailsService.sendEmail(
+        [user.email],
+        EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL,
+        {
+          username: updatedUser.fullName,
+          otp: verificationCode
+        }
+      );
+      logger.info(
+        `[generateVerificationCode] email sent to ${updatedUser.email}`
+      );
+      return true;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 
-  //     if (user.verificationCode != verificationCode)
-  //       throw new ErrorResponse(
-  //         usersErrors.WRONG_VERIFICATION_CODE.message,
-  //         BAD_REQUEST,
-  //         usersErrors.WRONG_VERIFICATION_CODE.code
-  //       );
+  async verifyEmail(user, body) {
+    try {
+      const { verificationCode } = body;
+      if (!user.verificationCode)
+        throw new ErrorResponse(
+          usersErrors.REQUEST_VERIFICATION_CODE.message,
+          BAD_REQUEST,
+          usersErrors.REQUEST_VERIFICATION_CODE.code
+        );
 
-  //     if (user.verificationCodeTTL < Date.now())
-  //       throw new ErrorResponse(
-  //         usersErrors.VERIFICATION_CODE_EXPIRED.message,
-  //         BAD_REQUEST,
-  //         usersErrors.VERIFICATION_CODE_EXPIRED.code
-  //       );
+      if (user.verificationCode != verificationCode)
+        throw new ErrorResponse(
+          usersErrors.WRONG_VERIFICATION_CODE.message,
+          BAD_REQUEST,
+          usersErrors.WRONG_VERIFICATION_CODE.code
+        );
 
-  //     const updates = {
-  //       isVerified: true,
-  //       $unset: {
-  //         verificationCode: 1,
-  //         verificationCodeTTL: 1
-  //       }
-  //     };
-  //     const updatedUser = await UserModel.update({ _id: user._id }, updates);
-  //     return updatedUser;
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  // }
+      if (user.verificationCodeTTL < Date.now())
+        throw new ErrorResponse(
+          usersErrors.VERIFICATION_CODE_EXPIRED.message,
+          BAD_REQUEST,
+          usersErrors.VERIFICATION_CODE_EXPIRED.code
+        );
 
-  // async resetPassword(body) {
-  //   try {
-  //     const { email } = body;
-  //     const user = await UserModel.findOne({ email });
-  //     if (!user)
-  //       throw new ErrorResponse(
-  //         usersErrors.USER_NOT_FOUND.message,
-  //         BAD_REQUEST,
-  //         usersErrors.USER_NOT_FOUND.code
-  //       );
+      const updates = {
+        isVerified: true,
+        $unset: {
+          verificationCode: 1,
+          verificationCodeTTL: 1
+        }
+      };
+      const updatedUser = await UserModel.update({ _id: user._id }, updates);
+      return updatedUser;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 
-  //     const resetPasswordCode = Math.floor(
-  //       1000 + Math.random() * 9000
-  //     ).toString();
-  //     const ttl = Date.now() + 3600000; // 1 hour
+  async resetPassword(body) {
+    try {
+      const { email } = body;
+      const user = await UserModel.findOne({ email });
+      if (!user)
+        throw new ErrorResponse(
+          usersErrors.USER_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.USER_NOT_FOUND.code
+        );
 
-  //     const updates = {
-  //       resetPasswordCode,
-  //       resetPasswordCodeTTL: ttl
-  //     };
-  //     const updatedUser = await UserModel.update({ _id: user._id }, updates);
+      const resetPasswordCode = Math.floor(
+        1000 + Math.random() * 9000
+      ).toString();
+      const ttl = Date.now() + 3600000; // 1 hour
 
-  //     await EmailsService.sendEmail(
-  //       [user.email],
-  //       EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD,
-  //       {
-  //         username: updatedUser.fullName,
-  //         otp: resetPasswordCode
-  //       }
-  //     );
-  //     logger.info(`[resetPassword] email sent to ${updatedUser.email}`);
+      const updates = {
+        resetPasswordCode,
+        resetPasswordCodeTTL: ttl
+      };
+      const updatedUser = await UserModel.update({ _id: user._id }, updates);
 
-  //     return true;
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  // }
+      await EmailsService.sendEmail(
+        [user.email],
+        EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD,
+        {
+          username: updatedUser.fullName,
+          otp: resetPasswordCode
+        }
+      );
+      logger.info(`[resetPassword] email sent to ${updatedUser.email}`);
 
-  // async verifyResetPasswordCode(body) {
-  //   try {
-  //     const { resetPasswordCode, email } = body;
-  //     const user = await UserModel.findOneAndIncludeOTP({ email });
-  //     if (!user)
-  //       throw new ErrorResponse(
-  //         usersErrors.USER_NOT_FOUND.message,
-  //         BAD_REQUEST,
-  //         usersErrors.USER_NOT_FOUND.code
-  //       );
+      return true;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 
-  //     if (!user.resetPasswordCode)
-  //       throw new ErrorResponse(
-  //         usersErrors.REQUEST_VERIFICATION_CODE.message,
-  //         BAD_REQUEST,
-  //         usersErrors.REQUEST_VERIFICATION_CODE.code
-  //       );
+  async verifyResetPasswordCode(body) {
+    try {
+      const { resetPasswordCode, email } = body;
+      const user = await UserModel.findOneAndIncludeOTP({ email });
+      if (!user)
+        throw new ErrorResponse(
+          usersErrors.USER_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.USER_NOT_FOUND.code
+        );
 
-  //     if (user.resetPasswordCode != resetPasswordCode)
-  //       throw new ErrorResponse(
-  //         usersErrors.WRONG_RESET_PASSWORD_CODE.message,
-  //         BAD_REQUEST,
-  //         usersErrors.WRONG_RESET_PASSWORD_CODE.code
-  //       );
+      if (!user.resetPasswordCode)
+        throw new ErrorResponse(
+          usersErrors.REQUEST_VERIFICATION_CODE.message,
+          BAD_REQUEST,
+          usersErrors.REQUEST_VERIFICATION_CODE.code
+        );
 
-  //     if (user.resetPasswordCodeTTL < Date.now())
-  //       throw new ErrorResponse(
-  //         usersErrors.VERIFICATION_CODE_EXPIRED.message,
-  //         BAD_REQUEST,
-  //         usersErrors.VERIFICATION_CODE_EXPIRED.code
-  //       );
+      if (user.resetPasswordCode != resetPasswordCode)
+        throw new ErrorResponse(
+          usersErrors.WRONG_RESET_PASSWORD_CODE.message,
+          BAD_REQUEST,
+          usersErrors.WRONG_RESET_PASSWORD_CODE.code
+        );
 
-  //     const updates = {
-  //       $unset: {
-  //         resetPasswordCode: 1,
-  //         resetPasswordCodeTTL: 1
-  //       }
-  //     };
-  //     const updatedUser = await UserModel.update({ _id: user._id }, updates);
-  //     const token = await generateToken(updatedUser);
+      if (user.resetPasswordCodeTTL < Date.now())
+        throw new ErrorResponse(
+          usersErrors.VERIFICATION_CODE_EXPIRED.message,
+          BAD_REQUEST,
+          usersErrors.VERIFICATION_CODE_EXPIRED.code
+        );
 
-  //     return token;
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  // }
+      const updates = {
+        $unset: {
+          resetPasswordCode: 1,
+          resetPasswordCodeTTL: 1
+        }
+      };
+      const updatedUser = await UserModel.update({ _id: user._id }, updates);
+      const token = await generateToken(updatedUser);
+
+      return token;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 export default new UserService();

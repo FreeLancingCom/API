@@ -97,7 +97,7 @@ export default function (params) {
     <body>
         <div class="container">
             <div class="header">
-            <img src="https://example.com/roadapp-logo.png" alt="Road app  Top Logo">
+            <img src="https://example.com/roadapp-logo.png" alt="Road app Logo">
             </div>
             <h1>${lang.title}</h1>
             <p>${lang.greeting}</p>
