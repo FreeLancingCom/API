@@ -7,7 +7,7 @@ export default {
   [CONTROLLER.LIST_CITIES]: async (req, res, next) => {
     try {
       const data = await cityService.listCountries(req.query);
-      res.status(StatusCodes.OK).json({ success: true, data, options: data.options });
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);

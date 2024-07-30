@@ -77,15 +77,16 @@ class CitiesService {
 
   async updateCity(cityId, body) {
     try {
-      const existingCity = await CityModel.findOne({ _id: cityId });
+      const isExistCity = await CityModel.findOne({ _id: cityId });
 
-      if (!existingCity) {
+      if (!isExistCity) {
         throw new ErrorResponse(
           cityErrors.CITY_NOT_FOUND.message,
           BAD_REQUEST,
           cityErrors.CITY_NOT_FOUND.code
         );
       }
+
       if (body['countryId']) {
         const isExistCountry = await Country.findOne({ _id: body.countryId });
 
@@ -98,7 +99,9 @@ class CitiesService {
         }
       }
 
-      const data = await CityModel.update({ _id: cityId }, body);
+      await CityModel.update({ _id: cityId }, body);
+      const data = await CityModel.findOne({ _id: cityId });
+
       return data;
     } catch (e) {
       logger.error(e);
