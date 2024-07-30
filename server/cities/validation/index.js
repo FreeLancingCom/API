@@ -16,7 +16,8 @@ export default {
   [CONTROLLER.CREATE_CITY]: {
     body: Joi.object({
       name: Joi.string().required(),
-      nameAr: Joi.string().required()
+      nameAr: Joi.string().required(),
+      countryId: Joi.string().required()
     }).required()
   },
   [CONTROLLER.UPDATE_CITY]: {
@@ -25,7 +26,8 @@ export default {
     }).required(),
     body: Joi.object({
       name: Joi.string().optional(),
-      nameAr: Joi.string().optional()
+      nameAr: Joi.string().optional(),
+      countryId: Joi.string().optional()
     }).required()
   },
   [CONTROLLER.DELETE_CITY]: {

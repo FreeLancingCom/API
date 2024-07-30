@@ -19,7 +19,7 @@ const citySchema = new mongoose.Schema({
   countryId: {
     type: String,
     required: true,
-    ref : 'countries'
+    ref: 'countries'
   }
 });
 
