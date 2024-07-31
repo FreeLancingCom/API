@@ -20,7 +20,6 @@ export default {
     body: Joi.object()
       .keys({
         name: Joi.string().required(),
-        countryId: Joi.string().required(),
         cityId: Joi.string().required(),
         firstLine: Joi.string().required(),
         secondLine: Joi.string().optional(),

@@ -18,9 +18,9 @@ class AddressesService {
     const { limit, skip, sort, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
-      const data = await addressesModel.find(_query, options);
-      data.options = options;
-      return data;
+      const addresses = await addressesModel.find(_query, options);
+
+      return { addresses, options };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -29,15 +29,15 @@ class AddressesService {
 
   async getAddress(addressId) {
     try {
-      const data = await addressesModel.findOne({ _id: addressId });
-      if (!data) {
+      const address = await addressesModel.findOne({ _id: addressId });
+      if (!address) {
         throw new ErrorResponse(
           addressError.ADDRESS_NOT_FOUND.message,
           BAD_REQUEST,
           addressError.ADDRESS_NOT_FOUND.code
         );
       }
-      return data;
+      return address;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -56,32 +56,22 @@ class AddressesService {
         );
       }
 
-      if (body['countryId']) {
-        const isExistCountry = await Country.findOne({ _id: body.countryId });
+      const isExistCity = await City.findOne({ _id: body.cityId });
 
-        if (!isExistCountry) {
-          throw new ErrorResponse(
-            countryError.COUNTRY_NOT_FOUND.message,
-            BAD_REQUEST,
-            countryError.COUNTRY_NOT_FOUND.code
-          );
-        }
+      if (isExistCity) {
+        body.countryId = isExistCity.countryId;
       }
 
-      if (body['cityId']) {
-        const isExistCity = await City.findOne({ _id: body.cityId });
-
-        if (!isExistCity) {
-          throw new ErrorResponse(
-            cityErrors.CITY_NOT_FOUND.message,
-            BAD_REQUEST,
-            cityErrors.CITY_NOT_FOUND.code
-          );
-        }
+      if (!isExistCity) {
+        throw new ErrorResponse(
+          cityErrors.CITY_NOT_FOUND.message,
+          BAD_REQUEST,
+          cityErrors.CITY_NOT_FOUND.code
+        );
       }
 
-      const data = await addressesModel.create(body);
-      return data;
+      const createdAddress = await addressesModel.create(body);
+      return createdAddress;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -100,21 +90,11 @@ class AddressesService {
         );
       }
 
-      if (body['countryId']) {
-        const isExistCountry = await Country.findOne({ _id: body.countryId });
-
-        if (!isExistCountry) {
-          throw new ErrorResponse(
-            countryError.COUNTRY_NOT_FOUND.message,
-            BAD_REQUEST,
-            countryError.COUNTRY_NOT_FOUND.code
-          );
-        }
-      }
-
       if (body['cityId']) {
         const isExistCity = await City.findOne({ _id: body.cityId });
-
+        if (isExistCity) {
+          body.countryId = isExistCity.countryId;
+        }
         if (!isExistCity) {
           throw new ErrorResponse(
             cityErrors.CITY_NOT_FOUND.message,
@@ -124,8 +104,8 @@ class AddressesService {
         }
       }
 
-      const data = await addressesModel.update({ _id: addressId }, body);
-      return data;
+      const updatedAddress = await addressesModel.update({ _id: addressId }, body);
+      return updatedAddress;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -143,8 +123,8 @@ class AddressesService {
           addressError.ADDRESS_NOT_FOUND.code
         );
       }
-      const data = await addressesModel.delete({ _id: addressId });
-      return data;
+      const deletedAddress = await addressesModel.delete({ _id: addressId });
+      return deletedAddress;
     } catch (e) {
       logger.error(e);
       throw e;

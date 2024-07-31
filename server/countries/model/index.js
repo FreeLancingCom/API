@@ -23,7 +23,7 @@ class Country {
     return result;
   }
   async update(selector, newParams, options = {}) {
-    const result = await AddressSchema.findOneAndUpdate(selector, newParams, {
+    const result = await CountrySchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,
       ...options

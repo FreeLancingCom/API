@@ -15,9 +15,8 @@ class CountriesService {
     const options = getPaginationAndSortingOptions(query);
 
     try {
-      const data = await Country.find(_query, options);
-      data.options = options;
-      return data;
+      const countries = await Country.find(_query, options);
+      return { countries, options };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -26,15 +25,15 @@ class CountriesService {
 
   async getCountry(countryId) {
     try {
-      const data = await Country.findOne({ _id: countryId });
-      if (!data) {
+      const country = await Country.findOne({ _id: countryId });
+      if (!country) {
         throw new ErrorResponse(
           countryError.COUNTRY_NOT_FOUND.message,
           BAD_REQUEST,
           countryError.COUNTRY_NOT_FOUND.code
         );
       }
-      return data;
+      return country;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -52,8 +51,8 @@ class CountriesService {
         );
       }
 
-      const data = await Country.create(body);
-      return data;
+      const createdCountry = await Country.create(body);
+      return createdCountry;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -71,8 +70,17 @@ class CountriesService {
           countryError.COUNTRY_NOT_FOUND.code
         );
       }
-      const data = await Country.update({ _id: countryId }, body);
-      return data;
+
+      const nameIsDuplicate = await Country.findOne({ name: body.name, _id: { $ne: countryId } });
+      if (nameIsDuplicate) {
+        throw new ErrorResponse(
+          countryError.COUNTRY_ALREADY_EXISTS.message,
+          BAD_REQUEST,
+          countryError.COUNTRY_ALREADY_EXISTS.code
+        );
+      }
+      const updatedCountry = await Country.update({ _id: countryId }, body);
+      return updatedCountry;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -81,8 +89,8 @@ class CountriesService {
 
   async deleteCountry(id) {
     try {
-      const data = await Country.delete({ _id: id });
-      return data;
+      const deletedCountry = await Country.delete({ _id: id });
+      return deletedCountry;
     } catch (e) {
       logger.error(e);
       throw e;

@@ -17,9 +17,9 @@ class CitiesService {
     const options = getPaginationAndSortingOptions(query);
 
     try {
-      const data = await CityModel.find(_query, options);
-      data.options = options;
-      return data;
+      const cities = await CityModel.find(_query, options);
+
+      return { cities, options };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -28,15 +28,15 @@ class CitiesService {
 
   async getCity(cityId) {
     try {
-      const data = await CityModel.findOne({ _id: cityId });
-      if (!data) {
+      const city = await CityModel.findOne({ _id: cityId });
+      if (!city) {
         throw new ErrorResponse(
           cityErrors.CITY_NOT_FOUND.message,
           BAD_REQUEST,
           cityErrors.CITY_NOT_FOUND.code
         );
       }
-      return data;
+      return city;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -55,20 +55,18 @@ class CitiesService {
         );
       }
 
-      if (body['countryId']) {
-        const isExistCountry = await Country.findOne({ _id: body.countryId });
+      const isExistCountry = await Country.findOne({ _id: body.countryId });
 
-        if (!isExistCountry) {
-          throw new ErrorResponse(
-            countryError.COUNTRY_NOT_FOUND.message,
-            BAD_REQUEST,
-            countryError.COUNTRY_NOT_FOUND.code
-          );
-        }
+      if (!isExistCountry) {
+        throw new ErrorResponse(
+          countryError.COUNTRY_NOT_FOUND.message,
+          BAD_REQUEST,
+          countryError.COUNTRY_NOT_FOUND.code
+        );
       }
 
-      const data = await CityModel.create(body);
-      return data;
+      const createdCity = await CityModel.create(body);
+      return createdCity;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -77,16 +75,6 @@ class CitiesService {
 
   async updateCity(cityId, body) {
     try {
-      const isExistCity = await CityModel.findOne({ _id: cityId });
-
-      if (!isExistCity) {
-        throw new ErrorResponse(
-          cityErrors.CITY_NOT_FOUND.message,
-          BAD_REQUEST,
-          cityErrors.CITY_NOT_FOUND.code
-        );
-      }
-
       if (body['countryId']) {
         const isExistCountry = await Country.findOne({ _id: body.countryId });
 
@@ -99,8 +87,8 @@ class CitiesService {
         }
       }
 
-      const data = await CityModel.update({ _id: cityId }, body);
-      return data;
+      const updatedCity = await CityModel.update({ _id: cityId }, body);
+      return updatedCity;
     } catch (e) {
       logger.error(e);
       throw e;
@@ -117,8 +105,8 @@ class CitiesService {
           cityErrors.CITY_NOT_FOUND.code
         );
       }
-      const data = await CityModel.delete({ _id: cityId });
-      return data;
+      const deletedCity = await CityModel.delete({ _id: cityId });
+      return deletedCity;
     } catch (e) {
       logger.error(e);
       throw e;

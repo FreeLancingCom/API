@@ -13,7 +13,6 @@ const countrySchema = new mongoose.Schema({
   },
   nameAr: {
     type: String,
-    required: true,
     unique: true
   }
 });
