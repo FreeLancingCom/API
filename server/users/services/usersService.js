@@ -190,7 +190,6 @@ class UserService {
         );
       }
       await this._validateUserFieldsUpdates(userData);
-      console.log('user data', userData);
       const user = await UserModel.update({ _id: userId }, userData);
       return user;
     } catch (e) {
