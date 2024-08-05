@@ -3,6 +3,8 @@ import MaintenanceCenter from '../models/index.js'; // Ensure the path is correc
 import countriesService from '../../countries/services/countriesService.js';
 import usersService from '../../users/services/usersService.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
+import logger from '../../../common/utils/logger/index.js';
+import servicesService from '../../services/services/index.js';
 
 class MaintenanceCenterService {
   async listMaintenanceCenters(user, query) {
@@ -72,7 +74,7 @@ class MaintenanceCenterService {
     }
   }
 
-  async updateMaintenanceCenter(userId, centerId, payload) {
+  async updateMaintenanceCenter(user, centerId, payload) {
     try {
       const maintenanceCenter = await MaintenanceCenter.findOne({ _id: centerId });
       if (!maintenanceCenter) throw new Error('Maintenance Center not found');
@@ -80,13 +82,31 @@ class MaintenanceCenterService {
       if (payload.products) {
         // TODO: handle products
       }
+
+      // check if provided array of service IDs exist
+      let validatedServices = [];
       if (payload.services) {
-        // TODO: handle services
+        validatedServices = await Promise.all(
+          payload.services.map(async serviceId => {
+            const service = await servicesService.getService(user, serviceId);
+            return { _id: service._id, cost: service.cost };
+          })
+        );
+
+        validatedServices = [...validatedServices, maintenanceCenter.services];
+        validatedServices = _.uniqBy(validatedServices, 'id');
+        payload.$push = { services: validatedServices };
+
+        delete payload.services;
       }
 
+      if (payload.removedServices) {
+        payload.$pull = { services: { _id: { $in: payload.removedServices } } };
+      }
+      // Check if admins to be added to the MC exist
       let validAdminIds = [];
       if (payload.admins) {
-        validAdminIds.push(
+        validAdminIds = await Promise.all(
           payload.admins.map(async adminId => {
             const user = await usersService.getUser(adminId);
             return user._id;
@@ -99,6 +119,8 @@ class MaintenanceCenterService {
         const countryData = await countriesService.getCountry(countryId);
         payload.country = { _id: countryData._id, name: countryData.name };
       }
+
+      logger.info(`[updateMaintenanceCenter][formattedUpdates]${JSON.stringify(payload)}`);
       const updatedMaintenanceCenter = await MaintenanceCenter.update({ _id: centerId }, payload);
       await usersService.updateManyUsers(
         { _id: { $in: validAdminIds } },

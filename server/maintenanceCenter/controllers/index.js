@@ -48,10 +48,9 @@ export default {
   },
   [CONTROLLERS.UPDATE_MAINTENANCE_CENTER]: async (req, res, next) => {
     try {
-      const userId = req.user._id;
       const centerId = req.params.centerId;
       const data = await maintenanceCenterService.updateMaintenanceCenter(
-        userId,
+        req.user,
         centerId,
         req.body
       );
@@ -60,14 +59,13 @@ export default {
         data
       });
     } catch (error) {
-      console.log(error);
       logger.error(error);
       next(error);
     }
   },
   [CONTROLLERS.DELETE_MAINTENANCE_CENTERS]: async (req, res, next) => {
     try {
-      await maintenanceCenterService.deleteMaintenanceCenter(req.params.id);
+      await maintenanceCenterService.deleteMaintenanceCenter(req.params.centerId);
       return res.status(OK).json({
         success: true
       });
