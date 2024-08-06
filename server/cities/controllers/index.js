@@ -1,48 +1,48 @@
-import countriesService from '../services/countriesService.js';
+import cityService from '../services/cityService.js';
 import { CONTROLLER } from '../helpers/constant.js';
 import { StatusCodes } from 'http-status-codes';
 import logger from '../../../common/utils/logger/index.js';
 
 export default {
-  [CONTROLLER.LIST_COUNTRIES]: async (req, res, next) => {
+  [CONTROLLER.LIST_CITIES]: async (req, res, next) => {
     try {
-      const data = await countriesService.listCountries(req.query);
+      const data = await cityService.listCountries(req.query);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
-  [CONTROLLER.GET_COUNTRY]: async (req, res, next) => {
+  [CONTROLLER.GET_CITY]: async (req, res, next) => {
     try {
-      const data = await countriesService.getCountry(req.params.id);
+      const data = await cityService.getCity(req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
-  [CONTROLLER.CREATE_COUNTRY]: async (req, res, next) => {
+  [CONTROLLER.CREATE_CITY]: async (req, res, next) => {
     try {
-      const data = await countriesService.createCountry(req.body);
+      const data = await cityService.createCity(req.body);
       res.status(StatusCodes.CREATED).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
-  [CONTROLLER.UPDATE_COUNTRY]: async (req, res, next) => {
+  [CONTROLLER.UPDATE_CITY]: async (req, res, next) => {
     try {
-      const data = await countriesService.updateCountry(req.params.id, req.body);
+      const data = await cityService.updateCity(req.params.id, req.body);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
-  [CONTROLLER.DELETE_COUNTRY]: async (req, res, next) => {
+  [CONTROLLER.DELETE_CITY]: async (req, res, next) => {
     try {
-      const data = await countriesService.deleteCountry(req.params.id);
+      const data = await cityService.deleteCity(req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
