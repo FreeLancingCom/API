@@ -2,6 +2,7 @@ import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import userRouter from './users/routers/index.js';
 import emailRouter from './email/routes/index.js';
+import productsRouter from './products/routers/index.js';
 
 import addressRouter from './addresses/routers/index.js';
 import cityRouter from './cities/routers/index.js';
@@ -19,6 +20,8 @@ router.use('/addresses', addressRouter);
 router.use('/countries', countryRouter);
 
 router.use('/notifications', notificationRouter);
+router.use('/products', productsRouter);
+
 router.use('/vehicles', vehicleRouter);
 router.use("/cities", cityRouter);
 
