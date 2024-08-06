@@ -15,11 +15,13 @@ export const errorCodes = Object.freeze({
 const ADMIN = 'ADMIN';
 const PROVIDER = 'PROVIDER';
 const CLIENT = 'CLIENT';
+const DEVELOPER = 'DEVELOPER';
 
 export const USER_ROLES = {
   ADMIN,
   PROVIDER,
-  CLIENT
+  CLIENT,
+  DEVELOPER
 };
 
 
