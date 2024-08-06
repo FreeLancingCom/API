@@ -92,9 +92,6 @@ class AddressesService {
 
       if (body['cityId']) {
         const isExistCity = await City.findOne({ _id: body.cityId });
-        if (isExistCity) {
-          body.countryId = isExistCity.countryId;
-        }
         if (!isExistCity) {
           throw new ErrorResponse(
             cityErrors.CITY_NOT_FOUND.message,
@@ -103,6 +100,8 @@ class AddressesService {
           );
         }
       }
+      
+      body.countryId = isExistCity.countryId;
 
       const updatedAddress = await addressesModel.update({ _id: addressId }, body);
       return updatedAddress;
