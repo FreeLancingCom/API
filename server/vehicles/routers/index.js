@@ -13,9 +13,16 @@ const router = express.Router();
 router.get(
   '/',
   Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.LIST_VEHICLES]),
-  validateRequest(validationSchemas[CONTROLLERS.LIST_VEHICLES]),
-  Controller[CONTROLLERS.LIST_VEHICLES]
+  Authorization.Authorize(Permissions[CONTROLLERS.LIST_CLIENT_VEHICLES]),
+  validateRequest(validationSchemas[CONTROLLERS.LIST_CLIENT_VEHICLES]),
+  Controller[CONTROLLERS.LIST_CLIENT_VEHICLES]
+);
+router.get(
+  '/admin',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.ADMIN_LIST_VEHICLES]),
+  validateRequest(validationSchemas[CONTROLLERS.ADMIN_LIST_VEHICLES]),
+  Controller[CONTROLLERS.ADMIN_LIST_VEHICLES]
 );
 router.get(
   '/count',

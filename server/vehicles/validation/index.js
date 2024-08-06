@@ -2,7 +2,15 @@ import Joi from 'joi';
 import { CONTROLLERS,ENGINE_TYPE,GEAR_SHIFT_TYPE } from '../helpers/constants.js';
 
 export default {
-  [CONTROLLERS.LIST_VEHICLES]: {
+  [CONTROLLERS.LIST_CLIENT_VEHICLES]: {
+    query: Joi.object()
+      .keys({
+        page: Joi.number().optional(),
+        limit: Joi.number().optional()
+      })
+      .optional()
+  },
+  [CONTROLLERS.ADMIN_LIST_VEHICLES]: {
     query: Joi.object()
       .keys({
         page: Joi.number().optional(),

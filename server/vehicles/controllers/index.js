@@ -5,9 +5,18 @@ import vehiclesService from '../services/vehicleService.js';
 import logger from '../../../common/utils/logger/index.js';
 
 export default {
-  [CONTROLLERS.LIST_VEHICLES]: async (req, res, next) => {
+  [CONTROLLERS.LIST_CLIENT_VEHICLES]: async (req, res, next) => {
     try {
-      const data = await vehiclesService.listVehicles(req.query);
+      const data = await vehiclesService.listVehicles(req.user,req.query);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.ADMIN_LIST_VEHICLES]: async (req, res, next) => {
+    try {
+      const data = await vehiclesService.adminListVehicles(req.query);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -25,7 +34,7 @@ export default {
   },
   [CONTROLLERS.GET_VEHICLE]: async (req, res, next) => {
     try {
-      const data = await vehiclesService.getVehicle(req.params.id);
+      const data = await vehiclesService.getVehicle(req.user,req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -44,7 +53,7 @@ export default {
   },
   [CONTROLLERS.UPDATE_VEHICLE]: async (req, res, next) => {
     try {
-      const data = await vehiclesService.updatVehicle(req.params.id, req.body);
+      const data = await vehiclesService.updatVehicle(req.user,req.params.id, req.body);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -53,7 +62,7 @@ export default {
   },
   [CONTROLLERS.DELETE_VEHICLE]: async (req, res, next) => {
     try {
-      const data = await vehiclesService.deleteVehicle(req.params.id);
+      const data = await vehiclesService.deleteVehicle(req.user,req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

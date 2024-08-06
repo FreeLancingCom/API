@@ -5,14 +5,34 @@ import { vehcileErrors } from '../helpers/constants.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
+import usersService from '../../users/services/usersService.js';
 const { BAD_REQUEST } = StatusCodes;
 class VehicleService {
-  async listVehicles(query) {
+  async listVehicles(user,query) {
     try {
-      const { page, limit, skip, sortBy, sortOrder, ..._query } = query;
+      const userId = _.get(user, '_id');
+      await usersService.getUser(userId)
+
+       const { page, limit, skip, sortBy, sortOrder, ..._query} = query;
+      _query.userId = userId;
 
       const options = getPaginationAndSortingOptions(query);
+      
+      const vehicles = await VehicleModel.find(_query, options);
 
+      return { vehicles, options };
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+  async adminListVehicles(query) {
+    try {
+
+       const { page, limit, skip, sortBy, sortOrder, ..._query} = query;
+
+      const options = getPaginationAndSortingOptions(query);
+      
       const vehicles = await VehicleModel.find(_query, options);
 
       return { vehicles, options };
@@ -22,15 +42,26 @@ class VehicleService {
     }
   }
 
-  async getVehicle(vehcileId) {
+  async getVehicle(user,vehicleId) {
     try {
-      const vehicle = await VehicleModel.findOne({ _id: vehcileId });
 
+      const userId = _.get(user, '_id');
+      await usersService.getUser(userId)  
+
+      const vehicle = await VehicleModel.findOne({ _id: vehicleId });
+      
       if (!vehicle) {
         throw new ErrorResponse(
           vehcileErrors.VEHICLE_NOT_FOUND.message,
           BAD_REQUEST,
           vehcileErrors.VEHICLE_NOT_FOUND.code
+        );
+      }
+      if(vehicle['userId']!=userId){
+        throw new ErrorResponse(
+          vehcileErrors.USER_NOT_OWNER.message,
+          BAD_REQUEST,
+          vehcileErrors.USER_NOT_OWNER.code
         );
       }
 
@@ -49,9 +80,9 @@ class VehicleService {
 
       if (existingUser) {
         throw new ErrorResponse(
-          vehcileErrors.VEHICLE_ALREADY_EXISTS.message,
+          vehcileErrors.USER_NOT_FOUND.message,
           BAD_REQUEST,
-          vehcileErrors.VEHICLE_ALREADY_EXISTS.code
+          vehcileErrors.USER_NOT_FOUND.code
         );
       }
       vehicleData= {...vehicleData,
@@ -66,9 +97,12 @@ class VehicleService {
     }
   }
 
-  async updatVehicle(vehcileId, vehicleData) {
+  async updatVehicle(user,vehicleId, vehicleData) {
     try {
-      const existingVehicle = await VehicleModel.findOne({ _id: vehcileId });
+      const userId = _.get(user, '_id');
+      await usersService.getUser(userId)  
+
+      const existingVehicle = await VehicleModel.findOne({ _id: vehicleId });
       
       if (!existingVehicle) {
         throw new ErrorResponse(
@@ -77,8 +111,14 @@ class VehicleService {
           vehcileErrors.VEHICLE_NOT_FOUND.code
         );
       }
-
-      const updatedVehicle = await VehicleModel.update({ _id: vehcileId }, vehicleData );
+      if(existingVehicle['userId']!=userId){
+        throw new ErrorResponse(
+          vehcileErrors.USER_NOT_OWNER.message,
+          BAD_REQUEST,
+          vehcileErrors.USER_NOT_OWNER.code
+        );
+      }
+      const updatedVehicle = await VehicleModel.update({ _id: vehicleId }, vehicleData );
       return updatedVehicle;
     } catch (e) {
       logger.error(e);
@@ -86,10 +126,13 @@ class VehicleService {
     }
   }
 
-  async deleteVehicle(vehcileId) {
+  async deleteVehicle(user,vehicleId) {
     try {
-      const existingVehicle = await VehicleModel.findOne({ _id: vehcileId });
+      const userId = _.get(user, '_id');
+      await usersService.getUser(userId)  
 
+      const existingVehicle = await VehicleModel.findOne({ _id: vehicleId });
+      
       if (!existingVehicle) {
         throw new ErrorResponse(
           vehcileErrors.VEHICLE_NOT_FOUND.message,
@@ -97,8 +140,14 @@ class VehicleService {
           vehcileErrors.VEHICLE_NOT_FOUND.code
         );
       }
-
-      return VehicleModel.delete({ _id: vehcileId });
+      if(existingVehicle['userId']!=userId){
+        throw new ErrorResponse(
+          vehcileErrors.USER_NOT_OWNER.message,
+          BAD_REQUEST,
+          vehcileErrors.USER_NOT_OWNER.code
+        );
+      }
+      return VehicleModel.delete({ _id: vehicleId });
     } catch (e) {
       logger.error(e);
       throw e;
