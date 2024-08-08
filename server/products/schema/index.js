@@ -17,28 +17,6 @@ const pricesDetailsSchema = new mongoose.Schema(
   }
 );
 
-const offersDetailsSchema = new mongoose.Schema(
-  {
-    offerType: {
-      type: String,
-      required: true,
-      enum: ['TIMED', 'UNLIMITED'],
-      default: null
-    },
-    from: {
-      type: Date,
-      default: null
-    },
-    to: {
-      type: Date,
-      default: null
-    }
-  },
-  {
-    _id: false
-  }
-);
-
 const productSchema = new mongoose.Schema(
   {
     _id: {
@@ -62,26 +40,8 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    // categoryId: {
-    //   type: String,
-    //   ref: 'categories'
-    // },
-    // subcategoryId: [
-    //   {
-    //     type: String,
-    //     required: true,
-    //     ref: 'subcategories'
-    //   }
-    // ],
-    // brandId: {
-    //   type: String,
-    //   ref: 'brands'
-    // },
     price: {
       type: pricesDetailsSchema
-    },
-    offer: {
-      type: offersDetailsSchema
     },
     currency: {
       type: String,

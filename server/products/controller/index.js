@@ -62,7 +62,7 @@ export default {
     try {
       const id = _.get(req, 'params.id', null);
       const mcId = _.get(req, 'user.maintenanceCenterId', null);
-      const data = await productService.updateProduct(id,mcId,req.body);
+      const data = await productService.updateProduct(id, mcId, req.body);
       return res.status(StatusCodes.OK).json({
         success: true,
         data
@@ -75,7 +75,8 @@ export default {
   [CONTROLLERS.DELETE_PRODUCT]: async (req, res, next) => {
     try {
       const id = _.get(req, 'params.id', null);
-      const data = await productService.deleteProduct(id);
+      const mcId = _.get(req, 'user.maintenanceCenterId', null);
+      const data = await productService.deleteProduct(id, mcId);
       return res.status(StatusCodes.OK).json({
         success: true,
         data
