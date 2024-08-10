@@ -35,7 +35,8 @@ export default {
       legalDoc: Joi.string(),
       video: Joi.string().optional(),
       active: Joi.bool().default(true),
-      tags: Joi.array().items(Joi.string())
+      tags: Joi.array().items(Joi.string()),
+      category: Joi.string().required(),
     })
   },
   [CONTROLLERS.UPDATE_PRODUCT]: {
