@@ -36,7 +36,6 @@ export default {
       video: Joi.string().optional(),
       active: Joi.bool().default(true),
       tags: Joi.array().items(Joi.string()),
-      maintenanceCenterId : Joi.string().required()
     })
   },
   [CONTROLLERS.UPDATE_PRODUCT]: {
