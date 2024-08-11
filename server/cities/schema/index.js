@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import nanoid from '../../../common/utils/nanoID/index.js';
 
-const countrySchema = new mongoose.Schema({
+const citySchema = new mongoose.Schema({
   _id: {
     type: String,
     default: () => nanoid()
@@ -13,9 +13,13 @@ const countrySchema = new mongoose.Schema({
   },
   nameAr: {
     type: String,
-    unique: true,
-    required: true
+    unique: true
+  },
+  countryId: {
+    type: String,
+    required: true,
+    ref: 'countries'
   }
 });
 
-export default mongoose.model('Country', countrySchema);
+export default mongoose.model('City', citySchema);
