@@ -3,8 +3,7 @@ export const CONTROLLERS = {
   GET_PRODUCT: 'allRoles:get',
   CREATE_PRODUCT: 'provider:create',
   UPDATE_PRODUCT: 'provider:update',
-  DELETE_PRODUCT: 'provider:delete',
-  LIST_MAINTENANCE_CENTER_PRODUCTS: 'allRoles:listMaintenanceCenter'
+  DELETE_PRODUCT: 'provider:delete'
 };
 
 export const productsErrors = Object.freeze({

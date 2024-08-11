@@ -25,13 +25,6 @@ router.get(
   Controller[CONTROLLERS.GET_PRODUCT]
 );
 
-router.get(
-  '/maintenance-center/:mcId',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.LIST_MAINTENANCE_CENTER_PRODUCTS]),
-  Controller[CONTROLLERS.LIST_MAINTENANCE_CENTER_PRODUCTS]
-);
-
 router.post(
   '/',
   Authenticate,

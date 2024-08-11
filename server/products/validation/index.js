@@ -28,14 +28,14 @@ export default {
           originalPrice: Joi.number().required(),
           finalPrice: Joi.number().required()
         })
-      .required(),
+        .required(),
       currency: Joi.string().required(),
       images: Joi.array().items(Joi.string()),
       specifications: Joi.object().pattern(Joi.string(), Joi.any()),
       legalDoc: Joi.string(),
       video: Joi.string().optional(),
       active: Joi.bool().default(true),
-      tags: Joi.array().items(Joi.string()),
+      tags: Joi.array().items(Joi.string())
     })
   },
   [CONTROLLERS.UPDATE_PRODUCT]: {
@@ -57,7 +57,7 @@ export default {
       .keys({
         page: Joi.number().optional(),
         limit: Joi.number().optional(),
-        mcId : Joi.string().required()
+        mcId: Joi.string().required()
       })
       .optional()
   }
