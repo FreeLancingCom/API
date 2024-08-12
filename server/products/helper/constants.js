@@ -1,15 +1,9 @@
 export const CONTROLLERS = {
-  LIST_PRODUCTS: 'admin:list',
-  GET_PRODUCT: 'admin:get',
-  CREATE_PRODUCT: 'admin:create',
-  UPDATE_PRODUCT: 'admin:update',
-  DELETE_PRODUCT: 'admin:delete',
-  LIST_MAINTENANCE_CENTER_PRODUCTS: 'admin:listMaintenanceCenter'
-};
-
-export const PRODUCT_STATUS = {
-  ACTIVE: 'ACTIVE',
-  INACTIVE: 'INACTIVE'
+  LIST_PRODUCTS: 'allRoles:list',
+  GET_PRODUCT: 'allRoles:get',
+  CREATE_PRODUCT: 'provider:create',
+  UPDATE_PRODUCT: 'provider:update',
+  DELETE_PRODUCT: 'provider:delete'
 };
 
 export const productsErrors = Object.freeze({
@@ -22,7 +16,7 @@ export const productsErrors = Object.freeze({
     code: 104
   },
   INSUFFICIENT_STOCK: {
-    message:`Requested quantity for some of products exceeds available stock.`,
+    message: `Requested quantity for some of products exceeds available stock.`,
     code: 105
   },
   MAINTENANCE_CENTER_NOT_FOUND: {
