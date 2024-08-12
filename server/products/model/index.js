@@ -25,7 +25,6 @@ class Product {
   }
 
   async create(payload) {
-    console.log(payload);
     const result = await ProductSchema.create(payload);
     return result;
   }

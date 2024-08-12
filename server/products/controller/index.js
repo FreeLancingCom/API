@@ -8,7 +8,6 @@ export default {
   [CONTROLLERS.LIST_PRODUCTS]: async (req, res, next) => {
     try {
       const data = await productService.listProducts(req.query);
-      console.log(req.query);
 
       return res.status(StatusCodes.OK).json({
         success: true,
