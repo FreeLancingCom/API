@@ -41,7 +41,7 @@ class ProductService {
   //? mcId here from the token(req.user.maintenanceCenter) as the product provider only can access it
   async createProduct(userId, mcId, productData) {
     productData['addedBy'] = userId;
-    productData['maintenanceCenter'] = mcId;
+    productData['maintenanceCenterId'] = mcId;
     try {
       if (!productData['nameAr']) productData['nameAr'] = productData['name'];
 
@@ -55,16 +55,16 @@ class ProductService {
 
   async updateProduct(productId, mcId, productData) {
     try {
-      const product = await ProductModel.findOne({ _id: productId, maintenanceCenter: mcId });
+      const product = await ProductModel.findOne({ _id: productId, maintenanceCenterId: mcId });
       if (!product)
         throw new ErrorResponse(
           productsErrors.PRODUCT_NOT_FOUND.message,
           BAD_REQUEST,
           productsErrors.PRODUCT_NOT_FOUND.code
         );
-      productData['maintenanceCenter'] = mcId; // to prevent the user from changing the maintenance center  + we can change it when create the request module
+      productData['maintenanceCenterId'] = mcId; // to prevent the user from changing the maintenance center  + we can change it when create the request module
       const updatedProduct = await ProductModel.update(
-        { _id: productId, maintenanceCenter: mcId },
+        { _id: productId, maintenanceCenterId: mcId },
         productData
       );
       return updatedProduct;
@@ -76,7 +76,7 @@ class ProductService {
 
   async deleteProduct(productId, mcId) {
     try {
-      const product = await ProductModel.findOne({ _id: productId, maintenanceCenter: mcId });
+      const product = await ProductModel.findOne({ _id: productId, maintenanceCenterId: mcId });
       if (!product)
         throw new ErrorResponse(
           productsErrors.PRODUCT_NOT_FOUND.message,
@@ -86,7 +86,7 @@ class ProductService {
 
       const deletedProduct = await ProductModel.delete({
         _id: productId,
-        maintenanceCenter: mcId
+        maintenanceCenterId: mcId
       });
 
       return deletedProduct;

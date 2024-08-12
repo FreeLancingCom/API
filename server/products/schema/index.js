@@ -66,7 +66,7 @@ const productSchema = new mongoose.Schema(
       default: true
     },
     tags: [{ type: String }],
-    maintenanceCenter: {
+    maintenanceCenterId: {
       type: String,
       ref: 'MaintenanceCenter'
     }

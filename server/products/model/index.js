@@ -5,7 +5,7 @@ class Product {
     const result = await ProductSchema.find(selectors, projection, options)
       .lean()
       .populate('addedBy', 'fullName email')
-      .populate('maintenanceCenter', 'name nameAr')
+      .populate('maintenanceCenterId', 'name nameAr')
       .maxTimeMS(60000);
     return result;
   }
