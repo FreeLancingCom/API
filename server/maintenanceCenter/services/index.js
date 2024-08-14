@@ -5,6 +5,11 @@ import usersService from '../../users/services/usersService.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
 import logger from '../../../common/utils/logger/index.js';
 import servicesService from '../../services/services/index.js';
+import { maintenanceCentersErrors } from '../helpers/constants.js';
+import ErrorResponse from '../../../common/utils/errorResponse/index.js';
+import StatusCodes from 'http-status-codes';
+
+const { BAD_REQUEST } = StatusCodes;
 
 class MaintenanceCenterService {
   async listMaintenanceCenters(user, query) {
@@ -36,7 +41,16 @@ class MaintenanceCenterService {
       const selector = {
         _id
       };
-      return MaintenanceCenter.findOne(selector);
+      const maintenanceCenter = MaintenanceCenter.findOne(selector);
+      if (!maintenanceCenter) {
+        throw new ErrorResponse(
+          maintenanceCentersErrors.MAINTENANCE_CENTER_NOT_FOUND.message,
+          BAD_REQUEST,
+          maintenanceCentersErrors.MAINTENANCE_CENTER_NOT_FOUND.code
+        );
+      }
+
+      return maintenanceCenter
     } catch (error) {
       logger.error(error);
       throw error;
