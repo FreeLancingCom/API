@@ -41,7 +41,7 @@ class MaintenanceCenterService {
       const selector = {
         _id
       };
-      const maintenanceCenter = MaintenanceCenter.findOne(selector);
+      const maintenanceCenter = await MaintenanceCenter.findOne(selector);
       if (!maintenanceCenter) {
         throw new ErrorResponse(
           maintenanceCentersErrors.MAINTENANCE_CENTER_NOT_FOUND.message,
