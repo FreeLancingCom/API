@@ -62,27 +62,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    // categoryId: {
-    //   type: String,
-    //   ref: 'categories'
-    // },
-    // subcategoryId: [
-    //   {
-    //     type: String,
-    //     required: true,
-    //     ref: 'subcategories'
-    //   }
-    // ],
-    // brandId: {
-    //   type: String,
-    //   ref: 'brands'
-    // },
     price: {
       type: pricesDetailsSchema
     },
-    offer: {
-      type: offersDetailsSchema
-    },
+
     currency: {
       type: String,
       required: true
