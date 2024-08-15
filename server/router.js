@@ -18,6 +18,8 @@ router.use('/email', emailRouter);
 router.use('/addresses', addressRouter);
 router.use('/countries', countryRouter);
 router.use('/notifications', notificationRouter);
+router.use('/maintenanceCenter', maintenanceCenterRouter);
+router.use('/services', services);
 router.use('/products', productsRouter);
 router.use('/vehicles', vehicleRouter);
 router.use('/cities', cityRouter);
