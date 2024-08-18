@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run dev",
-    "dev": "SET NODE_ENV=development&&nodemon index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
     "prod": "NODE_ENV=production node index.js"
   },
   "author": "Digifly",
