@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run dev",
-    "dev": "NODE_ENV=development nodemon index.js",
+    "dev": "SET NODE_ENV=development&&nodemon index.js",
     "prod": "NODE_ENV=production node index.js"
   },
   "author": "Digifly",
@@ -28,6 +28,7 @@
     "morgan": "1.10.0",
     "nanoid": "5.0.7",
     "nodemailer": "6.9.14",
+    "stopword": "3.0.1",
     "winston": "3.13.1"
   },
   "devDependencies": {

@@ -5,15 +5,16 @@ import { productsErrors } from '../helper/constants.js';
 import { StatusCodes } from 'http-status-codes';
 import logger from '../../../common/utils/logger/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
+import { searchSelectorsFun } from '../helper/searchSelectors.js';
 
 const { BAD_REQUEST } = StatusCodes;
 
 class ProductService {
   async listProducts(query) {
     try {
-      const { limit, sort, skip, page, ..._query } = query;
+      const selectors = searchSelectorsFun(query); 
       const options = getPaginationAndSortingOptions(query);
-      const products = await ProductModel.find(_query, options, null);
+      const products = await ProductModel.find(selectors, options, null);
       return { products, options };
     } catch (e) {
       logger.error(e);
