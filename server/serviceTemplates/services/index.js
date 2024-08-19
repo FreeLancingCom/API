@@ -13,8 +13,9 @@ class serviceTemplatesService {
       const options = getPaginationAndSortingOptions(query);
       const selector = {};
 
-      if (query.name) selector.name = query.name;
-      if (query.nameAr) selector.nameAr = query.nameAr;
+      // Handle partial searching with regex
+      if (query.name) selector.name = { $regex: query.name, $options: 'i' };
+      if (query.nameAr) selector.nameAr = { $regex: query.nameAr, $options: 'i' };
       if (query.status) selector.status = query.status;
 
       const serviceTemplates = await serviceTemplateModel.find(selector, options);
@@ -39,8 +40,9 @@ class serviceTemplatesService {
         $or: [{ status: serviceTemplateStatuses.APPROVED }, { creatorId: user._id }]
       };
 
-      if (query.name) selector.name = query.name;
-      if (query.nameAr) selector.nameAr = query.nameAr;
+      // Handle partial searching with regex
+      if (query.name) selector.name = { $regex: query.name, $options: 'i' };
+      if (query.nameAr) selector.nameAr = { $regex: query.nameAr, $options: 'i' };
 
       const serviceTemplates = await serviceTemplateModel.find(selector, options);
       const count = await serviceTemplateModel.countDocuments(selector);
