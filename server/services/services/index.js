@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import serviceModel from '../models/index.js'; // Ensure the path is correct
 import { USER_ROLES } from '../../../common/helpers/constants.js';
-import maintenanceCenter from '../../maintenanceCenter/services/index.js';
 import logger from '../../../common/utils/logger/index.js';
 
 class servicesService {
@@ -15,8 +14,9 @@ class servicesService {
       const isCenterAdmin = user.role == USER_ROLES.PROVIDER;
       if (isCenterAdmin) selector.maintenanceCenterId = user.maintenanceCenterId;
 
-      if (query.name) selector = { name: query.name }; // handle partial searching
-      if (query.nameAr) selector = { name: query.nameAr };
+      // Handle partial searching with regex
+      if (query.name) selector.name = { $regex: query.name, $options: 'i' };
+      if (query.nameAr) selector.nameAr = { $regex: query.nameAr, $options: 'i' };
 
       const services = await serviceModel.find(selector, options);
       const count = await serviceModel.count(selector);
@@ -40,8 +40,9 @@ class servicesService {
         maintenanceCenterId
       };
 
-      if (query.name) selector = { name: query.name };
-      if (query.nameAr) selector = { name: query.nameAr };
+      // Handle partial searching with regex
+      if (query.name) selector.name = { $regex: query.name, $options: 'i' };
+      if (query.nameAr) selector.nameAr = { $regex: query.nameAr, $options: 'i' };
 
       const services = await serviceModel.find(selector, options);
       const count = await serviceModel.count(selector);
