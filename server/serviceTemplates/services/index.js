@@ -5,7 +5,6 @@ import { serviceTemplateStatuses } from '../helpers/constants.js';
 import logger from '../../../common/utils/logger/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import servicesService from '../../services/services/index.js';
-import { servicesTypes } from '../../services/helpers/constants.js';
 
 class serviceTemplatesService {
   // list for Admin
@@ -166,7 +165,6 @@ class serviceTemplatesService {
       if (!serviceTemplate) throw new Error('Service Template not found');
       const serviceBody = {
         ...serviceTemplate,
-        type: servicesTypes.CUSTOM, // remove after refactoring the services module
         maintenanceCenterId
       };
       const providerService = await servicesService.createService(user, serviceBody);
