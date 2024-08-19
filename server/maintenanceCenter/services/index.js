@@ -5,16 +5,17 @@ import usersService from '../../users/services/usersService.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
 import logger from '../../../common/utils/logger/index.js';
 import servicesService from '../../services/services/index.js';
+import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 
 class MaintenanceCenterService {
   async listMaintenanceCenters(user, query) {
     try {
-      const { page = 1, limit = 10 } = query;
-      const skip = (page - 1) * limit;
-      const options = { page, limit, skip };
+      const options = getPaginationAndSortingOptions(query);
 
       const selector = {};
-      if (query.name) selector = { name: query.name };
+
+      // Handle partial searching with regex
+      if (query.name) selector.name = { $regex: query.name, $options: 'i' };
 
       const maintenanceCenters = await MaintenanceCenter.find(selector, options);
       const count = await MaintenanceCenter.count(selector);
@@ -46,11 +47,10 @@ class MaintenanceCenterService {
   async createMaintenanceCenter(user, body) {
     try {
       const formattedBody = {};
-      const name = body.name;
-      const existingCenter = await MaintenanceCenter.findOne({ name });
+      const existingCenter = await MaintenanceCenter.findOne({ name: body.name });
       if (existingCenter) throw new Error('Maintenance Center name already exists');
 
-      formattedBody.name = name;
+      formattedBody.name = body.name;
       formattedBody.admins = [user._id];
       formattedBody.address = body.address;
       formattedBody.landline = body.landline;
@@ -64,7 +64,7 @@ class MaintenanceCenterService {
       const newMaintenanceCenter = await MaintenanceCenter.create(formattedBody);
 
       await usersService.updateUser(user._id, {
-        $push: { maintenanceCenters: newMaintenanceCenter._id }
+        maintenanceCenterId: newMaintenanceCenter._id
       });
 
       return newMaintenanceCenter;
@@ -79,36 +79,13 @@ class MaintenanceCenterService {
       const maintenanceCenter = await MaintenanceCenter.findOne({ _id: centerId });
       if (!maintenanceCenter) throw new Error('Maintenance Center not found');
 
-      if (payload.products) {
-        // TODO: handle products
-      }
-
-      // check if provided array of service IDs exist
-      let validatedServices = [];
-      if (payload.services) {
-        validatedServices = await Promise.all(
-          payload.services.map(async serviceId => {
-            const service = await servicesService.getService(user, serviceId);
-            return { _id: service._id, cost: service.cost };
-          })
-        );
-
-        validatedServices = [...validatedServices, maintenanceCenter.services];
-        validatedServices = _.uniqBy(validatedServices, 'id');
-        payload.$push = { services: validatedServices };
-
-        delete payload.services;
-      }
-
-      if (payload.removedServices) {
-        payload.$pull = { services: { _id: { $in: payload.removedServices } } };
-      }
       // Check if admins to be added to the MC exist
       let validAdminIds = [];
       if (payload.admins) {
         validAdminIds = await Promise.all(
           payload.admins.map(async adminId => {
             const user = await usersService.getUser(adminId);
+            // There's a flaw here if admin already has maintenanceCenterId, it will be overwritten, and we don't send invitations or something
             return user._id;
           })
         );
@@ -125,7 +102,7 @@ class MaintenanceCenterService {
       await usersService.updateManyUsers(
         { _id: { $in: validAdminIds } },
         {
-          $push: { maintenanceCenters: updatedMaintenanceCenter._id }
+          maintenanceCenterId: updatedMaintenanceCenter._id
         }
       );
       return updatedMaintenanceCenter;
