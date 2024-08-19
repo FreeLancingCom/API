@@ -157,7 +157,7 @@ class ProductsTypeService {
         );
       }
 
-      if (isExistProductType.status === PRODUCT_STATUS.DECLINE) {
+      if (isExistProductType.status != PRODUCT_STATUS.PENDING) {
         throw new ErrorResponse(
           productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.message,
           BAD_REQUEST,
