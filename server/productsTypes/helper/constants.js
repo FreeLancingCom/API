@@ -43,8 +43,8 @@ export const productsTypesError = Object.freeze({
     message: 'Product type not found',
     code: 106
   },
-  PRODUCT_TYPE_ALREADY_APPROVED: {
-    message: 'Product type already approved',
+  PRODUCT_TYPE_NOT_PENDING: {
+    message: 'product type not pending',
     code: 107
   }
 });

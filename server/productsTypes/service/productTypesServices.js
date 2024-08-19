@@ -128,9 +128,9 @@ class ProductsTypeService {
 
       if (isExistProductType.status != PRODUCT_STATUS.PENDING) {
         throw new ErrorResponse(
-          productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.message,
+          productsTypesError.PRODUCT_TYPE_NOT_PENDING.message,
           BAD_REQUEST,
-          productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.code
+          productsTypesError.PRODUCT_TYPE_NOT_PENDING.code
         );
       }
 
@@ -159,9 +159,9 @@ class ProductsTypeService {
 
       if (isExistProductType.status != PRODUCT_STATUS.PENDING) {
         throw new ErrorResponse(
-          productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.message,
+          productsTypesError.PRODUCT_TYPE_NOT_PENDING.message,
           BAD_REQUEST,
-          productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.code
+          productsTypesError.PRODUCT_TYPE_NOT_PENDING.code
         );
       }
 
