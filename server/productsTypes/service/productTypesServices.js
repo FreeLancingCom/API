@@ -2,7 +2,7 @@ import ProdTypeModel from '../../productsTypes/model/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 
-import { productsTypesError } from '../helper/constants.js';
+import { productsTypesError , PRODUCT_STATUS } from '../helper/constants.js';
 
 import StatusCodes from 'http-status-codes';
 const { BAD_REQUEST } = StatusCodes;
@@ -126,7 +126,7 @@ class ProductsTypeService {
         );
       }
 
-      if (isExistProductType.status === 'APPROVED') {
+      if (isExistProductType.status != PRODUCT_STATUS.PENDING) {
         throw new ErrorResponse(
           productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.message,
           BAD_REQUEST,
@@ -136,7 +136,7 @@ class ProductsTypeService {
 
       const approvedProductType = await ProdTypeModel.update(
         { _id: productTypeId },
-        { status: 'APPROVED' }
+        { status: PRODUCT_STATUS.APPROVED }
       );
       return approvedProductType;
     } catch (e) {
@@ -157,7 +157,7 @@ class ProductsTypeService {
         );
       }
 
-      if (isExistProductType.status === 'DECLINE') {
+      if (isExistProductType.status === PRODUCT_STATUS.DECLINE) {
         throw new ErrorResponse(
           productsTypesError.PRODUCT_TYPE_ALREADY_APPROVED.message,
           BAD_REQUEST,
@@ -167,7 +167,7 @@ class ProductsTypeService {
 
       const declinedProductType = await ProdTypeModel.update(
         { _id: productTypeId },
-        { status: 'DECLINE' }
+        { status: PRODUCT_STATUS.DECLINE }
       );
       return declinedProductType;
     } catch (e) {
