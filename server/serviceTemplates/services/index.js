@@ -11,18 +11,14 @@ class serviceTemplatesService {
   // list for Admin
   async listServiceTemplates(user, query) {
     try {
-      const { limit, skip, sort, page } = getPaginationAndSortingOptions(query);
+      const options = getPaginationAndSortingOptions(query);
       const selector = {};
 
       if (query.name) selector.name = query.name;
       if (query.nameAr) selector.nameAr = query.nameAr;
       if (query.status) selector.status = query.status;
 
-      const serviceTemplates = await serviceTemplateModel
-        .find(selector)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit);
+      const serviceTemplates = await serviceTemplateModel.find(selector, options);
       const count = await serviceTemplateModel.countDocuments(selector);
 
       return {
@@ -39,7 +35,7 @@ class serviceTemplatesService {
   // List templates for provider
   async listServiceTemplatesForProvider(user, query) {
     try {
-      const { limit, skip, sort, page } = getPaginationAndSortingOptions(query);
+      const options = getPaginationAndSortingOptions(query);
       const selector = {
         $or: [{ status: serviceTemplateStatuses.APPROVED }, { creatorId: user._id }]
       };
@@ -47,11 +43,7 @@ class serviceTemplatesService {
       if (query.name) selector.name = query.name;
       if (query.nameAr) selector.nameAr = query.nameAr;
 
-      const serviceTemplates = await serviceTemplateModel
-        .find(selector)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit);
+      const serviceTemplates = await serviceTemplateModel.find(selector, options);
       const count = await serviceTemplateModel.countDocuments(selector);
 
       return {
