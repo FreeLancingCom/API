@@ -22,37 +22,6 @@ class ProductService {
   }
 
   //?mc here would be the req.params.mcId , because two roles can access this route  {provider, client}
-  async listMaintenanceCenterProducts(mcId, query) {
-    try {
-      const { limit, sort, skip, page, ..._query } = query;
-      const options = getPaginationAndSortingOptions(query);
-
-      if (!mcId) {
-        throw new ErrorResponse(
-          productsErrors.MAINTENANCE_CENTER_NOT_FOUND.message,
-          BAD_REQUEST,
-          productsErrors.MAINTENANCE_CENTER_NOT_FOUND.code
-        );
-      }
-
-      const products = await ProductModel.find(
-        { maintenanceCenterId: mcId, ..._query },
-        options,
-        null
-      );
-      if (!products || products.length === 0)
-        throw new ErrorResponse(
-          productsErrors.NO_PRODUCTS_FOUND_FOR_MAINTENANCE_CENTER.message,
-          BAD_REQUEST,
-          productsErrors.NO_PRODUCTS_FOUND_FOR_MAINTENANCE_CENTER.code
-        );
-      return { products, options };
-    } catch (e) {
-      logger.error(e);
-      throw e;
-    }
-  }
-
   async getProduct(productId, options) {
     try {
       const product = await ProductModel.findOneAndIncludePopulate({ _id: productId }, options);
@@ -69,7 +38,7 @@ class ProductService {
     }
   }
 
-  //? mcId here from the token(req.user.maintenanceCenterId) as the product provider only can access it
+  //? mcId here from the token(req.user.maintenanceCenter) as the product provider only can access it
   async createProduct(userId, mcId, productData) {
     productData['addedBy'] = userId;
     productData['maintenanceCenterId'] = mcId;
@@ -93,7 +62,7 @@ class ProductService {
           BAD_REQUEST,
           productsErrors.PRODUCT_NOT_FOUND.code
         );
-
+      productData['maintenanceCenterId'] = mcId; // to prevent the user from changing the maintenance center  + we can change it when create the request module
       const updatedProduct = await ProductModel.update(
         { _id: productId, maintenanceCenterId: mcId },
         productData
@@ -119,8 +88,6 @@ class ProductService {
         _id: productId,
         maintenanceCenterId: mcId
       });
-
-      // await usersService.updateUserWishlist([productId]);
 
       return deletedProduct;
     } catch (e) {

@@ -3,23 +3,9 @@ import ProductSchema from '../schema/index.js';
 class Product {
   async find(selectors = {}, options = {}, projection = {}) {
     const result = await ProductSchema.find(selectors, projection, options)
-      //   .populate({
-      //     path: 'categoryId',
-      //     select: 'name nameAr'
-      //   })
-      //   .populate({
-      //     path: 'subcategoryId',
-      //     select: 'name nameAr'
-      //   })
-      //   .populate({
-      //     path: 'brandId',
-      //     select: 'name nameAr'
-      //   })
-      // .populate({
-      //   path: 'addedBy',
-      //   select: 'fullName email'
-      // })
       .lean()
+      .populate('addedBy', 'fullName email')
+      .populate('maintenanceCenterId', 'name nameAr')
       .maxTimeMS(60000);
     return result;
   }
@@ -30,22 +16,6 @@ class Product {
   }
   async findOneAndIncludePopulate(selector = {}, projection = {}) {
     const result = await ProductSchema.findOne(selector).select(projection);
-    //   .populate({
-    //     path: 'categoryId',
-    //     select: 'name nameAr'
-    //   })
-    //   .populate({
-    //     path: 'subcategoryId',
-    //     select: 'name nameAr'
-    //   })
-    //   .populate({
-    //     path: 'brandId',
-    //     select: 'name nameAr'
-    //   })
-    // .populate({
-    //   path: 'addedBy',
-    //   select: 'fullName email'
-    // });
     return result;
   }
 
