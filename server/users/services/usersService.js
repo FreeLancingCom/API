@@ -189,24 +189,19 @@ class UserService {
           usersErrors.USER_NOT_FOUND.code
         );
       }
+      await this._validateUserFieldsUpdates(userData);
+      const user = await UserModel.update({ _id: userId }, userData);
+      return user;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 
-      if (userData['phoneNumber']) {
-        const isValidPhoneNumber = UserService.validatePhoneNumber(userData.phoneNumber);
-        if (!isValidPhoneNumber) {
-          throw new ErrorResponse(
-            usersErrors.INVALID_PHONE_NUMBER.message,
-            BAD_REQUEST,
-            usersErrors.INVALID_PHONE_NUMBER.code
-          );
-        }
-      }
-
-      if (userData['password']) {
-        const salt = await bcrypt.genSalt(10);
-        userData.password = await bcrypt.hash(userData.password, salt);
-      }
-
-      const user = await UserModel.update({ _id: userId }, { $set: userData });
+  async updateManyUsers(selector, newParams) {
+    try {
+      await this._validateUserFieldsUpdates(newParams);
+      const user = await UserModel.updateMany(selector, newParams);
       return user;
     } catch (e) {
       logger.error(e);
@@ -277,9 +272,7 @@ class UserService {
 
   async generateVerificationCode(user) {
     try {
-      const verificationCode = Math.floor(
-        1000 + Math.random() * 9000
-      ).toString();
+      const verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
       const ttl = Date.now() + 3600000; // 1 hour
 
       const updates = {
@@ -289,17 +282,11 @@ class UserService {
 
       const updatedUser = await this.updateUser(user._id, updates);
 
-      await EmailsService.sendEmail(
-        [user.email],
-        EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL,
-        {
-          username: updatedUser.fullName,
-          otp: verificationCode
-        }
-      );
-      logger.info(
-        `[generateVerificationCode] email sent to ${updatedUser.email}`
-      );
+      await EmailsService.sendEmail([user.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
+        username: updatedUser.fullName,
+        otp: verificationCode
+      });
+      logger.info(`[generateVerificationCode] email sent to ${updatedUser.email}`);
       return true;
     } catch (e) {
       logger.error(e);
@@ -357,9 +344,7 @@ class UserService {
           usersErrors.USER_NOT_FOUND.code
         );
 
-      const resetPasswordCode = Math.floor(
-        1000 + Math.random() * 9000
-      ).toString();
+      const resetPasswordCode = Math.floor(1000 + Math.random() * 9000).toString();
       const ttl = Date.now() + 3600000; // 1 hour
 
       const updates = {
@@ -368,14 +353,10 @@ class UserService {
       };
       const updatedUser = await UserModel.update({ _id: user._id }, updates);
 
-      await EmailsService.sendEmail(
-        [user.email],
-        EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD,
-        {
-          username: updatedUser.fullName,
-          otp: resetPasswordCode
-        }
-      );
+      await EmailsService.sendEmail([user.email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
+        username: updatedUser.fullName,
+        otp: resetPasswordCode
+      });
       logger.info(`[resetPassword] email sent to ${updatedUser.email}`);
 
       return true;
@@ -430,6 +411,24 @@ class UserService {
     } catch (e) {
       logger.error(e);
       throw e;
+    }
+  }
+
+  async _validateUserFieldsUpdates(userData) {
+    if (userData['phoneNumber']) {
+      const isValidPhoneNumber = UserService.validatePhoneNumber(userData.phoneNumber);
+      if (!isValidPhoneNumber) {
+        throw new ErrorResponse(
+          usersErrors.INVALID_PHONE_NUMBER.message,
+          BAD_REQUEST,
+          usersErrors.INVALID_PHONE_NUMBER.code
+        );
+      }
+    }
+
+    if (userData['password']) {
+      const salt = await bcrypt.genSalt(10);
+      userData.password = await bcrypt.hash(userData.password, salt);
     }
   }
 }
