@@ -51,5 +51,14 @@ export default {
       logger.error(error);
       next(error);
     }
+  },
+  [CONTROLLERS.COUNT_ADDRESSES]: async (req, res, next) => {
+    try {
+      const data = await addressesService.countAddresses(req.query);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 };

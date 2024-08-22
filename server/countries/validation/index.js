@@ -32,5 +32,11 @@ export default {
     params: Joi.object({
       id: Joi.string().required()
     }).required()
+  },
+  [CONTROLLER.COUNT_COUNTRIES]: {
+    query: Joi.object({
+      page: Joi.number().optional(),
+      limit: Joi.number().max(10).optional()
+    }).optional()
   }
 };

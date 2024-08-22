@@ -112,6 +112,16 @@ class CitiesService {
       throw e;
     }
   }
+  async countCities(query) {
+    try {
+      const { limit, skip, sort, page, ..._query } = query;
+      const count = await CityModel.count(_query);
+      return count;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 export default new CitiesService();

@@ -18,6 +18,14 @@ router.get(
 );
 
 router.get(
+  '/count',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.COUNT_ADDRESSES]),
+  validateRequest(validationSchemas[CONTROLLERS.COUNT_ADDRESSES]),
+  Controller[CONTROLLERS.COUNT_ADDRESSES]
+);
+
+router.get(
   '/:id',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.GET_ADDRESS]),

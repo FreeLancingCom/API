@@ -48,5 +48,14 @@ export default {
       logger.error(error);
       next(error);
     }
+  },
+  [CONTROLLER.COUNT_CITIES]: async (req, res, next) => {
+    try {
+      const data = await cityService.countCities(req.query);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 };
