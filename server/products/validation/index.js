@@ -76,5 +76,12 @@ export default {
         status: Joi.string().optional().valid(PRODUCT_STATUS)
       })
       .optional()
+  },
+  [CONTROLLERS.COUNT_PRODUCTS]: {
+    query: Joi.object()
+      .keys({
+        status: Joi.string().optional().valid(PRODUCT_STATUS)
+      })
+      .optional()
   }
 };

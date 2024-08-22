@@ -18,6 +18,14 @@ router.get(
 );
 
 router.get(
+  '/count',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.COUNT_PRODUCTS]),
+  validateRequest(validationSchemas[CONTROLLERS.COUNT_PRODUCTS]),
+  Controller[CONTROLLERS.COUNT_PRODUCTS]
+);
+
+router.get(
   '/:id',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.GET_PRODUCT]),

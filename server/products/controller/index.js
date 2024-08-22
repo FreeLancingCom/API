@@ -62,7 +62,7 @@ export default {
     try {
       const id = _.get(req, 'params.id', null);
       const mcId = _.get(req, 'user.maintenanceCenterId', null);
-      const data = await productService.updateProduct(id,mcId,req.body);
+      const data = await productService.updateProduct(id, mcId, req.body);
       return res.status(StatusCodes.OK).json({
         success: true,
         data
@@ -76,6 +76,18 @@ export default {
     try {
       const id = _.get(req, 'params.id', null);
       const data = await productService.deleteProduct(id);
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.COUNT_PRODUCTS]: async (req, res, next) => {
+    try {
+      const data = await productService.countProducts(req.query);
       return res.status(StatusCodes.OK).json({
         success: true,
         data

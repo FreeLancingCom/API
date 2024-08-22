@@ -4,7 +4,8 @@ export const CONTROLLERS = {
   CREATE_PRODUCT: 'admin:create',
   UPDATE_PRODUCT: 'admin:update',
   DELETE_PRODUCT: 'admin:delete',
-  LIST_MAINTENANCE_CENTER_PRODUCTS: 'admin:listMaintenanceCenter'
+  LIST_MAINTENANCE_CENTER_PRODUCTS: 'admin:listMaintenanceCenter',
+  COUNT_PRODUCTS: 'admin:count'
 };
 
 export const PRODUCT_STATUS = {
@@ -22,7 +23,7 @@ export const productsErrors = Object.freeze({
     code: 104
   },
   INSUFFICIENT_STOCK: {
-    message:`Requested quantity for some of products exceeds available stock.`,
+    message: `Requested quantity for some of products exceeds available stock.`,
     code: 105
   },
   MAINTENANCE_CENTER_NOT_FOUND: {
