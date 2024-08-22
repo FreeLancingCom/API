@@ -60,12 +60,5 @@ export default {
         mcId: Joi.string().required()
       })
       .optional()
-  },
-  [CONTROLLERS.COUNT_PRODUCTS]: {
-    query: Joi.object()
-      .keys({
-        status: Joi.string().optional().valid(PRODUCT_STATUS)
-      })
-      .optional()
   }
 };

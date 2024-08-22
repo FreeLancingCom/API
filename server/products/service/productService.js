@@ -98,8 +98,7 @@ class ProductService {
 
   async countProducts(query) {
     try {
-      const { limit, sort, skip, page, ..._query } = query;
-      const count = await ProductModel.count(_query);
+      const count = await ProductModel.count(query);
       return count;
     } catch (e) {
       logger.error(e);

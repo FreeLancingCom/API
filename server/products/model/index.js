@@ -59,10 +59,6 @@ class Product {
       .limit(options.limit || 200);
     return result;
   }
-  async count(selectors = {}) {
-    const result = await ProductSchema.countDocuments(selectors).maxTimeMS(60000);
-    return result;
-  }
 }
 
 export default new Product();
