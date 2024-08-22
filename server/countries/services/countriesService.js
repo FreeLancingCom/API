@@ -99,8 +99,7 @@ class CountriesService {
 
   async countCountries(query) {
     try {
-      const { limit, skip, sort, page, ..._query } = query;
-      const count = await Country.count(_query);
+      const count = await Country.count(query);
       return count;
     } catch (e) {
       logger.error(e);

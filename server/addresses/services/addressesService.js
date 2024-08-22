@@ -132,8 +132,7 @@ class AddressesService {
 
   async countAddresses(query) {
     try {
-      const { limit, skip, sort, ..._query } = query;
-      const count = await addressesModel.count(_query);
+      const count = await addressesModel.count(query);
       return count;
     } catch (e) {
       logger.error(e);

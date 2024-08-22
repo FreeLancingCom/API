@@ -21,7 +21,6 @@ router.get(
   '/count',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLER.COUNT_COUNTRIES]),
-  validateRequest(validationSchemas[CONTROLLER.COUNT_COUNTRIES]),
   Controller[CONTROLLER.COUNT_COUNTRIES]
 );
 

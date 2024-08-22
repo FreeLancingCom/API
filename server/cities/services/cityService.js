@@ -114,8 +114,7 @@ class CitiesService {
   }
   async countCities(query) {
     try {
-      const { limit, skip, sort, page, ..._query } = query;
-      const count = await CityModel.count(_query);
+      const count = await CityModel.count(query);
       return count;
     } catch (e) {
       logger.error(e);

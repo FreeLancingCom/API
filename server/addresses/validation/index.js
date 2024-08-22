@@ -50,13 +50,5 @@ export default {
         id: Joi.string().required()
       })
       .required()
-  },
-  [CONTROLLERS.COUNT_ADDRESSES]: {
-    query: Joi.object()
-      .keys({
-        page: Joi.number().optional(),
-        limit: Joi.number().max(10).optional()
-      })
-      .optional()
   }
 };
