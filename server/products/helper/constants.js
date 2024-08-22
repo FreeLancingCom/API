@@ -4,7 +4,6 @@ export const CONTROLLERS = {
   CREATE_PRODUCT: 'admin:create',
   UPDATE_PRODUCT: 'admin:update',
   DELETE_PRODUCT: 'admin:delete',
-  LIST_MAINTENANCE_CENTER_PRODUCTS: 'admin:listMaintenanceCenter',
   COUNT_PRODUCTS: 'admin:count'
 };
 
