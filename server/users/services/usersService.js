@@ -9,6 +9,7 @@ import { USER_ROLES } from '../../../common/helpers/constants.js';
 import EmailsService from '../../email/services/emailService.js';
 import { EMAIL_TEMPLATES_DETAILS } from '../../email/helpers/constant.js';
 import { generateToken } from '../../../common/utils/jwt/index.js';
+import countriesService from '../../countries/services/countriesService.js';
 
 const { BAD_REQUEST } = StatusCodes;
 class UserService {
@@ -151,6 +152,14 @@ class UserService {
 
       const salt = await bcrypt.genSalt(10);
       userData.password = await bcrypt.hash(userData.password, salt);
+
+      const countryExists = await countriesService.getCountry(userData.countryId)
+      if(!countryExists)
+        throw new ErrorResponse(
+          usersErrors.COUNTRY_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.COUNTRY_NOT_FOUND.code
+        );
 
       userData.isVerified = false;
       if (userData.role == USER_ROLES.ADMIN) {
@@ -429,6 +438,16 @@ class UserService {
     if (userData['password']) {
       const salt = await bcrypt.genSalt(10);
       userData.password = await bcrypt.hash(userData.password, salt);
+    }
+
+    if (userData['countryId']) {
+      const countryExists = await countriesService.getCountry(userData.countryId)
+      if(!countryExists)
+        throw new ErrorResponse(
+          usersErrors.COUNTRY_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.COUNTRY_NOT_FOUND.code
+        );
     }
   }
 }

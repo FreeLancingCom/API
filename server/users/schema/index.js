@@ -27,7 +27,8 @@ const userSchema = new mongoose.Schema(
     },
     countryId: {
       type: String,
-      ref: 'countries'
+      ref: 'countries',
+      required: true
     },
     maintenanceCenters: [
       {
