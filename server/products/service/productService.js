@@ -97,6 +97,16 @@ class ProductService {
     }
   }
 
+  async countProducts(query) {
+    try {
+      const count = await ProductModel.count(query);
+      return count;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   //{productId, quantity}
   async SubtractAvailableQuantity(purchasedProducts) {
     try {

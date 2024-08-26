@@ -1,9 +1,15 @@
 export const CONTROLLERS = {
-  LIST_PRODUCTS: 'allRoles:list',
-  GET_PRODUCT: 'allRoles:get',
-  CREATE_PRODUCT: 'provider:create',
-  UPDATE_PRODUCT: 'provider:update',
-  DELETE_PRODUCT: 'provider:delete'
+  LIST_PRODUCTS: 'admin:list',
+  GET_PRODUCT: 'admin:get',
+  CREATE_PRODUCT: 'admin:create',
+  UPDATE_PRODUCT: 'admin:update',
+  DELETE_PRODUCT: 'admin:delete',
+  COUNT_PRODUCTS: 'admin:count'
+};
+
+export const PRODUCT_STATUS = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
 };
 
 export const productsErrors = Object.freeze({
