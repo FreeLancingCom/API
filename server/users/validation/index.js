@@ -22,7 +22,8 @@ export default {
   [CONTROLLERS.ADMIN_LOGIN]: {
     body: Joi.object().keys({
       email: Joi.string().required(),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      rememberMe: Joi.boolean().optional().default(false)
     })
   },
   [CONTROLLERS.CREATE_USER]: {
@@ -31,19 +32,14 @@ export default {
       phoneNumber: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-      role: Joi.string()
-        .valid(
-          USER_ROLES.ADMIN,
-          USER_ROLES.PROVIDER,
-          USER_ROLES.CLIENT
-        )
-        .required()
+      role: Joi.string().valid(USER_ROLES.ADMIN, USER_ROLES.PROVIDER, USER_ROLES.CLIENT).required()
     })
   },
   [CONTROLLERS.USER_LOGIN]: {
     body: Joi.object().keys({
       email: Joi.string().required(),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      rememberMe: Joi.boolean().optional().default(false)
     })
   },
   [CONTROLLERS.SIGNUP]: {
@@ -52,12 +48,7 @@ export default {
       phoneNumber: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-      role: Joi.string()
-        .valid(
-          USER_ROLES.PROVIDER,
-          USER_ROLES.CLIENT
-        )
-        .required()
+      role: Joi.string().valid(USER_ROLES.PROVIDER, USER_ROLES.CLIENT).required()
     })
   },
   [CONTROLLERS.UPDATE_USER]: {

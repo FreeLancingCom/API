@@ -49,7 +49,7 @@ class UserService {
   //admin login
   async adminLogin(body) {
     try {
-      const { email, password } = body;
+      const { email, password, rememberMe } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
       if (!user || !user.isActive) {
@@ -75,8 +75,10 @@ class UserService {
           usersErrors.INVALID_CREDENTIALS.code
         );
       }
-
-      const token = await generateToken(user);
+      const token = await generateToken(
+        user,
+        rememberMe ? process.env.JWT_LONG_EXPIRY : process.env.JWT_SHORT_EXPIRY
+      );
       delete user.password;
 
       return { user, token };
@@ -89,7 +91,7 @@ class UserService {
   //user login
   async login(body) {
     try {
-      const { email, password } = body;
+      const { email, password, rememberMe } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
       if (!user || !user.isActive) {
@@ -116,7 +118,10 @@ class UserService {
         );
       }
 
-      const token = await generateToken(user);
+      const token = await generateToken(
+        user,
+        rememberMe ? process.env.JWT_LONG_EXPIRY : process.env.JWT_SHORT_EXPIRY
+      );
       delete user.password;
 
       return { user, token };
@@ -159,7 +164,7 @@ class UserService {
 
       const _user = await UserModel.create({ ...userData, role });
       const { password, ...user } = _user.toObject();
-      const token = await generateToken(user);
+      const token = await generateToken(user, process.env.JWT_SHORT_EXPIRY);
       if (user.role == USER_ROLES.CLIENT) {
         await this.generateVerificationCode(user);
       }
@@ -405,7 +410,7 @@ class UserService {
         }
       };
       const updatedUser = await UserModel.update({ _id: user._id }, updates);
-      const token = await generateToken(updatedUser);
+      const token = await generateToken(updatedUser, process.env.JWT_SHORT_EXPIRY);
 
       return token;
     } catch (e) {
