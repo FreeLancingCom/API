@@ -10,9 +10,7 @@ import cityRouter from './cities/routers/index.js';
 import vehicleRouter from './vehicles/routers/index.js';
 import notificationRouter from './notifications/routers/index.js';
 import countryRouter from './countries/routers/index.js';
-import maintenanceCenterRouter from './maintenanceCenter/routers/index.js';
 import productsTypesRouter from './productsTypes/router/index.js';
-import services from './services/routers/index.js';
 import reviews from './reviews/routers/index.js';
 
 const router = express.Router();
