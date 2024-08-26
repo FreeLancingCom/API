@@ -45,22 +45,6 @@ const productSchema = new mongoose.Schema(
       required: true
     },
     images: [{ type: String }],
-    specifications: {
-      type: Map,
-      of: String
-    },
-    legalDoc: {
-      type: String
-    },
-    video: {
-      type: String,
-      required: false
-    },
-    addedBy: {
-      type: String,
-      required: true,
-      ref: 'users'
-    },
     active: {
       type: Boolean,
       default: true
