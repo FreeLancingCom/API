@@ -271,6 +271,18 @@ class ProductService {
     }
   }
 
+  async getProductByTypeId(typeId, options) {
+    try {
+      const product = await ProductModel.findOne({ typeId }, options);
+      if (product)
+        return true
+
+      return false;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
   // async verifyProductsExistence(productIds = []) {
   //   try {
   //     const products = await ProductModel.find({ _id: { $in: productIds } });

@@ -117,11 +117,15 @@ const productSchema = new mongoose.Schema(
       {
         type: String
       }
-    ]
+    ],
     //   maintenanceCenterId:{
     //     type: String,
     //     ref: 'maintenanceCenters'
     //   }
+    typeId: {
+      type: String,
+      ref: 'producttypes'
+    }
   },
 
   { timestamps: true }
