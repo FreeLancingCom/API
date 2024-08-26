@@ -96,6 +96,16 @@ class CountriesService {
       throw e;
     }
   }
+
+  async countCountries(query) {
+    try {
+      const count = await Country.count(query);
+      return count;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 export default new CountriesService();
