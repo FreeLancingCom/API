@@ -83,32 +83,6 @@ const maintenanceCenterSchema = new mongoose.Schema({
       required: true
     }
   ],
-  products: [
-    {
-      _id: {
-        type: String,
-        ref: 'Product',
-        required: true
-      },
-      cost: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
-  services: [
-    {
-      _id: {
-        type: String,
-        ref: 'Service',
-        required: true
-      },
-      cost: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
   country: {
     type: countrySchema,
     ref: 'Countries',

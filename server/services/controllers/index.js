@@ -19,6 +19,24 @@ export default {
       next(error);
     }
   },
+
+  [CONTROLLERS.LIST_SERVICE_BY_CLIENT]: async (req, res, next) => {
+    try {
+      const data = await servicesService.listServicesForClient(
+        req.user,
+        req.query.maintenanceCenterId,
+        req.query
+      );
+      return res.status(OK).json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+
   [CONTROLLERS.GET_SERVICE]: async (req, res, next) => {
     try {
       const data = await servicesService.getService(req.user, req.params.serviceId);
@@ -31,6 +49,24 @@ export default {
       next(error);
     }
   },
+
+  [CONTROLLERS.GET_SERVICE_BY_CLIENT]: async (req, res, next) => {
+    try {
+      const data = await servicesService.getServiceByClient(
+        req.user,
+        req.query.maintenanceCenterId,
+        req.params.serviceId
+      );
+      return res.status(OK).json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+
   [CONTROLLERS.CREATE_SERVICE]: async (req, res, next) => {
     try {
       const data = await servicesService.createService(req.user, req.body);
@@ -43,6 +79,7 @@ export default {
       next(error);
     }
   },
+
   [CONTROLLERS.UPDATE_SERVICE]: async (req, res, next) => {
     try {
       const user = req.user;
@@ -57,6 +94,7 @@ export default {
       next(error);
     }
   },
+
   [CONTROLLERS.DELETE_SERVICES]: async (req, res, next) => {
     try {
       await servicesService.deleteService(req.user, req.params.serviceId);
