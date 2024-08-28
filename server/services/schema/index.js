@@ -22,7 +22,11 @@ const servicesSchema = new mongoose.Schema({
     ref: 'maintenanceCenters'
   },
   cost: { type: Number, required: true },
-  model: { type: String }
+  model: { type: String },
+  typeId: {
+    type: String,
+    ref: 'servicetypes'
+  }
 });
 
 const Services = mongoose.model('services', servicesSchema);

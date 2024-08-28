@@ -136,6 +136,18 @@ class servicesService {
       throw error;
     }
   }
+
+  async getServiceByTypeId(typeId, options) {
+    try {
+      const service = await serviceModel.findOne({ typeId }, options);
+      if (service)
+        return true
+      return false;
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
 }
 
 export default new servicesService();
