@@ -170,6 +170,20 @@ class ProductService {
       throw e;
     }
   }
+
+  async getProductByTypeId(typeId, options) {
+    try {
+      const product = await ProductModel.findOne({ typeId }, options);
+      if (product)
+        return true
+
+      return false;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+  
 }
 
 export default new ProductService();

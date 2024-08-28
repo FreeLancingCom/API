@@ -10,6 +10,7 @@ import EmailsService from '../../email/services/emailService.js';
 import { EMAIL_TEMPLATES_DETAILS } from '../../email/helpers/constant.js';
 import { generateToken } from '../../../common/utils/jwt/index.js';
 import countriesService from '../../countries/services/countriesService.js';
+import { JWT_LONG_EXPIRY, JWT_SHORT_EXPIRY } from '../../../config/env/index.js';
 
 const { BAD_REQUEST } = StatusCodes;
 class UserService {
@@ -78,7 +79,7 @@ class UserService {
       }
       const token = await generateToken(
         user,
-        rememberMe ? process.env.JWT_LONG_EXPIRY : process.env.JWT_SHORT_EXPIRY
+        rememberMe ? JWT_LONG_EXPIRY : JWT_SHORT_EXPIRY
       );
       delete user.password;
 
@@ -121,7 +122,7 @@ class UserService {
 
       const token = await generateToken(
         user,
-        rememberMe ? process.env.JWT_LONG_EXPIRY : process.env.JWT_SHORT_EXPIRY
+        rememberMe ? JWT_LONG_EXPIRY : JWT_SHORT_EXPIRY
       );
       delete user.password;
 
@@ -173,7 +174,7 @@ class UserService {
 
       const _user = await UserModel.create({ ...userData, role });
       const { password, ...user } = _user.toObject();
-      const token = await generateToken(user, process.env.JWT_SHORT_EXPIRY);
+      const token = await generateToken(user, JWT_SHORT_EXPIRY);
       if (user.role == USER_ROLES.CLIENT) {
         await this.generateVerificationCode(user);
       }
@@ -419,7 +420,7 @@ class UserService {
         }
       };
       const updatedUser = await UserModel.update({ _id: user._id }, updates);
-      const token = await generateToken(updatedUser, process.env.JWT_SHORT_EXPIRY);
+      const token = await generateToken(updatedUser, JWT_SHORT_EXPIRY);
 
       return token;
     } catch (e) {

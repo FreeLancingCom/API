@@ -53,6 +53,10 @@ const productSchema = new mongoose.Schema(
     maintenanceCenterId: {
       type: String,
       ref: 'MaintenanceCenter'
+    },
+    typeId: {
+      type: String,
+      ref: 'producttypes'
     }
   },
   { timestamps: true }

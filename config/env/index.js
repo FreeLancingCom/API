@@ -14,9 +14,8 @@ export const EMAIL_CONFIG = {
   emailPassword: process.env.EMAIL_PASSWORD
 };
 
-export const JWT_SHORT_EXPIRY= '24h'
-export const JWT_LONG_EXPIRY= '7d'
-
+export const JWT_SHORT_EXPIRY = process.env.JWT_SHORT_EXPIRY || '24h'
+export const JWT_LONG_EXPIRY = process.env.JWT_LONG_EXPIRY || '7d'
 
 export const API_BASE_URL = '/api';
 
