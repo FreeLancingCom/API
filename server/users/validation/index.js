@@ -22,7 +22,8 @@ export default {
   [CONTROLLERS.ADMIN_LOGIN]: {
     body: Joi.object().keys({
       email: Joi.string().required(),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      rememberMe: Joi.boolean().optional().default(false)
     })
   },
   [CONTROLLERS.CREATE_USER]: {
@@ -44,7 +45,8 @@ export default {
   [CONTROLLERS.USER_LOGIN]: {
     body: Joi.object().keys({
       email: Joi.string().required(),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      rememberMe: Joi.boolean().optional().default(false)
     })
   },
   [CONTROLLERS.SIGNUP]: {

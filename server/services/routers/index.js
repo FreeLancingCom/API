@@ -18,11 +18,27 @@ router.get(
 );
 
 router.get(
+  '/client',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.LIST_SERVICE_BY_CLIENT]),
+  validateRequest(validationSchemas[CONTROLLERS.LIST_SERVICE_BY_CLIENT]),
+  Controller[CONTROLLERS.LIST_SERVICE_BY_CLIENT]
+);
+
+router.get(
   '/:serviceId',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.GET_SERVICE]),
   validateRequest(validationSchemas[CONTROLLERS.GET_SERVICE]),
   Controller[CONTROLLERS.GET_SERVICE]
+);
+
+router.get(
+  '/client/:serviceId',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.GET_SERVICE_BY_CLIENT]),
+  validateRequest(validationSchemas[CONTROLLERS.GET_SERVICE_BY_CLIENT]),
+  Controller[CONTROLLERS.GET_SERVICE_BY_CLIENT]
 );
 
 router.post(

@@ -28,6 +28,32 @@ const countrySchema = new mongoose.Schema(
   { _id: false }
 );
 
+const reviewsSchema = new mongoose.Schema(
+  {
+    employeesBehavior: {
+      type: Number,
+      default: 0
+    },
+    speed: {
+      type: Number,
+      default: 0
+    },
+    honesty: {
+      type: Number,
+      default: 0
+    },
+    fairCost: {
+      type: Number,
+      default: 0
+    },
+    efficiency: {
+      type: Number,
+      default: 0
+    }
+  },
+  { _id: false }
+)
+
 const maintenanceCenterSchema = new mongoose.Schema({
   _id: {
     type: String,
@@ -57,32 +83,6 @@ const maintenanceCenterSchema = new mongoose.Schema({
       required: true
     }
   ],
-  products: [
-    {
-      _id: {
-        type: String,
-        ref: 'Product',
-        required: true
-      },
-      cost: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
-  services: [
-    {
-      _id: {
-        type: String,
-        ref: 'Service',
-        required: true
-      },
-      cost: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
   country: {
     type: countrySchema,
     ref: 'Countries',
@@ -92,10 +92,15 @@ const maintenanceCenterSchema = new mongoose.Schema({
     type: maintenanceCenterAddressSchema,
     required: true
   },
-  review_score: {
+  totalReviews: {
+    type: reviewsSchema,
+    default: () => ({})
+  },
+  averageReviews: {
+    type: reviewsSchema,
+  },
+  reviewsCount: {
     type: Number,
-    min: 0,
-    max: 5,
     default: 0
   }
 });

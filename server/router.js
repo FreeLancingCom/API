@@ -8,8 +8,10 @@ import cityRouter from './cities/routers/index.js';
 import vehicleRouter from './vehicles/routers/index.js';
 import notificationRouter from './notifications/routers/index.js';
 import countryRouter from './countries/routers/index.js';
-import maintenanceCenterRouter from './maintenanceCenter/routers/index.js';
+import productsTypesRouter from './productsTypes/router/index.js';
 import services from './services/routers/index.js';
+import reviews from './reviews/routers/index.js';
+import serviceTemplates from './serviceTemplates/routers/index.js';
 
 const router = express.Router();
 
@@ -18,11 +20,15 @@ router.use('/email', emailRouter);
 router.use('/addresses', addressRouter);
 router.use('/countries', countryRouter);
 router.use('/notifications', notificationRouter);
+router.use('/maintenanceCenter', maintenanceCenterRouter);
+router.use('/serviceTemplates', serviceTemplates);
 router.use('/products', productsRouter);
+router.use('/productsTypes', productsTypesRouter);
 router.use('/vehicles', vehicleRouter);
 router.use('/cities', cityRouter);
 router.use('/maintenanceCenter', maintenanceCenterRouter);
 router.use('/services', services);
+router.use('/reviews', reviews);
 
 router.use('/health', (req, res) => {
   const data = {

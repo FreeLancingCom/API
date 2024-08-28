@@ -36,6 +36,11 @@ class City {
     const result = await CitySchema.deleteOne(selector, options);
     return result;
   }
+
+  async count(selector) {
+    const data = await CitySchema.countDocuments(selector);
+    return data;
+  }
 }
 
 export default new City();
