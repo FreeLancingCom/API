@@ -32,7 +32,14 @@ export default {
       phoneNumber: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-      role: Joi.string().valid(USER_ROLES.ADMIN, USER_ROLES.PROVIDER, USER_ROLES.CLIENT).required()
+      countryId: Joi.string().required(),
+      role: Joi.string()
+        .valid(
+          USER_ROLES.ADMIN,
+          USER_ROLES.PROVIDER,
+          USER_ROLES.CLIENT
+        )
+        .required()
     })
   },
   [CONTROLLERS.USER_LOGIN]: {
@@ -48,7 +55,13 @@ export default {
       phoneNumber: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-      role: Joi.string().valid(USER_ROLES.PROVIDER, USER_ROLES.CLIENT).required()
+      countryId: Joi.string().required(),
+      role: Joi.string()
+        .valid(
+          USER_ROLES.PROVIDER,
+          USER_ROLES.CLIENT
+        )
+        .required()
     })
   },
   [CONTROLLERS.UPDATE_USER]: {
@@ -63,7 +76,9 @@ export default {
         phoneNumber: Joi.string().optional(),
         password: Joi.string().optional(),
         email: Joi.string().optional(),
-        isActive: Joi.boolean().optional()
+        countryId: Joi.string().optional(),
+        isActive: Joi.boolean().optional(),
+        role: Joi.string().forbidden(),
       })
       .required()
   },
