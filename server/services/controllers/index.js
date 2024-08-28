@@ -105,5 +105,18 @@ export default {
       logger.error(error);
       next(error);
     }
+  },
+
+  [CONTROLLERS.COUNT_SERVICES]: async (req, res, next) => {
+    try {
+      const data = await servicesService.countServices(req.user, req.params.serviceId);
+      return res.status(OK).json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 };
