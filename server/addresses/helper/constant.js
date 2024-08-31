@@ -3,7 +3,8 @@ export const CONTROLLERS = {
   GET_ADDRESS: 'admin_users:get',
   CREATE_ADDRESS: 'admin:create',
   UPDATE_ADDRESS: 'admin:update',
-  DELETE_ADDRESS: 'admin:delete'
+  DELETE_ADDRESS: 'admin:delete',
+  COUNT_ADDRESSES: 'admin_users:count'
 };
 
 export const addressError = Object.freeze({

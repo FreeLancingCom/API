@@ -36,6 +36,10 @@ class AddressModel {
     const data = await AddressSchema.deleteOne(selector);
     return data;
   }
+  async count(selector) {
+    const data = await AddressSchema.countDocuments(selector);
+    return data;
+  }
 }
 
 export default new AddressModel();
