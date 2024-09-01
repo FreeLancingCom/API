@@ -6,12 +6,12 @@ export default {
   [CONTROLLERS.UPDATE_PROFILE]: {
     body: Joi.object().keys({
       isActive: Joi.forbidden(),
-      maintenanceCenters: Joi.forbidden(),
       role: Joi.forbidden(),
       fullName: Joi.string().optional(),
       phoneNumber: Joi.string().optional(),
       password: Joi.string().optional(),
       email: Joi.string().optional(),
+      maintenanceCenters: Joi.forbidden(),
     })
   }
   
