@@ -13,7 +13,6 @@ import VehicleModel from '../../vehicles/models/index.js';
 import ServiceModel from '../../services/models/index.js';
 import ProductModel from '../../products/model/index.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
-import { searchSelectorsFun } from '../helpers/searchSelectors.js';
 
 class BookingService {
   async clientListBookings(user,query) {
@@ -21,13 +20,11 @@ class BookingService {
       const userId = _.get(user, '_id');
 
        const { page, limit, skip, sortBy, sortOrder, ..._query} = query;
-       
       _query.clientId = userId;
 
       const options = getPaginationAndSortingOptions(query);
-      const selectors = searchSelectorsFun(query); 
       
-      const bookings = await BookingModel.find(selectors, options);
+      const bookings = await BookingModel.find(_query, options);
 
       return { bookings, options };
     } catch (e) {
@@ -43,9 +40,8 @@ class BookingService {
       _query.providerId = userId;
 
       const options = getPaginationAndSortingOptions(query);
-      const selectors = searchSelectorsFun(query); 
-
-      const bookings = await BookingModel.find(selectors, options);
+      
+      const bookings = await BookingModel.find(_query, options);
 
       return { bookings, options };
     } catch (e) {
@@ -459,15 +455,14 @@ class BookingService {
 
   async countBookings(userRole,userId, query) {
     try {
-      const selectors = searchSelectorsFun(query); 
       if (userRole === USER_ROLES.CLIENT ) {
-        selectors.clientId = userId
+        query.clientId = userId
       }
       if (userRole === USER_ROLES.PROVIDER ) {
-        selectors.providerId = userId
+        query.providerId = userId
       }
       
-      return await BookingModel.count(selectors);
+      return await BookingModel.count(query);
     } catch (e) {
       logger.error(e);
       throw e;
