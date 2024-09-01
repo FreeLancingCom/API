@@ -1,6 +1,5 @@
-import mongoose from 'mongoose';
+import mongoose, { model } from 'mongoose';
 import nanoid from '../../../common/utils/nanoID/index.js';
-import { servicesTypes } from '../helpers/constants.js';
 
 const servicesSchema = new mongoose.Schema({
   _id: {
@@ -17,17 +16,17 @@ const servicesSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
-  type: {
+  maintenanceCenterId: {
     type: String,
     required: true,
-    enum: Object.values(servicesTypes)
-  },
-  maintenanceCenterId: {
-    // In case of a custom service
-    type: String,
     ref: 'maintenanceCenters'
   },
-  cost: { type: Number, required: true }
+  cost: { type: Number, required: true },
+  model: { type: String },
+  typeId: {
+    type: String,
+    ref: 'servicetypes'
+  }
 });
 
 const Services = mongoose.model('services', servicesSchema);

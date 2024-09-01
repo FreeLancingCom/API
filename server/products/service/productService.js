@@ -97,6 +97,16 @@ class ProductService {
     }
   }
 
+  async countProducts(query) {
+    try {
+      const count = await ProductModel.count(query);
+      return count;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   //{productId, quantity}
   async SubtractAvailableQuantity(purchasedProducts) {
     try {
@@ -160,6 +170,20 @@ class ProductService {
       throw e;
     }
   }
+
+  async getProductByTypeId(typeId, options) {
+    try {
+      const product = await ProductModel.findOne({ typeId }, options);
+      if (product)
+        return true
+
+      return false;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+  
 }
 
 export default new ProductService();

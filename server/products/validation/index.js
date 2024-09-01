@@ -31,9 +31,6 @@ export default {
         .required(),
       currency: Joi.string().required(),
       images: Joi.array().items(Joi.string()),
-      specifications: Joi.object().pattern(Joi.string(), Joi.any()),
-      legalDoc: Joi.string(),
-      video: Joi.string().optional(),
       active: Joi.bool().default(true),
       tags: Joi.array().items(Joi.string())
     })

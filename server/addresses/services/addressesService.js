@@ -100,7 +100,7 @@ class AddressesService {
           );
         }
       }
-      
+
       body.countryId = isExistCity.countryId;
 
       const updatedAddress = await addressesModel.update({ _id: addressId }, body);
@@ -124,6 +124,16 @@ class AddressesService {
       }
       const deletedAddress = await addressesModel.delete({ _id: addressId });
       return deletedAddress;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async countAddresses(query) {
+    try {
+      const count = await addressesModel.count(query);
+      return count;
     } catch (e) {
       logger.error(e);
       throw e;
