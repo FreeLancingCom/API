@@ -34,7 +34,9 @@ export default {
   },
   [CONTROLLERS.COUNT_BOOKINGS]: async (req, res, next) => {
     try {
-      const data = await bookingsService.countBookings(req.query);
+      const userId = _.get(req, 'user._id');
+      const userRole = _.get(req, 'user.role', null);
+      const data = await bookingsService.countBookings(userRole,userId,req.query);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
