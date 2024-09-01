@@ -6,16 +6,25 @@ import { StatusCodes } from 'http-status-codes';
 import logger from '../../../common/utils/logger/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import { searchSelectorsFun } from '../helper/searchSelectors.js';
+import productTypesServices from '../../productTypes/services/productTypesServices.js';
 
 const { BAD_REQUEST } = StatusCodes;
 
 class ProductService {
   async listProducts(query) {
     try {
-      const selectors = searchSelectorsFun(query); 
+      const selectors = searchSelectorsFun(query);
       const options = getPaginationAndSortingOptions(query);
       const products = await ProductModel.find(selectors, options, null);
-      return { products, options };
+      const count = await ProductModel.count(selectors);
+
+      return {
+        products,
+        options: {
+          ...options,
+          count
+        }
+      };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -25,7 +34,7 @@ class ProductService {
   //?mc here would be the req.params.mcId , because two roles can access this route  {provider, client}
   async getProduct(productId, options) {
     try {
-      const product = await ProductModel.findOneAndIncludePopulate({ _id: productId }, options);
+      const product = await ProductModel.findOne({ _id: productId }, options);
       if (!product)
         throw new ErrorResponse(
           productsErrors.PRODUCT_NOT_FOUND.message,
@@ -40,11 +49,27 @@ class ProductService {
   }
 
   //? mcId here from the token(req.user.maintenanceCenter) as the product provider only can access it
-  async createProduct(userId, mcId, productData) {
-    productData['addedBy'] = userId;
-    productData['maintenanceCenterId'] = mcId;
+  async createProduct(mcId, productData) {
     try {
-      if (!productData['nameAr']) productData['nameAr'] = productData['name'];
+      productData['maintenanceCenterId'] = mcId;
+      const productType = await productTypesServices.getProductType(productData.typeId)
+      if (!productType)
+        throw new ErrorResponse(
+          productsErrors.PRODUCT_NOT_FOUND.message,
+          BAD_REQUEST,
+          productsErrors.PRODUCT_NOT_FOUND.code
+        );
+
+      const productExists = await ProductModel.findOne({ typeId: productType._id, maintenanceCenterId: mcId })
+      if (productExists)
+        throw new ErrorResponse(
+          productsErrors.PRODUCT_ALREADY_EXISTS.message,
+          BAD_REQUEST,
+          productsErrors.PRODUCT_ALREADY_EXISTS.code
+        );
+
+      productData['name'] = productType.name
+      productData['nameAr'] = productType.nameAr
 
       const product = await ProductModel.create(productData);
       return product;
@@ -63,7 +88,7 @@ class ProductService {
           BAD_REQUEST,
           productsErrors.PRODUCT_NOT_FOUND.code
         );
-      productData['maintenanceCenterId'] = mcId; // to prevent the user from changing the maintenance center  + we can change it when create the request module
+
       const updatedProduct = await ProductModel.update(
         { _id: productId, maintenanceCenterId: mcId },
         productData
@@ -99,7 +124,8 @@ class ProductService {
 
   async countProducts(query) {
     try {
-      const count = await ProductModel.count(query);
+      const selectors = searchSelectorsFun(query);
+      const count = await ProductModel.count(selectors);
       return count;
     } catch (e) {
       logger.error(e);
@@ -183,7 +209,7 @@ class ProductService {
       throw e;
     }
   }
-  
+
 }
 
 export default new ProductService();

@@ -13,7 +13,6 @@ import productTypeRouter from './productTypes/routers/index.js';
 import serviceTypeRouter from './serviceTypes/routers/index.js';
 import services from './services/routers/index.js';
 import reviews from './reviews/routers/index.js';
-import serviceTemplates from './serviceTemplates/routers/index.js';
 
 const router = express.Router();
 
@@ -23,7 +22,6 @@ router.use('/addresses', addressRouter);
 router.use('/countries', countryRouter);
 router.use('/notifications', notificationRouter);
 router.use('/maintenanceCenter', maintenanceCenterRouter);
-router.use('/serviceTemplates', serviceTemplates);
 router.use('/products', productsRouter);
 router.use('/productTypes', productTypeRouter);
 router.use('/serviceTypes', serviceTypeRouter);

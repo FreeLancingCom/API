@@ -31,8 +31,15 @@ class ServiceTypeService {
       }
 
       const serviceTypes = await ServiceTypeModel.find(selectors, options);
+      const count = await ServiceTypeModel.count(selectors);
 
-      return { serviceTypes, options };
+      return {
+        serviceTypes,
+        options: {
+          ...options,
+          count
+        }
+      }
     } catch (e) {
       logger.error(e);
       throw e;

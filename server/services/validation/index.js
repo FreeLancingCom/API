@@ -45,9 +45,7 @@ export default {
   [CONTROLLERS.CREATE_SERVICE]: {
     body: Joi.object()
       .keys({
-        name: Joi.string().trim().min(2).required(),
-        nameAr: Joi.string().trim().min(2).required(),
-        maintenanceCenterId: Joi.string().optional(),
+        typeId: Joi.string().required(),
         cost: Joi.number().min(0).required(),
         model: Joi.string().optional()
       })
@@ -60,8 +58,10 @@ export default {
       })
       .required(),
     body: Joi.object().keys({
-      name: Joi.string().trim().min(2).optional(),
-      nameAr: Joi.string().trim().min(2).optional(),
+      name: Joi.string().forbidden(),
+      nameAr: Joi.string().forbidden(),
+      typeId: Joi.string().forbidden(),
+      maintenanceCenterId: Joi.string().forbidden(),
       cost: Joi.number().min(0).optional(),
       model: Joi.string().optional()
     })
