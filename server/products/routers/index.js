@@ -18,18 +18,18 @@ router.get(
 );
 
 router.get(
+  '/count',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.COUNT_PRODUCTS]),
+  Controller[CONTROLLERS.COUNT_PRODUCTS]
+);
+
+router.get(
   '/:id',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.GET_PRODUCT]),
   validateRequest(validationSchemas[CONTROLLERS.GET_PRODUCT]),
   Controller[CONTROLLERS.GET_PRODUCT]
-);
-
-router.get(
-  '/maintenance-center/:mcId',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.LIST_MAINTENANCE_CENTER_PRODUCTS]),
-  Controller[CONTROLLERS.LIST_MAINTENANCE_CENTER_PRODUCTS]
 );
 
 router.post(

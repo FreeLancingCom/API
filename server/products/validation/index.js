@@ -1,17 +1,11 @@
 import Joi from 'joi';
 import { CONTROLLERS } from '../helper/constants.js';
-import { PRODUCT_STATUS } from '../helper/constants.js';
 export default {
   [CONTROLLERS.LIST_PRODUCTS]: {
     query: Joi.object()
       .keys({
         page: Joi.number().optional(),
         limit: Joi.number().optional(),
-        status: Joi.string().optional().valid(PRODUCT_STATUS),
-        // categoryId: Joi.string().optional(),
-        // subcategoryId: Joi.alternatives()
-        //   .try(Joi.string(), Joi.array().items(Joi.string()))
-        //   .optional(),
         minPrice: Joi.number().optional(),
         maxPrice: Joi.number().optional()
       })
@@ -26,28 +20,17 @@ export default {
   },
   [CONTROLLERS.CREATE_PRODUCT]: {
     body: Joi.object().keys({
-      name: Joi.string().required(),
+      typeId: Joi.string().required(),
       description: Joi.string().allow(''),
       availableQuantity: Joi.number().required(),
-      // subcategoryId: Joi.array().items(Joi.string()).required(),
-      // brandId: Joi.string(),
       price: Joi.object()
         .keys({
           originalPrice: Joi.number().required(),
           finalPrice: Joi.number().required()
         })
         .required(),
-      offer: Joi.object().keys({
-        offerType: Joi.string().required(),
-        from: Joi.date(),
-        to: Joi.date()
-      }),
       currency: Joi.string().required(),
       images: Joi.array().items(Joi.string()),
-      specifications: Joi.object().pattern(Joi.string(), Joi.any()),
-      legalDoc: Joi.string(),
-      video: Joi.string().optional(),
-      active: Joi.bool().default(true),
       tags: Joi.array().items(Joi.string())
     })
   },
@@ -56,10 +39,13 @@ export default {
       .keys({
         id: Joi.string().required()
       })
-      .required()
-    // body: Joi.object().keys({
-    //   subcategoryId: Joi.array().items(Joi.string()).optional()
-    // })
+      .required(),
+    body: Joi.object().keys({
+      typeId: Joi.string().forbidden(),
+      name: Joi.string().forbidden(),
+      nameAr: Joi.string().forbidden(),
+      maintenanceCenterId: Joi.string().forbidden()
+    })
   },
   [CONTROLLERS.DELETE_PRODUCT]: {
     params: Joi.object()
@@ -68,13 +54,4 @@ export default {
       })
       .required()
   },
-  [CONTROLLERS.LIST_MAINTENANCE_CENTER_PRODUCTS]: {
-    query: Joi.object()
-      .keys({
-        page: Joi.number().optional(),
-        limit: Joi.number().optional(),
-        status: Joi.string().optional().valid(PRODUCT_STATUS)
-      })
-      .optional()
-  }
 };

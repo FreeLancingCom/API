@@ -52,6 +52,10 @@ export const usersErrors = Object.freeze({
   WRONG_RESET_PASSWORD_CODE: {
     code: 108,
     message: 'Wrong Reset Password Code'
+  },
+  COUNTRY_NOT_FOUND: {
+    code: 109,
+    message: 'Country not found.'
   }
 });
 

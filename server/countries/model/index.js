@@ -35,6 +35,11 @@ class Country {
     const result = await CountrySchema.deleteOne(selector, options);
     return result;
   }
+
+  async count(selector) {
+    const data = await CountrySchema.countDocuments(selector);
+    return data;
+  }
 }
 
 export default new Country();

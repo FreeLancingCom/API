@@ -1,38 +1,59 @@
 import _ from 'lodash';
 import serviceModel from '../models/index.js'; // Ensure the path is correct
 import { USER_ROLES } from '../../../common/helpers/constants.js';
-import { servicesTypes } from '../helpers/constants.js';
-import maintenanceCenter from '../../maintenanceCenter/services/index.js';
 import logger from '../../../common/utils/logger/index.js';
+import serviceTypesServices from '../../serviceTypes/services/serviceTypesServices.js';
+import { servicesErrors } from '../helpers/constants.js';
+import { searchSelectorsFun } from '../helpers/searchSelectors.js';
+import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
+import ErrorResponse from '../../../common/utils/errorResponse/index.js';
+import { StatusCodes } from 'http-status-codes';
+
+const { BAD_REQUEST } = StatusCodes;
 
 class servicesService {
+  // list for admin and providers
   async listServices(user, query) {
     try {
-      const { page = 1, limit = 10 } = query;
-      const skip = (page - 1) * limit;
-      const options = { page, limit, skip };
-      const selector = {};
+      const selectors = searchSelectorsFun(query);
+      const options = getPaginationAndSortingOptions(query);
 
-      // If user is center admin get services that are general or related custom for their maintenance centers
+      // If user is center admin get services that are related to their maintenance centers
       const isCenterAdmin = user.role == USER_ROLES.PROVIDER;
-      if (isCenterAdmin)
-        selector.$or = [
-          { maintenanceCenterId: { $in: user.maintenanceCenters } },
-          { type: servicesTypes.GENERAL }
-        ];
+      if (isCenterAdmin) selectors.maintenanceCenterId = user.maintenanceCenterId;
 
-      if (query.name) selector = { name: query.name };
-      if (query.nameAr) selector = { name: query.nameAr };
-      if (query.centerId && !isCenterAdmin) selector = { type: query.centerId };
-
-      const services = await serviceModel.find(selector, options);
-      const count = await serviceModel.count(selector);
+      const services = await serviceModel.find(selectors, options);
+      const count = await serviceModel.count(selectors);
 
       return {
-        data: services,
-        count,
-        page,
-        limit
+        services,
+        options: {
+          ...options,
+          count
+        }
+      };
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
+  // return back here
+  async listServicesForClient(user, maintenanceCenterId, query) {
+    try {
+      const selectors = searchSelectorsFun(query);
+      const options = getPaginationAndSortingOptions(query);
+
+      selectors.maintenanceCenterId = maintenanceCenterId
+
+      const services = await serviceModel.find(selectors, options);
+      const count = await serviceModel.count(selectors);
+
+      return {
+        services,
+        options: {
+          ...options,
+          count
+        }
       };
     } catch (error) {
       logger.error(error);
@@ -40,17 +61,16 @@ class servicesService {
     }
   }
 
+  // Get for admin and providers
   async getService(user, _id) {
     try {
       const selector = {
         _id
       };
-      // If user is center admin get services that are general or related custom for their maintenance centers
-      if (user.role == USER_ROLES.PROVIDER)
-        selector.$or = [
-          { maintenanceCenterId: { $in: user.maintenanceCenters } },
-          { type: servicesTypes.GENERAL }
-        ];
+
+      // If user is center admin get service that is related to their maintenance centers
+      const isCenterAdmin = user.role == USER_ROLES.PROVIDER;
+      if (isCenterAdmin) selector.maintenanceCenterId = user.maintenanceCenterId;
 
       const service = await serviceModel.findOne(selector);
       return service;
@@ -60,28 +80,46 @@ class servicesService {
     }
   }
 
+  async getServiceByClient(user, maintenanceCenterId, _id) {
+    try {
+      const selector = {
+        _id,
+        maintenanceCenterId
+      };
+      const service = await serviceModel.findOne(selector);
+      return service;
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
+
+  // Only used by provider when cloning a service template or creating a new service
   async createService(user, body) {
     try {
-      // Center Admin can only create custom services
-      const isCustomService = body.type == servicesTypes.CUSTOM;
-      const isCenterAdmin = user.role == USER_ROLES.PROVIDER;
-      if (isCenterAdmin && !isCustomService)
-        throw new Error('Center Admins can only create custom services');
+      body['maintenanceCenterId'] = user.maintenanceCenterId
+      const serviceType = await serviceTypesServices.getServiceType(body.typeId)
+      if (!serviceType)
+        throw new ErrorResponse(
+          servicesErrors.SERVICE_TYPE_NOT_FOUND.message,
+          BAD_REQUEST,
+          servicesErrors.SERVICE_TYPE_NOT_FOUND.code
+        );
 
-      if (isCustomService) {
-        if (!body.maintenanceCenterId) throw new Error('Please provide maintenance center id');
-        if (!user.maintenanceCenters.includes(body.maintenanceCenterId))
-          throw new Error('You Cannot create a custom service for this center.');
-      }
+      //don't let the maintenance center have more than one service of the same type and model
+      //TODO add model in the selectors when it is implemented
+      const serviceExists = await serviceModel.findOne({ typeId: serviceType._id, maintenanceCenterId: body.maintenanceCenterId })
+      if (serviceExists)
+        throw new ErrorResponse(
+          servicesErrors.SERVICE_ALREADY_EXISTS.message,
+          BAD_REQUEST,
+          servicesErrors.SERVICE_ALREADY_EXISTS.code
+        );
 
-      if (!isCustomService && body.maintenanceCenterId) delete body.maintenanceCenterId;
+      body['name'] = serviceType.name
+      body['nameAr'] = serviceType.nameAr
 
       const newService = await serviceModel.create(body);
-      if (isCustomService) {
-        await maintenanceCenter.updateMaintenanceCenter(user, body.maintenanceCenterId, {
-          services: [newService._id]
-        });
-      }
 
       return newService;
     } catch (error) {
@@ -92,13 +130,7 @@ class servicesService {
 
   async updateService(user, serviceId, payload) {
     try {
-      // only name updates are allowed
-      const selector = { _id: serviceId };
-      // If user is center admin, they can only edit services that are was created fot their MCs
-      const isCenterAdmin = user.role == USER_ROLES.PROVIDER;
-      if (isCenterAdmin) {
-        selector.maintenanceCenterId = { $in: user.maintenanceCenters };
-      }
+      const selector = { _id: serviceId, maintenanceCenterId: user.maintenanceCenterId };
 
       const service = await serviceModel.findOne(selector);
       if (!service) throw new Error('Service not found');
@@ -113,23 +145,34 @@ class servicesService {
 
   async deleteService(user, serviceId) {
     try {
-      const selector = { _id: serviceId };
-      // If user is center admin, they can only edit services that are was created fot their MCs
-      const isCenterAdmin = user.role == USER_ROLES.PROVIDER;
-      if (isCenterAdmin) {
-        selector.maintenanceCenterId = { $in: user.maintenanceCenters };
-      }
-
-      const service = await this.getService(user, serviceId);
+      const selector = { _id: serviceId, maintenanceCenterId: user.maintenanceCenterId };
+      const service = await serviceModel.findOne(selector);
       if (!service) throw new Error('Service Cannot be deleted');
 
-      const maintenanceCenterId = service.maintenanceCenterId;
       await serviceModel.delete({ _id: serviceId });
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
 
-      // Pull the removed service from maintenanceCenter.services
-      await maintenanceCenter.updateMaintenanceCenter(user, maintenanceCenterId, {
-        removedServices: [serviceId]
-      });
+  async countServices(query) {
+    try {
+      const selectors = searchSelectorsFun(query);
+      const count = await serviceModel.count(selectors);
+      return count;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async getServiceByTypeId(typeId, options) {
+    try {
+      const service = await serviceModel.findOne({ typeId }, options);
+      if (service)
+        return true
+      return false;
     } catch (error) {
       logger.error(error);
       throw error;
