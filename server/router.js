@@ -21,13 +21,12 @@ router.use('/email', emailRouter);
 router.use('/addresses', addressRouter);
 router.use('/countries', countryRouter);
 router.use('/notifications', notificationRouter);
-router.use('/maintenanceCenter', maintenanceCenterRouter);
+router.use('/maintenanceCenters', maintenanceCenterRouter);
 router.use('/products', productsRouter);
 router.use('/productTypes', productTypeRouter);
 router.use('/serviceTypes', serviceTypeRouter);
 router.use('/vehicles', vehicleRouter);
 router.use('/cities', cityRouter);
-router.use('/maintenanceCenter', maintenanceCenterRouter);
 router.use('/services', services);
 router.use('/reviews', reviews);
 
