@@ -69,18 +69,45 @@ export default {
       next(error);
     }
   },
-  [CONTROLLERS.APPROVE_BOOKING]: async (req, res, next) => {
+  [CONTROLLERS.RESCHEDULE_BOOKING]: async (req, res, next) => {
     try {
-      const data = await bookingsService.approveBooking(req.user,req.params.id);
+      const data = await bookingsService.rescheduleBooking(req.user,req.params.id, req.body);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
-  [CONTROLLERS.DECLINE_BOOKING]: async (req, res, next) => {
+  [CONTROLLERS.APPROVE_CLIENT_BOOKING]: async (req, res, next) => {
     try {
-      const data = await bookingsService.declineBooking(req.user,req.params.id);
+      const data = await bookingsService.approveClientBooking(req.user,req.params.id);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.APPROVE_PROVIDER_BOOKING]: async (req, res, next) => {
+    try {
+      const data = await bookingsService.approveProviderBooking(req.user,req.params.id);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.DECLINE_CLIENT_BOOKING]: async (req, res, next) => {
+    try {
+      const data = await bookingsService.declineClientBooking(req.user,req.params.id);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.DECLINE_PROVIDER_BOOKING]: async (req, res, next) => {
+    try {
+      const data = await bookingsService.declineProviderBooking(req.user,req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -90,15 +117,6 @@ export default {
   [CONTROLLERS.COMPLETE_BOOKING]: async (req, res, next) => {
     try {
       const data = await bookingsService.completeBooking(req.user,req.params.id);
-      res.status(StatusCodes.OK).json({ success: true, data });
-    } catch (error) {
-      logger.error(error);
-      next(error);
-    }
-  },
-  [CONTROLLERS.DELETE_BOOKING]: async (req, res, next) => {
-    try {
-      const data = await bookingsService.deleteBooking(req.user,req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

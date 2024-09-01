@@ -65,18 +65,32 @@ router.put(
 );
 
 router.put(
-  '/:id/approve',
+  '/client/:id/approve',
   Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.APPROVE_BOOKING]),
-  validateRequest(validationSchemas[CONTROLLERS.APPROVE_BOOKING]),
-  Controller[CONTROLLERS.APPROVE_BOOKING]
+  Authorization.Authorize(Permissions[CONTROLLERS.APPROVE_CLIENT_BOOKING]),
+  validateRequest(validationSchemas[CONTROLLERS.APPROVE_CLIENT_BOOKING]),
+  Controller[CONTROLLERS.APPROVE_CLIENT_BOOKING]
 );
 router.put(
-  '/:id/decline',
+  '/provider/:id/approve',
   Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DECLINE_BOOKING]),
-  validateRequest(validationSchemas[CONTROLLERS.DECLINE_BOOKING]),
-  Controller[CONTROLLERS.DECLINE_BOOKING]
+  Authorization.Authorize(Permissions[CONTROLLERS.APPROVE_PROVIDER_BOOKING]),
+  validateRequest(validationSchemas[CONTROLLERS.APPROVE_PROVIDER_BOOKING]),
+  Controller[CONTROLLERS.APPROVE_PROVIDER_BOOKING]
+);
+router.put(
+  '/client/:id/decline',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.DECLINE_CLIENT_BOOKING]),
+  validateRequest(validationSchemas[CONTROLLERS.DECLINE_CLIENT_BOOKING]),
+  Controller[CONTROLLERS.DECLINE_CLIENT_BOOKING]
+);
+router.put(
+  '/provider/:id/decline',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.DECLINE_PROVIDER_BOOKING]),
+  validateRequest(validationSchemas[CONTROLLERS.DECLINE_PROVIDER_BOOKING]),
+  Controller[CONTROLLERS.DECLINE_PROVIDER_BOOKING]
 );
 router.put(
   '/:id/complete',
@@ -84,13 +98,6 @@ router.put(
   Authorization.Authorize(Permissions[CONTROLLERS.COMPLETE_BOOKING]),
   validateRequest(validationSchemas[CONTROLLERS.COMPLETE_BOOKING]),
   Controller[CONTROLLERS.COMPLETE_BOOKING]
-);
-router.delete(
-  '/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DELETE_BOOKING]),
-  validateRequest(validationSchemas[CONTROLLERS.DELETE_BOOKING]),
-  Controller[CONTROLLERS.DELETE_BOOKING]
 );
 
 

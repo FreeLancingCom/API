@@ -3,11 +3,13 @@ export const CONTROLLERS = {
   Provider_LIST_BOOKINGS: 'booking:providerList',
   GET_BOOKING: 'booking:get',
   CREATE_BOOKING: 'booking:create',
-  UPDATE_BOOKING: 'booking:update',
-  APPROVE_BOOKING: 'booking:approve',
+  UPDATE_BOOKING: 'booking:Update',
+  RESCHEDULE_BOOKING: 'booking:reschedule',
+  APPROVE_CLIENT_BOOKING: 'booking:clientApprove',
+  APPROVE_PROVIDER_BOOKING: 'booking:providerApprove',
   COMPLETE_BOOKING: 'booking:complete',
-  DECLINE_BOOKING: 'booking:decline',
-  DELETE_BOOKING: 'booking:delete',
+  DECLINE_CLIENT_BOOKING: 'booking:clientDecline',
+  DECLINE_PROVIDER_BOOKING: 'booking:providerDecline',
   COUNT_BOOKINGS:'booking:count',
   ADMIN_LIST_BOOKINGS:'booking:adminList'
 };
@@ -45,9 +47,9 @@ export const bookingErrors = Object.freeze({
     code: 107,
     message: 'booking is already approved'
   },
-  BOOKING_IS_ALREADY_APPROVED: {
+  BOOKING_IS_NOT_PENDING: {
     code: 108,
-    message: 'booking is already approved'
+    message: 'booking is not pending'
   },
   BOOKING_IS_ALREADY_DECLINED: {
     code: 108,
@@ -64,17 +66,23 @@ export const bookingErrors = Object.freeze({
   PRODUCT_NOT_FOUND:{
    code: 111,
     message: 'product is already completed'
-  }
+  },
+  UNVALID_RESCHEDULE:{
+    code: 112,
+     message: 'unvalid reschedule'
+   },
   }
 );
 const PENDING = 'PENDING';
 const APPROVED = 'APPROVED';
 const DECLINED = 'DECLINED';
 const COMPELETED = 'COMPELETED';
+const RESCHEDULED = 'RESCHEDULED';
 
 export const BOOKING_STATUS = {
   PENDING,
   APPROVED,
   DECLINED,
-  COMPELETED
+  COMPELETED,
+  RESCHEDULED
 };

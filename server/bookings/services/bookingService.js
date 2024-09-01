@@ -11,13 +11,12 @@ const { BAD_REQUEST } = StatusCodes;
 import moment from 'moment'; 
 import VehicleModel from '../../vehicles/models/index.js';
 import ServiceModel from '../../services/models/index.js';
-import ProductModel from '../../products/models/index.js';
+import ProductModel from '../../products/model/index.js';
 
 class BookingService {
   async clientListBookings(user,query) {
     try {
       const userId = _.get(user, '_id');
-      await usersService.getUser(userId)
 
        const { page, limit, skip, sortBy, sortOrder, ..._query} = query;
       _query.clientId = userId;
@@ -35,7 +34,6 @@ class BookingService {
   async providerListBookings(user,query) {
     try {
       const userId = _.get(user, '_id');
-      await usersService.getUser(userId)
 
        const { page, limit, skip, sortBy, sortOrder, ..._query} = query;
       _query.providerId = userId;
@@ -70,8 +68,6 @@ class BookingService {
     try {
 
       const userId = _.get(user, '_id');
-      await usersService.getUser(userId)  
-
       const booking = await BookingModel.findOne({ _id: bookingId });
       
       if (!booking) {
@@ -103,7 +99,7 @@ class BookingService {
 
       const existingProvider = await MaintenanceCenterModel.findOne({
        _id:bookingData.providerId } );
-      if (existingProvider) {
+      if (!existingProvider) {
         throw new ErrorResponse(
           bookingErrors.PROVIDER_NOT_FOUND.message,
           BAD_REQUEST,
@@ -151,11 +147,9 @@ class BookingService {
     }
   }
 
-  async updatBooking(user,bookingId, bookingData) {
+  async rescheduleBooking(user,bookingId, bookingData) {
     try {
       const userId = _.get(user, '_id');
-      const user = await usersService.getUser(userId)  
-
 
       const existingBooking = await BookingModel.findOne({ _id: bookingId });
       
@@ -166,8 +160,65 @@ class BookingService {
           bookingErrors.BOOKING_NOT_FOUND.code
         );
       }
+      if(existingBooking['status']!=BOOKING_STATUS.PENDING){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_NOT_PENDING.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_NOT_PENDING.code
+        );
+      }
+      if(existingBooking['providerId']!=userId ){
+        throw new ErrorResponse(
+          bookingErrors.INVALID_USER.message,
+          BAD_REQUEST,
+          bookingErrors.INVALID_USER.code
+        );
+      }
 
-      if(existingBooking['clientId']!=userId ||existingBooking['providerId']!=userId ){
+      if(bookingData.bookingTime){
+        const currentTime = moment();
+        const bookingTime = moment(bookingData.bookingTime);
+        
+        if (!bookingTime.isAfter(currentTime)) {
+          throw new ErrorResponse(
+          bookingErrors.INVALID_BOOKING_Time.message,
+          BAD_REQUEST,
+          bookingErrors.INVALID_BOOKING_Time.code
+          );
+        }
+      }
+
+      const updatedBooking = await BookingModel.update({ _id: bookingId }, bookingData );
+      return updatedBooking;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  
+  async updatBooking(user,bookingId, bookingData) {
+    try {
+      const userId = _.get(user, '_id');
+
+      const existingBooking = await BookingModel.findOne({ _id: bookingId });
+      
+      if (!existingBooking) {
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_NOT_FOUND.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_NOT_FOUND.code
+        );
+      }
+      if(existingBooking['status']!=BOOKING_STATUS.PENDING){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_NOT_PENDING.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_NOT_PENDING.code
+        );
+      }
+
+      if(existingBooking['clientId']!=userId  ){
         throw new ErrorResponse(
           bookingErrors.INVALID_USER.message,
           BAD_REQUEST,
@@ -210,11 +261,9 @@ class BookingService {
     }
   }
 
-  async approveBooking(user,bookingId) {
+  async approveProviderBooking(user,bookingId) {
     try {
       const userId = _.get(user, '_id');
-      await usersService.getUser(userId)  
-
       const existingBooking = await BookingModel.findOne({ _id: bookingId });
       
       if (!existingBooking) {
@@ -253,10 +302,10 @@ class BookingService {
       throw e;
     }
   }
-  async declineBooking(user,bookingId) {
+
+  async declineProviderBooking(user,bookingId) {
     try {
       const userId = _.get(user, '_id');
-      await usersService.getUser(userId)  
 
       const existingBooking = await BookingModel.findOne({ _id: bookingId });
       
@@ -288,6 +337,75 @@ class BookingService {
           bookingErrors.BOOKING_IS_ALREADY_COMPLETED.code
         );
       }
+      
+      const updatedBooking = await BookingModel.update({ _id: bookingId }, {status:BOOKING_STATUS.DECLINED} );
+      return updatedBooking;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+  async approveClientBooking(user,bookingId) {
+    try {
+      const userId = _.get(user, '_id');
+
+      const existingBooking = await BookingModel.findOne({ _id: bookingId });
+      
+      if (!existingBooking) {
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_NOT_FOUND.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_NOT_FOUND.code
+        );
+      }
+      if(existingBooking['clientId']!=userId ){
+        throw new ErrorResponse(
+          bookingErrors.USER_NOT_OWNER.message,
+          BAD_REQUEST,
+          bookingErrors.USER_NOT_OWNER.code
+        );
+      }
+      if(existingBooking['status']!=BOOKING_STATUS.RESCHEDULED){
+        throw new ErrorResponse(
+          bookingErrors.UNVALID_RESCHEDULE.message,
+          BAD_REQUEST,
+          bookingErrors.UNVALID_RESCHEDULE.code
+        );
+      }
+      const updatedBooking = await BookingModel.update({ _id: bookingId }, {status:BOOKING_STATUS.APPROVED} );
+      return updatedBooking;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+  async declineClientBooking(user,bookingId) {
+    try {
+      const userId = _.get(user, '_id');
+
+      const existingBooking = await BookingModel.findOne({ _id: bookingId });
+      
+      if (!existingBooking) {
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_NOT_FOUND.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_NOT_FOUND.code
+        );
+      }
+      if(existingBooking['clientId']!=userId ){
+        throw new ErrorResponse(
+          bookingErrors.USER_NOT_OWNER.message,
+          BAD_REQUEST,
+          bookingErrors.USER_NOT_OWNER.code
+        );
+      }
+      if(existingBooking['status']!=BOOKING_STATUS.RESCHEDULED){
+        throw new ErrorResponse(
+          bookingErrors.UNVALID_RESCHEDULE.message,
+          BAD_REQUEST,
+          bookingErrors.UNVALID_RESCHEDULE.code
+        );
+      }
       const updatedBooking = await BookingModel.update({ _id: bookingId }, {status:BOOKING_STATUS.DECLINED} );
       return updatedBooking;
     } catch (e) {
@@ -299,7 +417,6 @@ class BookingService {
   async completeBooking(user,bookingId) {
     try {
       const userId = _.get(user, '_id');
-      await usersService.getUser(userId)  
 
       const existingBooking = await BookingModel.findOne({ _id: bookingId });
       
@@ -334,34 +451,6 @@ class BookingService {
     }
   }
 
-  async deleteBooking(user,bookingId) {
-    try {
-      const userId = _.get(user, '_id');
-      await usersService.getUser(userId)  
-
-      const existingBooking = await BookingModel.findOne({ _id: bookingId });
-      
-      if (!existingBooking) {
-        throw new ErrorResponse(
-          bookingErrors.BOOKING_NOT_FOUND.message,
-          BAD_REQUEST,
-          bookingErrors.BOOKING_NOT_FOUND.code
-        );
-      }
-      if(existingBooking['clientId']!=userId || existingBooking['providerId']!=userId ){
-        throw new ErrorResponse(
-          bookingErrors.USER_NOT_OWNER.message,
-          BAD_REQUEST,
-          bookingErrors.USER_NOT_OWNER.code
-        );
-      }
-      return BookingModel.delete({ _id: bookingId });
-    } catch (e) {
-      logger.error(e);
-      throw e;
-    }
-  }
-
 
   async countBookings(query = {}, options) {
     try {
@@ -387,7 +476,7 @@ class BookingService {
       );
     }
     services.forEach(service => {
-      totalPrice += service.price.finalPrice; 
+      totalPrice += service.cost; 
     });
   }
 
