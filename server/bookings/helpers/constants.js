@@ -5,6 +5,7 @@ export const CONTROLLERS = {
   CREATE_BOOKING: 'booking:create',
   UPDATE_BOOKING: 'booking:update',
   APPROVE_BOOKING: 'booking:approve',
+  COMPLETE_BOOKING: 'booking:complete',
   DECLINE_BOOKING: 'booking:decline',
   DELETE_BOOKING: 'booking:delete',
   COUNT_BOOKINGS:'booking:count',
@@ -40,6 +41,30 @@ export const bookingErrors = Object.freeze({
     code: 106,
     message: 'vehicle not found'
   },
+  BOOKING_IS_ALREADY_APPROVED: {
+    code: 107,
+    message: 'booking is already approved'
+  },
+  BOOKING_IS_ALREADY_APPROVED: {
+    code: 108,
+    message: 'booking is already approved'
+  },
+  BOOKING_IS_ALREADY_DECLINED: {
+    code: 108,
+    message: 'booking is already declined'
+  },
+  BOOKING_IS_ALREADY_COMPLETED: {
+    code: 109,
+    message: 'booking is already completed'
+  },
+  SERVICE_NOT_FOUND:{
+   code: 110,
+    message: 'service not found'
+  },
+  PRODUCT_NOT_FOUND:{
+   code: 111,
+    message: 'product is already completed'
+  }
   }
 );
 const PENDING = 'PENDING';

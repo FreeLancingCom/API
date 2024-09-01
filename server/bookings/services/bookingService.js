@@ -10,7 +10,8 @@ import MaintenanceCenterModel from '../../maintenanceCenter/models/index.js';
 const { BAD_REQUEST } = StatusCodes;
 import moment from 'moment'; 
 import VehicleModel from '../../vehicles/models/index.js';
-import { USER_ROLES } from '../../../common/helpers/constants.js';
+import ServiceModel from '../../services/models/index.js';
+import ProductModel from '../../products/models/index.js';
 
 class BookingService {
   async clientListBookings(user,query) {
@@ -130,9 +131,17 @@ class BookingService {
           bookingErrors.VEHICLE_NOT_FOUND.code
         );
       }
-      bookingData= {...bookingData,
-        clinetId
+      const totalPrice = await calculateTotalPrice(bookingData.services, bookingData.products);
+
+      bookingData = {
+        ...bookingData,
+        clientId,
+        price: {
+          originalPrice: totalPrice,
+          finalPrice: totalPrice, 
+        },
       };
+      
       const createdBooking = await BookingModel.create(bookingData);
       return createdBooking;
 
@@ -201,7 +210,7 @@ class BookingService {
     }
   }
 
-  async approveBooking(user,bookingId, bookingData) {
+  async approveBooking(user,bookingId) {
     try {
       const userId = _.get(user, '_id');
       await usersService.getUser(userId)  
@@ -222,6 +231,21 @@ class BookingService {
           bookingErrors.USER_NOT_OWNER.code
         );
       }
+      if(existingBooking['status']==BOOKING_STATUS.APPROVED){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_ALREADY_APPROVED.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_ALREADY_APPROVED.code
+        );
+      }
+      if(existingBooking['status']==BOOKING_STATUS.COMPELETED){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_ALREADY_COMPLETED.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_ALREADY_COMPLETED.code
+        );
+      }
+      
       const updatedBooking = await BookingModel.update({ _id: bookingId }, {status:BOOKING_STATUS.APPROVED} );
       return updatedBooking;
     } catch (e) {
@@ -229,7 +253,7 @@ class BookingService {
       throw e;
     }
   }
-  async declineBooking(user,bookingId, bookingData) {
+  async declineBooking(user,bookingId) {
     try {
       const userId = _.get(user, '_id');
       await usersService.getUser(userId)  
@@ -250,8 +274,60 @@ class BookingService {
           bookingErrors.USER_NOT_OWNER.code
         );
       }
+      if(existingBooking['status']==BOOKING_STATUS.DECLINED){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_ALREADY_DECLINED.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_ALREADY_DECLINED.code
+        );
+      }
+      if(existingBooking['status']==BOOKING_STATUS.COMPELETED){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_ALREADY_COMPLETED.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_ALREADY_COMPLETED.code
+        );
+      }
       const updatedBooking = await BookingModel.update({ _id: bookingId }, {status:BOOKING_STATUS.DECLINED} );
       return updatedBooking;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async completeBooking(user,bookingId) {
+    try {
+      const userId = _.get(user, '_id');
+      await usersService.getUser(userId)  
+
+      const existingBooking = await BookingModel.findOne({ _id: bookingId });
+      
+      if (!existingBooking) {
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_NOT_FOUND.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_NOT_FOUND.code
+        );
+      }
+      if(existingBooking['providerId']!=userId ){
+        throw new ErrorResponse(
+          bookingErrors.USER_NOT_OWNER.message,
+          BAD_REQUEST,
+          bookingErrors.USER_NOT_OWNER.code
+        );
+      }
+      if(existingBooking['status']==BOOKING_STATUS.COMPELETED){
+        throw new ErrorResponse(
+          bookingErrors.BOOKING_IS_ALREADY_COMPLETED.message,
+          BAD_REQUEST,
+          bookingErrors.BOOKING_IS_ALREADY_COMPLETED.code
+        );
+      }
+      const updatedBooking = await BookingModel.update({ _id: bookingId }, {status:BOOKING_STATUS.COMPELETED} );
+      return updatedBooking;
+
+      // TODO create a report of this booking 
     } catch (e) {
       logger.error(e);
       throw e;
@@ -296,7 +372,42 @@ class BookingService {
       throw e;
     }
   }
+
   
+  async calculateTotalPrice(serviceIds, productIds) {
+  let totalPrice = 0;
+
+  if (serviceIds && serviceIds.length > 0) {
+    const services = await ServiceModel.find({ _id: { $in: serviceIds } });
+    if (services.length !== serviceIds.length) {
+      throw new ErrorResponse(
+        bookingErrors.SERVICE_NOT_FOUND.message,
+        BAD_REQUEST,
+        bookingErrors.SERVICE_NOT_FOUND.code
+      );
+    }
+    services.forEach(service => {
+      totalPrice += service.price.finalPrice; 
+    });
+  }
+
+  // Fetch products and check if all exist
+  if (productIds && productIds.length > 0) {
+    const products = await ProductModel.find({ _id: { $in: productIds } });
+    if (products.length !== productIds.length) {
+      throw new ErrorResponse(
+        bookingErrors.PRODUCT_NOT_FOUND.message,
+        BAD_REQUEST,
+        bookingErrors.PRODUCT_NOT_FOUND.code
+      );
+    }
+    products.forEach(product => {
+      totalPrice += product.price.finalPrice; 
+    });
+  }
+
+  return totalPrice;
+}
 }
 
 export default new BookingService();

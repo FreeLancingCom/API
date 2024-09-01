@@ -78,6 +78,13 @@ export default {
       })
       .required(),
   },
+  [CONTROLLERS.COMPLETE_BOOKING]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required(),
+  },
   [CONTROLLERS.DELETE_BOOKING]: {
     params: Joi.object()
       .keys({

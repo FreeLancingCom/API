@@ -71,7 +71,7 @@ export default {
   },
   [CONTROLLERS.APPROVE_BOOKING]: async (req, res, next) => {
     try {
-      const data = await bookingsService.approveBooking(req.user,req.params.id, req.body);
+      const data = await bookingsService.approveBooking(req.user,req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -80,7 +80,16 @@ export default {
   },
   [CONTROLLERS.DECLINE_BOOKING]: async (req, res, next) => {
     try {
-      const data = await bookingsService.declineBooking(req.user,req.params.id, req.body);
+      const data = await bookingsService.declineBooking(req.user,req.params.id);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.COMPLETE_BOOKING]: async (req, res, next) => {
+    try {
+      const data = await bookingsService.completeBooking(req.user,req.params.id);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

@@ -78,6 +78,13 @@ router.put(
   validateRequest(validationSchemas[CONTROLLERS.DECLINE_BOOKING]),
   Controller[CONTROLLERS.DECLINE_BOOKING]
 );
+router.put(
+  '/:id/complete',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.COMPLETE_BOOKING]),
+  validateRequest(validationSchemas[CONTROLLERS.COMPLETE_BOOKING]),
+  Controller[CONTROLLERS.COMPLETE_BOOKING]
+);
 router.delete(
   '/:id',
   Authenticate,
