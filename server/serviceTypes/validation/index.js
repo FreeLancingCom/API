@@ -1,27 +1,26 @@
 import Joi from 'joi';
-import { CONTROLLERS } from '../helper/constants.js';
-import { PRODUCT_STATUS } from '../helper/constants.js';
+import { CONTROLLERS, SERVICE_STATUS } from '../helpers/constants.js';
 
 export default {
-  [CONTROLLERS.LIST_PRODUCTS_TYPES]: {
+  [CONTROLLERS.LIST_SERVICES_TYPES]: {
     query: Joi.object()
       .keys({
         page: Joi.number().optional(),
         limit: Joi.number().optional(),
-        status: Joi.string().optional().valid(PRODUCT_STATUS),
-        minPrice: Joi.number().optional(),
-        maxPrice: Joi.number().optional()
+        status: Joi.string()
+          .optional()
+          .valid(...Object.values(SERVICE_STATUS))
       })
       .optional()
   },
-  [CONTROLLERS.GET_PRODUCT_TYPE]: {
+  [CONTROLLERS.GET_SERVICE_TYPE]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()
       })
       .required()
   },
-  [CONTROLLERS.CREATE_PRODUCT_TYPE]: {
+  [CONTROLLERS.CREATE_SERVICE_TYPE]: {
     body: Joi.object().keys({
       name: Joi.string().required(),
       nameAr: Joi.string().required(),
@@ -30,7 +29,7 @@ export default {
     })
   },
 
-  [CONTROLLERS.UPDATE_PRODUCT_TYPE]: {
+  [CONTROLLERS.UPDATE_SERVICE_TYPE]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()
@@ -43,25 +42,43 @@ export default {
       creatorId: Joi.string().forbidden()
     })
   },
-  [CONTROLLERS.DELETE_PRODUCT_TYPE]: {
+  [CONTROLLERS.DELETE_SERVICE_TYPE]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()
       })
       .required()
   },
-  [CONTROLLERS.APPROVE_PRODUCT_TYPE]: {
+  [CONTROLLERS.APPROVE_SERVICE_TYPE]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()
       })
       .required()
   },
-  [CONTROLLERS.DECLINE_PRODUCT_TYPE]: {
+  [CONTROLLERS.DECLINE_SERVICE_TYPE]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()
       })
       .required()
+  },
+  [CONTROLLERS.REQUEST_SERVICE_TYPE]: {
+    body: Joi.object().keys({
+      name: Joi.string().required(),
+      nameAr: Joi.string().required(),
+      status: Joi.string().forbidden(),
+      creatorId: Joi.string().forbidden()
+    })
+  },
+
+  [CONTROLLERS.COUNT_SERVICE_TYPES]: {
+    query: Joi.object()
+      .keys({
+        status: Joi.string()
+          .optional()
+          .valid(...Object.values(SERVICE_STATUS))
+      })
+      .optional()
   }
 };

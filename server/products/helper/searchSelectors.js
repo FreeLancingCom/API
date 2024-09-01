@@ -17,15 +17,15 @@ const removeDiacritics = (text) => {
 
 const normalizeArabic = (text) => {
   let normalizedText = text;
-  
+
   // Replace Arabic characters with their normalized form
   for (let key in arabicNormalizationMap) {
     normalizedText = normalizedText.replace(new RegExp(key, 'g'), arabicNormalizationMap[key]);
   }
-  
+
   // Remove diacritics
   normalizedText = removeDiacritics(normalizedText);
-  
+
   return normalizedText;
 };
 
@@ -69,6 +69,14 @@ export const searchSelectorsFun = (input) => {
       priceFilter.$lte = input.maxPrice;
     }
     conditions.push({ 'price.finalPrice': priceFilter });
+  }
+
+  if (input.typeId) {
+    conditions.push({ typeId: input.typeId });
+  }
+
+  if (input.maintenanceCenterId) {
+    conditions.push({ maintenanceCenterId: input.maintenanceCenterId });
   }
 
   if (conditions.length > 0) {

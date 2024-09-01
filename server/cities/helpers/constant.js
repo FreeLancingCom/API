@@ -3,7 +3,8 @@ export const CONTROLLER = {
   LIST_CITIES: 'admin_users:list',
   GET_CITY: 'admin_users:get',
   UPDATE_CITY: 'admin:update',
-  DELETE_CITY: 'admin:delete'
+  DELETE_CITY: 'admin:delete',
+  COUNT_CITIES: 'admin_users:count'
 };
 
 export const cityErrors = Object.freeze({

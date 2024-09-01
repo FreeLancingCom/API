@@ -20,7 +20,7 @@ export default {
   },
   [CONTROLLERS.CREATE_PRODUCT]: {
     body: Joi.object().keys({
-      name: Joi.string().required(),
+      typeId: Joi.string().required(),
       description: Joi.string().allow(''),
       availableQuantity: Joi.number().required(),
       price: Joi.object()
@@ -31,10 +31,6 @@ export default {
         .required(),
       currency: Joi.string().required(),
       images: Joi.array().items(Joi.string()),
-      specifications: Joi.object().pattern(Joi.string(), Joi.any()),
-      legalDoc: Joi.string(),
-      video: Joi.string().optional(),
-      active: Joi.bool().default(true),
       tags: Joi.array().items(Joi.string())
     })
   },
@@ -43,7 +39,13 @@ export default {
       .keys({
         id: Joi.string().required()
       })
-      .required()
+      .required(),
+    body: Joi.object().keys({
+      typeId: Joi.string().forbidden(),
+      name: Joi.string().forbidden(),
+      nameAr: Joi.string().forbidden(),
+      maintenanceCenterId: Joi.string().forbidden()
+    })
   },
   [CONTROLLERS.DELETE_PRODUCT]: {
     params: Joi.object()
@@ -52,13 +54,4 @@ export default {
       })
       .required()
   },
-  [CONTROLLERS.LIST_MAINTENANCE_CENTER_PRODUCTS]: {
-    query: Joi.object()
-      .keys({
-        page: Joi.number().optional(),
-        limit: Joi.number().optional(),
-        mcId: Joi.string().required()
-      })
-      .optional()
-  }
 };

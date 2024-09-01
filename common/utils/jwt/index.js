@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 export const generateToken = async (user, expiresIn) => {
     const JWT_SECRET = process.env.JWT_SECRET || 'secret';
-    const JWT_EXPIRES_IN = expiresIn || process.env.JWT_EXPIRES_IN || '24h';
+    const JWT_EXPIRES_IN = expiresIn;
     if (!user) return null;
 
     if(user.password) delete user.password;

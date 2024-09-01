@@ -3,8 +3,8 @@ const router = express.Router();
 import Authenticate from '../../../common/middleware/authentication/index.js';
 import Authorization from '../../../common/middleware/authorization/index.js';
 import { PERMISSIONS } from '../permission.js';
-import { CONTROLLERS } from '../helper/constants.js';
-import controller from '../controller/index.js';
+import { CONTROLLERS } from '../helpers/constants.js';
+import controller from '../controllers/index.js';
 import validationSchemas from '../validation/index.js';
 import validateRequest from '../../../common/middleware/requestValidation/index.js';
 
@@ -14,6 +14,14 @@ router.get(
   Authorization.Authorize(PERMISSIONS[CONTROLLERS.LIST_PRODUCTS_TYPES]),
   validateRequest(validationSchemas[CONTROLLERS.LIST_PRODUCTS_TYPES]),
   controller[CONTROLLERS.LIST_PRODUCTS_TYPES]
+);
+
+router.get(
+  '/count',
+  Authenticate,
+  Authorization.Authorize(PERMISSIONS[CONTROLLERS.COUNT_PRODUCT_TYPES]),
+  validateRequest(validationSchemas[CONTROLLERS.COUNT_PRODUCT_TYPES]),
+  controller[CONTROLLERS.COUNT_PRODUCT_TYPES]
 );
 
 router.get(
@@ -62,6 +70,14 @@ router.delete(
   Authorization.Authorize(PERMISSIONS[CONTROLLERS.DELETE_PRODUCT_TYPE]),
   validateRequest(validationSchemas[CONTROLLERS.DELETE_PRODUCT_TYPE]),
   controller[CONTROLLERS.DELETE_PRODUCT_TYPE]
+);
+
+router.post(
+  '/request',
+  Authenticate,
+  Authorization.Authorize(PERMISSIONS[CONTROLLERS.REQUEST_PRODUCT_TYPE]),
+  validateRequest(validationSchemas[CONTROLLERS.REQUEST_PRODUCT_TYPE]),
+  controller[CONTROLLERS.REQUEST_PRODUCT_TYPE]
 );
 
 export default router;

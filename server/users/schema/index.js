@@ -27,14 +27,13 @@ const userSchema = new mongoose.Schema(
     },
     countryId: {
       type: String,
-      ref: 'countries'
+      ref: 'countries',
+      required: true
     },
-    maintenanceCenters: [
-      {
-        type: String,
-        ref: 'maintenanceCenters'
-      }
-    ],
+    maintenanceCenterId: {
+      type: String,
+      ref: 'maintenanceCenters'
+    },
     favouriteAds: [
       {
         type: String,

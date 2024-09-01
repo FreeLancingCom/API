@@ -9,6 +9,8 @@ import { USER_ROLES } from '../../../common/helpers/constants.js';
 import EmailsService from '../../email/services/emailService.js';
 import { EMAIL_TEMPLATES_DETAILS } from '../../email/helpers/constant.js';
 import { generateToken } from '../../../common/utils/jwt/index.js';
+import countriesService from '../../countries/services/countriesService.js';
+import { JWT_LONG_EXPIRY, JWT_SHORT_EXPIRY } from '../../../config/env/index.js';
 
 const { BAD_REQUEST } = StatusCodes;
 class UserService {
@@ -49,7 +51,7 @@ class UserService {
   //admin login
   async adminLogin(body) {
     try {
-      const { email, password } = body;
+      const { email, password, rememberMe } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
       if (!user || !user.isActive) {
@@ -75,8 +77,10 @@ class UserService {
           usersErrors.INVALID_CREDENTIALS.code
         );
       }
-
-      const token = await generateToken(user);
+      const token = await generateToken(
+        user,
+        rememberMe ? JWT_LONG_EXPIRY : JWT_SHORT_EXPIRY
+      );
       delete user.password;
 
       return { user, token };
@@ -89,7 +93,7 @@ class UserService {
   //user login
   async login(body) {
     try {
-      const { email, password } = body;
+      const { email, password, rememberMe } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
       if (!user || !user.isActive) {
@@ -116,7 +120,10 @@ class UserService {
         );
       }
 
-      const token = await generateToken(user);
+      const token = await generateToken(
+        user,
+        rememberMe ? JWT_LONG_EXPIRY : JWT_SHORT_EXPIRY
+      );
       delete user.password;
 
       return { user, token };
@@ -152,6 +159,14 @@ class UserService {
       const salt = await bcrypt.genSalt(10);
       userData.password = await bcrypt.hash(userData.password, salt);
 
+      const countryExists = await countriesService.getCountry(userData.countryId)
+      if(!countryExists)
+        throw new ErrorResponse(
+          usersErrors.COUNTRY_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.COUNTRY_NOT_FOUND.code
+        );
+
       userData.isVerified = false;
       if (userData.role == USER_ROLES.ADMIN) {
         userData.isVerified = true;
@@ -159,7 +174,7 @@ class UserService {
 
       const _user = await UserModel.create({ ...userData, role });
       const { password, ...user } = _user.toObject();
-      const token = await generateToken(user);
+      const token = await generateToken(user, JWT_SHORT_EXPIRY);
       if (user.role == USER_ROLES.CLIENT) {
         await this.generateVerificationCode(user);
       }
@@ -405,7 +420,7 @@ class UserService {
         }
       };
       const updatedUser = await UserModel.update({ _id: user._id }, updates);
-      const token = await generateToken(updatedUser);
+      const token = await generateToken(updatedUser, JWT_SHORT_EXPIRY);
 
       return token;
     } catch (e) {
@@ -429,6 +444,16 @@ class UserService {
     if (userData['password']) {
       const salt = await bcrypt.genSalt(10);
       userData.password = await bcrypt.hash(userData.password, salt);
+    }
+
+    if (userData['countryId']) {
+      const countryExists = await countriesService.getCountry(userData.countryId)
+      if(!countryExists)
+        throw new ErrorResponse(
+          usersErrors.COUNTRY_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.COUNTRY_NOT_FOUND.code
+        );
     }
   }
 }

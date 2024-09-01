@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import nanoid from '../../../common/utils/nanoID/index.js';
-import { PRODUCT_STATUS } from '../helper/constants.js';
+import { SERVICE_STATUS } from '../helpers/constants.js';
 
-const prodTypeSchema = new mongoose.Schema(
+const serviceTypeSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
@@ -19,7 +19,7 @@ const prodTypeSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      default: PRODUCT_STATUS.APPROVED
+      default: SERVICE_STATUS.APPROVED
     },
     creatorId: {
       type: String,
@@ -30,6 +30,6 @@ const prodTypeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const ProdTypeSchema = mongoose.model('productType', prodTypeSchema);
+const ServiceType = mongoose.model('servicetypes', serviceTypeSchema);
 
-export default ProdTypeSchema;
+export default ServiceType;

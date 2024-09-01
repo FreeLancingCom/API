@@ -1,9 +1,9 @@
-import ProdTypeSchema from '../schema/index.js';
+import ServiceTypeSchema from '../schema/index.js';
 
-class ProdTypeModel {
+class ServiceType {
   async find(selectors = {}, options = {}) {
     const { limit, skip, sort, projection } = options;
-    const result = await ProdTypeSchema.find(selectors, projection || {})
+    const result = await ServiceTypeSchema.find(selectors, projection || {})
       .sort(sort || '-updatedAt')
       .limit(limit)
       .skip(skip || 0)
@@ -13,22 +13,22 @@ class ProdTypeModel {
   }
 
   async findOne(selector = {}, projection = {}) {
-    const result = await ProdTypeSchema.findOne(selector).select(projection).lean();
+    const result = await ServiceTypeSchema.findOne(selector).select(projection).lean();
     return result;
   }
 
   async count(selectors = {}) {
-    const result = await ProdTypeSchema.countDocuments(selectors).maxTimeMS(60000);
+    const result = await ServiceTypeSchema.countDocuments(selectors).maxTimeMS(60000);
     return result;
   }
 
   async create(payload) {
-    const result = await ProdTypeSchema.create(payload);
+    const result = await ServiceTypeSchema.create(payload);
     return result;
   }
 
   async update(selector = {}, newParams, options = {}) {
-    const result = await ProdTypeSchema.findOneAndUpdate(selector, newParams, {
+    const result = await ServiceTypeSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,
       ...options
@@ -37,16 +37,16 @@ class ProdTypeModel {
   }
 
   async updateMany(selector, newParams, options = {}) {
-    const result = await ProdTypeSchema.updateMany(selector, newParams, options);
+    const result = await ServiceTypeSchema.updateMany(selector, newParams, options);
     return result;
   }
   async delete(selector, options = {}) {
-    const result = await ProdTypeSchema.deleteOne(selector, options);
+    const result = await ServiceTypeSchema.deleteOne(selector, options);
     return result;
   }
 
   async aggregate(pipeline, options = {}) {
-    const result = await ProdTypeSchema.aggregate(pipeline, { maxTimeMS: 60000 })
+    const result = await ServiceTypeSchema.aggregate(pipeline, { maxTimeMS: 60000 })
       .sort(options.sort || 'createdAt')
       .skip(options.skip || 0)
       .limit(options.limit || 200);
@@ -54,4 +54,4 @@ class ProdTypeModel {
   }
 }
 
-export default new ProdTypeModel();
+export default new ServiceType();

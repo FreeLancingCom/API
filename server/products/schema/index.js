@@ -30,7 +30,6 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true
     },
     availableQuantity: {
       type: Number,
@@ -45,30 +44,16 @@ const productSchema = new mongoose.Schema(
       required: true
     },
     images: [{ type: String }],
-    specifications: {
-      type: Map,
-      of: String
-    },
-    legalDoc: {
-      type: String
-    },
-    video: {
-      type: String,
-      required: false
-    },
-    addedBy: {
-      type: String,
-      required: true,
-      ref: 'users'
-    },
-    active: {
-      type: Boolean,
-      default: true
-    },
     tags: [{ type: String }],
     maintenanceCenterId: {
       type: String,
-      ref: 'MaintenanceCenter'
+      ref: 'MaintenanceCenter',
+      required: true
+    },
+    typeId: {
+      type: String,
+      ref: 'producttypes',
+      required: true
     }
   },
   { timestamps: true }
