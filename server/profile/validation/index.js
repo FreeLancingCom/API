@@ -11,7 +11,7 @@ export default {
       phoneNumber: Joi.string().optional(),
       password: Joi.string().optional(),
       email: Joi.string().optional(),
-      maintenanceCenters: Joi.forbidden(),
+      maintenanceCenterId: Joi.forbidden(),
     })
   }
   
