@@ -4,8 +4,7 @@ export const CONTROLLERS = {
   CREATE_COUPON: 'admin_coupons:create',
   UPDATE_COUPON: 'admin_coupons:update',
   DELETE_COUPON: 'admin_coupons:delete',
-  COUNT_COUPONS: 'admin_coupons:count',
-  APPLY_COUPON: 'admin_coupons:apply'
+  COUNT_COUPONS: 'admin_coupons:count'
 };
 
 export const couponError = Object.freeze({

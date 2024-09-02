@@ -28,7 +28,8 @@ export default {
 
   [CONTROLLERS.CREATE_COUPON]: async (req, res, next) => {
     try {
-      const data = await couponsService.createCoupon(req.body);
+      const user = _.get(req, 'user', null);
+      const data = await couponsService.createCoupon(req.body, user);
       return res.status(StatusCodes.CREATED).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -38,7 +39,8 @@ export default {
 
   [CONTROLLERS.UPDATE_COUPON]: async (req, res, next) => {
     try {
-      const data = await couponsService.updateCoupon(req.params.id, req.body);
+      const user = _.get(req, 'user', null);
+      const data = await couponsService.updateCoupon(req.params.id, req.bod, user);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -48,7 +50,8 @@ export default {
 
   [CONTROLLERS.DELETE_COUPON]: async (req, res, next) => {
     try {
-      const data = await couponsService.deleteCoupon(req.params.id);
+      const user = _.get(req, 'user', null);
+      const data = await couponsService.deleteCoupon(req.params.id, user);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -58,17 +61,8 @@ export default {
 
   [CONTROLLERS.COUNT_COUPONS]: async (req, res, next) => {
     try {
-      const data = await couponsService.countCoupons(req.query);
-      return res.status(StatusCodes.OK).json({ success: true, data });
-    } catch (error) {
-      logger.error(error);
-      next(error);
-    }
-  },
-  [CONTROLLERS.APPLY_COUPON]: async (req, res, next) => {
-    try {
-      const code = _.get(req.body, 'code', null);
-      const data = await couponsService.applyCoupon(code);
+      const user = _.get(req, 'user', null);
+      const data = await couponsService.countCoupons(req.query, user);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

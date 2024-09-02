@@ -40,13 +40,6 @@ router.post(
   Controller[CONTROLLERS.CREATE_COUPON]
 );
 
-router.post(
-  '/apply',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.APPLY_COUPON]),
-  validateRequest(validationSchemas[CONTROLLERS.APPLY_COUPON]),
-  Controller[CONTROLLERS.APPLY_COUPON]
-);
 router.put(
   '/:id',
   Authenticate,

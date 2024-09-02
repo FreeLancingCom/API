@@ -22,7 +22,7 @@ export default {
   [CONTROLLERS.CREATE_COUPON]: {
     body: Joi.object()
       .keys({
-        maintenanceCenterId: Joi.string().required(),
+        maintenanceCenterId: Joi.forbidden(),
         discount: Joi.object()
           .keys({
             percent: Joi.number().min(0).max(100).required(),
@@ -42,7 +42,7 @@ export default {
       .required(),
     body: Joi.object()
       .keys({
-        maintenanceCenterId: Joi.string().optional(),
+        maintenanceCenterId: Joi.forbidden(),
         discount: Joi.object()
           .keys({
             percent: Joi.number().min(0).max(100).optional(),
@@ -55,6 +55,11 @@ export default {
   },
 
   [CONTROLLERS.DELETE_COUPON]: {
+    body: Joi.object()
+      .keys({
+        maintenanceCenterId: Joi.forbidden()
+      })
+      .required(),
     params: Joi.object()
       .keys({
         id: Joi.string().required()

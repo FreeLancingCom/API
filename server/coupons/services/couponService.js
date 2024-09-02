@@ -20,32 +20,21 @@ class CouponsService {
 
     try {
       const options = getPaginationAndSortingOptions(query);
-      let filters = {};
-      let coupons = [];
-      let total = null;
 
-      if (role === USER_ROLES.ADMIN) {
-        filters = _query;
-        total = await this.countCoupons(filters);
-      } else if (role === USER_ROLES.PROVIDER) {
-        filters = { ..._query, maintenanceCenterId: userId };
-        total = await this.countCoupons(filters);
-      } else {
-        filters = { ..._query, maintenanceCenterId: userId };
+      if (role === USER_ROLES.PROVIDER) {
+        _query.maintenanceCenterId = userId;
       }
 
-      coupons = await couponsModel.find(filters, options);
+      const coupons = await couponsModel.find(_query, options);
+      const count = await couponsModel.count(_query);
 
-      if (total !== null) {
-        return { coupons, total };
-      }
-
-      return { coupons };
+      return { coupons, count };
     } catch (e) {
       logger.error(e);
       throw e;
     }
   }
+
   //?here I am doing filter object which using the logic I put is
   //1) if user is admin then he can see all coupons
   //2) if user is provider then he can see only his coupons
@@ -69,10 +58,10 @@ class CouponsService {
     }
   }
 
-  async createCoupon(body) {
+  async createCoupon(body, user) {
     try {
       const isValidMaintenanceCenter = await maintenanceCenterModel.findOne({
-        _id: body.maintenanceCenterId
+        _id: user.maintenanceCenterId
       });
 
       if (!isValidMaintenanceCenter) {
@@ -100,9 +89,12 @@ class CouponsService {
     }
   }
 
-  async updateCoupon(couponId, body) {
+  async updateCoupon(couponId, body, user) {
     try {
-      const isExistCoupon = await couponsModel.findOne({ _id: couponId });
+      const isExistCoupon = await couponsModel.findOne({
+        _id: couponId,
+        maintenanceCenterId: user.id
+      });
 
       if (!isExistCoupon) {
         throw new ErrorResponse(
@@ -132,9 +124,12 @@ class CouponsService {
     }
   }
 
-  async deleteCoupon(couponId) {
+  async deleteCoupon(couponId, user) {
     try {
-      const isExistCoupon = await couponsModel.findOne({ _id: couponId });
+      const isExistCoupon = await couponsModel.findOne({
+        _id: couponId,
+        maintenanceCenterId: user.id
+      });
 
       if (!isExistCoupon) {
         throw new ErrorResponse(
@@ -151,8 +146,11 @@ class CouponsService {
     }
   }
 
-  async countCoupons(query) {
+  async countCoupons(query, user) {
     try {
+      if (user.role === USER_ROLES.PROVIDER) {
+        query.maintenanceCenterId = user.id;
+      }
       const count = await couponsModel.count(query);
       return count;
     } catch (e) {
@@ -161,7 +159,7 @@ class CouponsService {
     }
   }
 
-  async applyCoupon(code) {
+  async validateCoupon(code) {
     try {
       const coupon = await couponsModel.findOne({ _id: code });
       if (!coupon) {
