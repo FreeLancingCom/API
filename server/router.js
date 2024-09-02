@@ -13,6 +13,7 @@ import productTypeRouter from './productTypes/routers/index.js';
 import serviceTypeRouter from './serviceTypes/routers/index.js';
 import services from './services/routers/index.js';
 import reviews from './reviews/routers/index.js';
+import coupons from './coupons/routers/index.js';
 
 const router = express.Router();
 
@@ -29,6 +30,7 @@ router.use('/vehicles', vehicleRouter);
 router.use('/cities', cityRouter);
 router.use('/services', services);
 router.use('/reviews', reviews);
+router.use('/coupons', coupons);
 
 router.use('/health', (req, res) => {
   const data = {
