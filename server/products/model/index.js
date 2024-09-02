@@ -4,7 +4,6 @@ class Product {
   async find(selectors = {}, options = {}, projection = {}) {
     const result = await ProductSchema.find(selectors, projection, options)
       .lean()
-      .populate('addedBy', 'fullName email')
       .populate('maintenanceCenterId', 'name nameAr')
       .maxTimeMS(60000);
     return result;
@@ -12,10 +11,6 @@ class Product {
 
   async findOne(selector = {}, projection = {}) {
     const result = await ProductSchema.findOne(selector).select(projection).lean();
-    return result;
-  }
-  async findOneAndIncludePopulate(selector = {}, projection = {}) {
-    const result = await ProductSchema.findOne(selector).select(projection);
     return result;
   }
 

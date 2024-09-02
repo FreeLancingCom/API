@@ -12,8 +12,8 @@ import maintenanceCenterRouter from './maintenanceCenter/routers/index.js';
 import productTypeRouter from './productTypes/routers/index.js';
 import serviceTypeRouter from './serviceTypes/routers/index.js';
 import services from './services/routers/index.js';
+import userProfile from './profile/routers/index.js';
 import reviews from './reviews/routers/index.js';
-import serviceTemplates from './serviceTemplates/routers/index.js';
 import bookings from './bookings/routers/index.js';
 
 const router = express.Router();
@@ -23,15 +23,14 @@ router.use('/email', emailRouter);
 router.use('/addresses', addressRouter);
 router.use('/countries', countryRouter);
 router.use('/notifications', notificationRouter);
-router.use('/maintenanceCenter', maintenanceCenterRouter);
-router.use('/serviceTemplates', serviceTemplates);
+router.use('/maintenanceCenters', maintenanceCenterRouter);
 router.use('/products', productsRouter);
 router.use('/productTypes', productTypeRouter);
 router.use('/serviceTypes', serviceTypeRouter);
 router.use('/vehicles', vehicleRouter);
 router.use('/cities', cityRouter);
-router.use('/maintenanceCenter', maintenanceCenterRouter);
 router.use('/services', services);
+router.use('/profile', userProfile);
 router.use('/reviews', reviews);
 router.use('/bookings', bookings);
 

@@ -8,12 +8,10 @@ const servicesSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    unique: true,
     required: true
   },
   nameAr: {
     type: String,
-    unique: true,
     required: true
   },
   maintenanceCenterId: {
@@ -25,7 +23,8 @@ const servicesSchema = new mongoose.Schema({
   model: { type: String },
   typeId: {
     type: String,
-    ref: 'servicetypes'
+    ref: 'servicetypes',
+    required: true
   }
 });
 

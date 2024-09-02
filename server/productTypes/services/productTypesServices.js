@@ -31,8 +31,16 @@ class ProductTypeService {
       }
 
       const productTypes = await ProductTypeModel.find(selectors, options);
+      const count = await ProductTypeModel.count(selectors);
 
-      return { productTypes, options };
+      return {
+        productTypes,
+        options: {
+          ...options,
+          count
+        }
+      }
+
     } catch (e) {
       logger.error(e);
       throw e;

@@ -26,6 +26,13 @@ router.get(
 );
 
 router.get(
+  '/count',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.COUNT_SERVICES]),
+  Controller[CONTROLLERS.COUNT_SERVICES]
+);
+
+router.get(
   '/:serviceId',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.GET_SERVICE]),
@@ -40,6 +47,8 @@ router.get(
   validateRequest(validationSchemas[CONTROLLERS.GET_SERVICE_BY_CLIENT]),
   Controller[CONTROLLERS.GET_SERVICE_BY_CLIENT]
 );
+
+
 
 router.post(
   '/',
