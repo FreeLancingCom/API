@@ -14,6 +14,7 @@ import serviceTypeRouter from './serviceTypes/routers/index.js';
 import services from './services/routers/index.js';
 import userProfile from './profile/routers/index.js';
 import reviews from './reviews/routers/index.js';
+import coupons from './coupons/routers/index.js';
 import bookings from './bookings/routers/index.js';
 
 const router = express.Router();
@@ -32,6 +33,7 @@ router.use('/cities', cityRouter);
 router.use('/services', services);
 router.use('/profile', userProfile);
 router.use('/reviews', reviews);
+router.use('/coupons', coupons);
 router.use('/bookings', bookings);
 
 router.use('/health', (req, res) => {
