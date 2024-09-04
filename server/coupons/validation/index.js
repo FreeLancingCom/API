@@ -72,12 +72,5 @@ export default {
         maintenanceCenterId: Joi.string().optional()
       })
       .optional()
-  },
-  [CONTROLLERS.APPLY_COUPON]: {
-    body: Joi.object()
-      .keys({
-        code: Joi.string().required()
-      })
-      .required()
   }
 };

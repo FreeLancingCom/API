@@ -22,7 +22,7 @@ class CouponsService {
       const options = getPaginationAndSortingOptions(query);
 
       if (role === USER_ROLES.PROVIDER) {
-        _query.maintenanceCenterId = userId;
+        _query.maintenanceCenterId = user.maintenanceCenterId;
       }
 
       const coupons = await couponsModel.find(_query, options);
@@ -34,12 +34,6 @@ class CouponsService {
       throw e;
     }
   }
-
-  //?here I am doing filter object which using the logic I put is
-  //1) if user is admin then he can see all coupons
-  //2) if user is provider then he can see only his coupons
-  //3) if the user is admin can see the count of all coupons
-  //4) if the user is provider can see the count of his coupons
 
   async getCoupon(couponId) {
     try {
@@ -149,7 +143,7 @@ class CouponsService {
   async countCoupons(query, user) {
     try {
       if (user.role === USER_ROLES.PROVIDER) {
-        query.maintenanceCenterId = user.id;
+        query.maintenanceCenterId = user.maintenanceCenterId;
       }
       const count = await couponsModel.count(query);
       return count;
