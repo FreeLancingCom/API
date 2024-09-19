@@ -112,12 +112,5 @@ export default {
       })
       .required(),
   },
-  [CONTROLLERS.DELETE_BOOKING]: {
-    params: Joi.object()
-      .keys({
-        id: Joi.string().required()
-      })
-      .required()
-  },
  
 };
