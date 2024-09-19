@@ -61,7 +61,7 @@ export default {
   [CONTROLLERS.APPROVE_PRODUCT_TYPE]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
-      const data = await productTypesServices.approveProductType(req.params.id, userId);
+      const data = await productTypesServices.approveProductType(userId, req.params.id);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
@@ -71,7 +71,8 @@ export default {
 
   [CONTROLLERS.DECLINE_PRODUCT_TYPE]: async (req, res, next) => {
     try {
-      const data = await productTypesServices.declineProductType(req.params.id);
+      const userId = _.get(req, 'user._id', null);
+      const data = await productTypesServices.declineProductType(userId, req.params.id);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
