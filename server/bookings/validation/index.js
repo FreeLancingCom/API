@@ -1,6 +1,5 @@
 import Joi from 'joi';
-import { CONTROLLERS,ENGINE_TYPE,GEAR_SHIFT_TYPE } from '../helpers/constants.js';
-import { status } from 'express/lib/response.js';
+import { CONTROLLERS } from '../helpers/constants.js';
 
 export default {
   [CONTROLLERS.CLIENT_LIST_BOOKINGS]: {
