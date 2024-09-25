@@ -16,6 +16,7 @@ import userProfile from './profile/routers/index.js';
 import reviews from './reviews/routers/index.js';
 import coupons from './coupons/routers/index.js';
 import bookings from './bookings/routers/index.js';
+import roadServicesRouter from './roadServices/routers/index.js';
 
 const router = express.Router();
 
@@ -35,6 +36,7 @@ router.use('/profile', userProfile);
 router.use('/reviews', reviews);
 router.use('/coupons', coupons);
 router.use('/bookings', bookings);
+router.use('/road-services' , roadServicesRouter);
 
 router.use('/health', (req, res) => {
   const data = {
