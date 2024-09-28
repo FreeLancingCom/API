@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { errorCodes } from '../../helpers/constants.js';
-import { ALLOWED_ENDPOINTS_FOR_UNVERIFIED_USERS } from '../../../server/users/helpers/constants.js';
 
 // Authorization middleware
 export default class Authorization {
@@ -30,15 +29,7 @@ export default class Authorization {
         });
 
 
-      if (
-        !user.isVerified &&
-        !ALLOWED_ENDPOINTS_FOR_UNVERIFIED_USERS.includes(endpoint)
-      )
-        return res.status(StatusCodes.FORBIDDEN).json({
-          message: errorCodes.VERIFY_YOUR_EMAIL.message,
-          statusCode: StatusCodes.FORBIDDEN,
-          errorCode: errorCodes.VERIFY_YOUR_EMAIL.code
-        });
+    
 
       next();
     };
