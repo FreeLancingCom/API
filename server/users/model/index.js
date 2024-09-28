@@ -1,5 +1,5 @@
 import UserSchema from '../schema/index.js';
-import { passwordProjection , projectionForUnNeededFields} from '../helpers/constant.js';
+import { passwordProjection } from '../helpers/constant.js';
 class User {
   async find(selectors = {}, options = {}) {
     let { limit, skip, sort, projection } = options;
@@ -37,9 +37,7 @@ class User {
   async findOne(selector = {}, projection = {}, populationList = []) {
 
     projection = {
-      ...passwordProjection,
-      ...projection,
-      ...projectionForUnNeededFields,
+      ...passwordProjection,    
     }
     const result = await UserSchema.findOne(selector).select(projection).lean().populate(populationList);
 
@@ -51,7 +49,7 @@ class User {
     projection = {
       ...passwordProjection,
       ...projection,
-      ...projectionForUnNeededFields,
+    
     }
     const result = await UserSchema.findOne(selector).select(projection).lean().populate(populationList);
 
