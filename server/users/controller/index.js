@@ -80,6 +80,72 @@ export default {
       }
     },
 
+    [CONTROLLERS.VERIFY_EMAIL]: async (req, res, next) => {
+
+      try {
+        const data = await usersService.verifyAccount(req.query.token);
+        res.status(StatusCodes.OK).json({ success: true, data });
+      } catch (error) {
+        logger.error(error);
+        next(error);
+      }
+
+
+
+
+      
+    }
+
+,
+    [CONTROLLERS.RESET_PASSWORD_CODE_TOKEN] : async(req,res,next)=>{
+
+      try {
+        const data = await usersService.generateForgetMyPasswordTokenLink(req.body);
+        res.status(StatusCodes.OK).json({ success: true, data });
+      } catch (error) {
+        logger.error(error);
+        next(error);
+      }
+
+    },
+
+
+    [CONTROLLERS.VERIFY_TOKEN_AND_RESET_PASSWORD] : async(req,res,next)=>{
+      try {
+        const data = await usersService.verifyTokenAndResetPassword(req.query.token,req.body.newPassword);
+        res.status(StatusCodes.OK).json({ success: true, data });
+      } catch (error) {
+        logger.error(error);
+        next(error);
+      }
+
+ 
+
+
+
+
+
+
+
+
+
+
+   
+
+    
+
+
+ 
+  }
+
+
+
+
+
+   
+
+   
+    
       
       
 

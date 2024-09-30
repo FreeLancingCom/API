@@ -4,12 +4,13 @@ import UserModel from '../model/index.js';
 import { usersErrors } from '../helpers/constant.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
-import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
-import { USER_ROLES } from '../../../common/helpers/constants.js';
 import { generateToken , generateRefreshToken } from '../../../common/utils/jwt/index.js';
 import { JWT_LONG_EXPIRY, JWT_SHORT_EXPIRY , JWT_REFRESH_SECRET } from '../../../config/env/index.js';
+import { EMAIL_TEMPLATES_DETAILS } from '../../email/helper/constant.js';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
+
+import EmailService from "../../email/service/emailService.js"
 
 const { BAD_REQUEST } = StatusCodes;
 class UserService {
@@ -59,6 +60,32 @@ class UserService {
     }
   }
 
+  // Request reset password service
+  async sendResetPasswordEmail(email) {
+    try {
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        throw new ErrorResponse(usersErrors.USER_NOT_FOUND.message, BAD_REQUEST, usersErrors.USER_NOT_FOUND.code);
+      }
+
+      const resetPasswordToken = jwt.sign({ email: user.email }, JWT_REFRESH_SECRET, { expiresIn: '10h' });
+      user['resetPasswordToken'] = resetPasswordToken;
+
+
+      await EmailService.sendEmail([user.email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
+        username: user.name,
+        link: `http://localhost:3005/api/v1/users/reset-password?token=${resetPasswordToken}`,
+      });
+
+      await UserModel.update({ email }, { resetPasswordToken });
+
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+
   async createUser(userData) {
     try {
       const existingUser = await UserModel.findOne({ email: userData.email });
@@ -88,6 +115,23 @@ class UserService {
       userData.isVerified = false;
 
 
+     
+
+      const VerifyAccountToken = jwt.sign({ email: userData.email }, JWT_REFRESH_SECRET, { expiresIn: '10h' });
+
+      userData['verifyPasswordToken'] = VerifyAccountToken;
+
+    
+
+
+      await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
+        username: userData.name,
+        link: `http://localhost:3005/api/v1/users/verify-account?token=${VerifyAccountToken}`,
+      });
+
+     
+
+
     
    
 
@@ -102,6 +146,41 @@ class UserService {
     }
   }
 
+
+
+
+
+// async sendRestPasswordEmail(email) {
+
+//   try {
+//     const user = await UserModel.findOne({email});
+//     if (!user) {
+//       throw new ErrorResponse(
+//         usersErrors.USER_NOT_FOUND.message,
+//         BAD_REQUEST,
+//         usersErrors.USER_NOT_FOUND.code
+//       );
+//     }
+
+//     const resetPasswordToken = jwt.sign({ pass : user.password }, JWT_REFRESH_SECRET, { expiresIn: '10h' });
+
+
+//     user['resetPasswordToken'] = resetPasswordToken;
+
+//     await EmailService.sendEmail(
+//       [user.email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD,
+//       { username: user.name,
+//         link: `http://localhost:3005/api/v1/users/reset-password?token=${resetPasswordToken}` });
+
+    
+
+//   } catch (e) {
+//     logger.error(e);
+//     throw e;
+//   }
+
+
+//   }
 
 
   async refreshToken(refreshToken) {
@@ -143,10 +222,134 @@ class UserService {
 
 
 
+  async verifyAccount(token) {
+    try {
+      const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
+      const email = _.get(decoded, 'email', null);
+      if (!email) {
+        throw new ErrorResponse(
+          'Invalid refresh token',
+          StatusCodes.FORBIDDEN,
+          'INVALID_REFRESH_TOKEN'
+        );
+      }
+
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        throw new ErrorResponse(
+          'User not found',
+          StatusCodes.FORBIDDEN,
+          'USER_NOT_FOUND'
+        );
+      }
+
+
+
+      const updatedUser =  UserModel.update({ email }, {isVerified : true});
+
+      user.resetPasswordToken = null;
+
+      return updatedUser;
+
+
+
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+
+
+
+
+
+  }
+
 
 
   
 
+
+  async generateForgetMyPasswordTokenLink(body) {
+    const { email } = body;
+  
+    if (!email) {
+      throw new ErrorResponse('Email not found', StatusCodes.FORBIDDEN, 'EMAIL_NOT_FOUND');
+    }
+  
+    const user = await UserModel.findOne({ email });
+  
+    if (!user) {
+      throw new ErrorResponse('User not found', StatusCodes.FORBIDDEN, 'USER_NOT_FOUND');
+    }
+  
+    const resetPasswordToken = jwt.sign({ email }, JWT_REFRESH_SECRET, { expiresIn: '10h' });
+    
+    // Update user's resetPasswordToken in the database
+    await UserModel.update({ email }, { resetPasswordToken });
+  
+    // Send password reset email
+    await EmailService.sendEmail([email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
+      username: user.name,
+      link: `http://localhost:3005/api/v1/users/reset-password?token=${resetPasswordToken}`,
+    });
+  
+    return { message: 'Reset password link sent successfully' };
+  }
+  
+
+  
+
+  async verifyTokenAndResetPassword(token, newPassword) {
+    try {
+      const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
+      const email = _.get(decoded, 'email', null);
+  
+      if (!email) {
+        throw new ErrorResponse('Invalid reset token', StatusCodes.FORBIDDEN);
+      }
+  
+      const user = await UserModel.findOne({ email });
+      if (!user || user.resetPasswordToken !== token) {
+        throw new ErrorResponse('Invalid or expired reset token', StatusCodes.FORBIDDEN);
+      }
+  
+      // Hash the new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      // Update the user's password in the database and remove the reset token
+      await UserModel.update({ email }, { password: hashedPassword, resetPasswordToken: null });
+  
+      return { message: 'Password updated successfully' };
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
+  
+
+
+  
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
 
 export default new UserService();

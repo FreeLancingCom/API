@@ -10,9 +10,18 @@ export const CONTROLLERS  = {
     GET_USER: 'getUser',
     UPDATE_USER: 'updateUser',
     DELETE_USER: 'deleteUser',
+    VERIFY_EMAIL : 'verifyEmail',
+    RESET_PASSWORD_CODE_TOKEN: 'RESET_PASSWORD_CODE_TOKEN',
+  VERIFY_TOKEN: 'VERIFY_TOKEN',
+  VERIFY_TOKEN_AND_RESET_PASSWORD: 'VERIFY_TOKEN_AND_RESET_PASSWORD',
 
     // TOKEN REFRESH
-    REFRESH_TOKEN: 'refresh_token'
+    REFRESH_TOKEN: 'refresh_token',
+
+    // AUTH Using email 
+  
+
+    GENERATE_VERIFY_ACCOUNT_LINK : "generateVieriifiyAccountLink"
   
 
 }
