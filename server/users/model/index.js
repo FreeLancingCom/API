@@ -7,7 +7,7 @@ class User {
     projection = {
       ...passwordProjection,
       ...projection
-    }
+    };
     const result = await UserSchema.find(selectors)
       .select(projection)
       .sort(sort || '-updatedAt')
@@ -22,8 +22,8 @@ class User {
     let { limit, skip, sort } = options;
 
     const projection = {
-      _id: 1,
-    }
+      _id: 1
+    };
     const result = await UserSchema.find(selectors)
       .select(projection)
       .sort(sort || '-updatedAt')
@@ -35,32 +35,38 @@ class User {
   }
 
   async findOne(selector = {}, projection = {}, populationList = []) {
-
     projection = {
-      ...passwordProjection,    
-    }
-    const result = await UserSchema.findOne(selector).select(projection).lean().populate(populationList);
+      ...passwordProjection
+    };
+    const result = await UserSchema.findOne(selector)
+      .select(projection)
+      .lean()
+      .populate(populationList);
 
     return result;
   }
 
   async findOneAndIncludeOTP(selector = {}, projection = {}, populationList = []) {
-
     projection = {
       ...passwordProjection,
-      ...projection,
-    
-    }
-    const result = await UserSchema.findOne(selector).select(projection).lean().populate(populationList);
+      ...projection
+    };
+    const result = await UserSchema.findOne(selector)
+      .select(projection)
+      .lean()
+      .populate(populationList);
 
     return result;
   }
 
   async findOneAndIncludePassword(selector = {}, projection = {}, populationList = []) {
     projection = {
-      ...projection,
-    }
-    const result = await UserSchema.findOne(selector).select(projection).lean().populate(populationList);
+      ...projection
+    };
+    const result = await UserSchema.findOne(selector)
+      .select(projection)
+      .lean()
+      .populate(populationList);
     return result;
   }
 
@@ -70,7 +76,6 @@ class User {
   }
 
   async create(payload) {
-
     const result = await UserSchema.create(payload);
     return result;
   }
