@@ -2,12 +2,8 @@ import { USER_ROLES } from '../../common/helpers/constants.js';
 import { CONTROLLERS } from './helpers/constant.js';
 
 export default {
-    [CONTROLLERS.SIGNUP]: {
-        permissions: [USER_ROLES.OWNER , USER_ROLES.CLIENT],
-        endpoint: '/signup'
-    },
-    [CONTROLLERS.LOGIN]: {
-        permissions: [USER_ROLES.OWNER, USER_ROLES.CLIENT],
-        endpoint: '/login'
-    }
+  [CONTROLLERS.DELETE_USER]: [USER_ROLES.OWNER],
+  [CONTROLLERS.UPDATE_USER]: [USER_ROLES.OWNER],
+  [CONTROLLERS.GET_USER]: [USER_ROLES.OWNER],
+  [CONTROLLERS.LIST_USERS]: [USER_ROLES.OWNER]
 };
