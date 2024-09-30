@@ -7,12 +7,14 @@ const router = express.Router();
 
 
 import userRoutes from './users/routes/index.js';
+import addressesRoutes from './addresses/router/index.js';
 
 
 
 
 
 router.use('/users', userRoutes);
+router.use('/addresses', addressesRoutes);
 
 router.use('/health', (req, res) => {
   const data = {
