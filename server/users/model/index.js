@@ -36,7 +36,8 @@ class User {
 
   async findOne(selector = {}, projection = {}, populationList = []) {
     projection = {
-      ...passwordProjection
+      ...passwordProjection,
+     ...projection
     };
     const result = await UserSchema.findOne(selector)
       .select(projection)
@@ -81,6 +82,9 @@ class User {
   }
 
   async update(selector, newParams, options = {}) {
+    passwordProjection['resetPasswordToken'] = 0;
+    passwordProjection['verifyPasswordToken'] = 0;
+
     const result = await UserSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,
