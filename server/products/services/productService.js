@@ -11,22 +11,30 @@ import Fuse from 'fuse.js';
 const { BAD_REQUEST } = StatusCodes;
 
 class ProductService {
-   
-async listProducts(query) {
+
+  async listProducts(query) {
     try {
-      const { limit, page, sort, sortBy, search, ..._query } = query;
-      const options = getPaginationAndSortingOptions(query);
+      const { limit, page, sort, sortBy, search, minPrice, maxPrice, ..._query } = query;
+        if (minPrice || maxPrice) {
+        _query['price.finalPrice'] = {};
+        if (minPrice) {
+          _query['price.finalPrice'].$gte = minPrice; 
+        }
+        if (maxPrice) {
+          _query['price.finalPrice'].$lte = maxPrice; 
+        }
+      }
   
-      let products = await ProductModel.find(_query, options , {});
-      const count = await ProductModel.countDocuments(_query);
+      const options = getPaginationAndSortingOptions(query);
+      let products = await ProductModel.find(_query, options , {}); 
+      const count = await ProductModel.countDocuments(_query); 
   
       if (search) {
         const fuse = new Fuse(products, {
-          keys: ['name', 'description' , 'tags'],
-          threshold: 0.3, 
+          keys: ['name', 'description', 'tags'],
+          threshold: 0.3,
         });
-  
-        products = fuse.search(search).map(result => result.item); 
+          products = fuse.search(search).map(result => result.item);
       }
   
       return {
@@ -41,6 +49,7 @@ async listProducts(query) {
       throw e;
     }
   }
+  
   
       
 
