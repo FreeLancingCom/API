@@ -8,15 +8,23 @@ export default {
   // AUTH FOR CLIENT
   [CONTROLLERS.LOGIN]: async (req, res, next) => {
     try {
+      const {isPersistent} = req.body;
       const { user, accessToken, refreshToken } = await usersService.login(req.body);
 
-      console.log(refreshToken);
-
-      res.cookie('refreshToken', refreshToken, {
+      
+      const cookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
+
+      
+      };
+      
+
+      isPersistent ? cookieOptions['maxAge'] = 7 * 24 * 60 * 60 * 1000 : "";
+
+    
+
+      res.cookie('refreshToken', refreshToken , cookieOptions);
 
       res.status(StatusCodes.OK).json({
         success: true,
@@ -41,7 +49,6 @@ export default {
 
   [CONTROLLERS.REFRESH_TOKEN]: async (req, res, next) => {
     try {
-      console.log(req.cookies);
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) {
         throw new ErrorResponse(
@@ -58,6 +65,7 @@ export default {
         secure: process.env.NODE_ENV === 'production',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
+ 
 
       res.status(StatusCodes.OK).json({
         success: true,

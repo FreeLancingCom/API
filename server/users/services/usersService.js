@@ -23,7 +23,7 @@ const { BAD_REQUEST } = StatusCodes;
 class UserService {
   async login(body) {
     try {
-      const { email, password } = body;
+      const { email, password  } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
       if (!user || !user.isVerified) {
@@ -34,7 +34,6 @@ class UserService {
         );
       }
 
-      console.log(user.password);
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
@@ -48,7 +47,6 @@ class UserService {
       const accessToken = await generateToken(user, JWT_SHORT_EXPIRY);
       const refreshToken = await generateRefreshToken(user, JWT_LONG_EXPIRY);
 
-      console.log(refreshToken);
 
       delete user.password;
 
@@ -78,7 +76,7 @@ class UserService {
 
       await EmailService.sendEmail([user.email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
         username: user.name,
-        link: `http://localhost:3005/api/v1/users/reset-password?token=${resetPasswordToken}`
+        link: `${process.env.CLIENT_URL}/users/reset-password?token=${resetPasswordToken}`
       });
 
       await UserModel.update({ email }, { resetPasswordToken });
@@ -122,7 +120,7 @@ class UserService {
 
       await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
         username: userData.name,
-        link: `http://localhost:3005/api/v1/users/verify-account?token=${VerifyAccountToken}`
+        link: `${process.env.CLIENT_URL}/users/verify-account?token=${VerifyAccountToken}`
       });
 
       const _user = await UserModel.create({ ...userData });
@@ -178,7 +176,7 @@ class UserService {
 
       const user = await UserModel.findOne({ email });
       if (!user) {
-        throw new ErrorResponse('User not found', StatusCodes.FORBIDDEN, 'USER_NOT_FOUND');
+        throw new ErrorResponse('User not found', StatusCodes.FORBIDDEN, 'USER_NOT_FOUND'); //!TODO
       }
 
       const updatedUser = UserModel.update({ email }, { isVerified: true });
@@ -213,7 +211,7 @@ class UserService {
     // Send password reset email
     await EmailService.sendEmail([email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
       username: user.name,
-      link: `http://localhost:3005/api/v1/users/reset-password?token=${resetPasswordToken}`
+      link: `${process.env.CLIENT_URL}/users/reset-password?token=${resetPasswordToken}`
     });
 
     return { message: 'Reset password link sent successfully' };
