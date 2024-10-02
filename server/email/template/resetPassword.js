@@ -97,7 +97,7 @@ export default function (params) {
     <body>
         <div class="container">
             <div class="header">
-            <img src="https://example.com/HerStyle" alt="Her Style Logo">
+            <img src="https://freeimage.host/i/dDgAIBn" alt="Her Style Logo">
             </div>
             <h1>${lang.title}</h1>
             <p>${lang.greeting}</p>
