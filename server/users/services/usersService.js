@@ -49,6 +49,8 @@ class UserService {
 
 
       delete user.password;
+      
+
 
       return { user, accessToken, refreshToken };
     } catch (e) {
