@@ -42,7 +42,7 @@ class PackageService {
 
   async updatePackage(packageId, packageData) {
     const updatedPackage = await packagesModel
-      .findByIdAndUpdate(packageId, packageData, { new: true })
+      .update(packageId, packageData)
       .exec();
     if (!updatedPackage) {
       throw new ErrorResponse(packageErrors.PACKAGE_NOT_UPDATED.message, BAD_REQUEST);
