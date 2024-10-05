@@ -1,4 +1,4 @@
-export const CONTROLLER = {
+export const CONTROLLERS = {
   LIST_PACKAGES: 'listPackages',
   GET_PACKAGE: 'getPackage',
   CREATE_PACKAGE: 'createPackage',

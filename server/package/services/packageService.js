@@ -1,4 +1,4 @@
-import packagesModel from '../model/index.js';
+import PackageModel from '../model/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 
@@ -11,51 +11,104 @@ import logger from '../../../common/utils/logger/index.js';
 
 class PackageService {
   async listPackages(query) {
+    const { limit, skip, sort, ..._query } = query;
+    const options = getPaginationAndSortingOptions(query);
     try {
-      const { limit, skip, sort } = getPaginationAndSortingOptions(query);
-      const packages = await packagesModel.find();
-      if (!packages) {
-        throw new ErrorResponse(packageErrors.PACKAGE_NOT_LISTED.message, BAD_REQUEST);
-      }
-      return packages;
-    } catch (error) {
-      logger.error(error);
-      next(error);
+      const packages = await PackageModel.find(_query, options);
+
+      return { packages, options };
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
   }
 
   async getPackage(packageId) {
-    const packageData = await packagesModel.findById(packageId).exec();
-    if (!packageData) {
-      throw new ErrorResponse(packageErrors.PACKAGE_NOT_FOUND.message, BAD_REQUEST);
+    try {
+      
+      const Package = await PackageModel.findOne({ _id: packageId });
+
+      if (!Package) {
+        throw new ErrorResponse(
+          packageErrors.PACKAGE_NOT_FOUND.message,
+          BAD_REQUEST,
+          packageErrors.PACKAGE_NOT_FOUND.code
+        );
+      }
+
+      return Package;
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
-    return packageData;
   }
 
   async createPackage(packageData) {
-    const createdPackage = await packagesModel.create(packageData);
-    if (!createdPackage) {
-      throw new ErrorResponse(packageErrors.PACKAGE_NOT_CREATED.message, BAD_REQUEST);
+    try {
+      const isPackageExist = await PackageModel.findOne({ name: packageData.name });
+
+      if (isPackageExist) {
+        throw new ErrorResponse(
+          packageErrors.PACKAGE_ALREADY_EXISTS.message,
+          BAD_REQUEST,
+          packageErrors.PACKAGE_ALREADY_EXISTS.code
+        );
+      }
+
+      const Package = await PackageModel.create(packageData);
+
+      return Package;
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
-    return createdPackage;
   }
 
   async updatePackage(packageId, packageData) {
-    const updatedPackage = await packagesModel
-      .update(packageId, packageData)
-      .exec();
-    if (!updatedPackage) {
-      throw new ErrorResponse(packageErrors.PACKAGE_NOT_UPDATED.message, BAD_REQUEST);
+    try {
+      const isExistPackage = await PackageModel.findOne({ _id: packageId });
+      if (!isExistPackage) {
+        throw new ErrorResponse(
+          packageErrors.PACKAGE_NOT_FOUND.message,
+          BAD_REQUEST,
+          packageErrors.PACKAGE_NOT_FOUND.code
+        );
+      }
+
+     const isTherePackageWithSameName = await PackageModel.findOne({ name: packageData.name });
+
+     if(isTherePackageWithSameName){
+        throw new ErrorResponse(
+          packageErrors.PACKAGE_ALREADY_EXISTS.message,
+          BAD_REQUEST,
+          packageErrors.PACKAGE_ALREADY_EXISTS.code
+        );
+     }
+
+      const Package = await PackageModel.update({ _id: packageId }, packageData);
+      return Package;
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
-    return updatedPackage;
   }
 
   async deletePackage(packageId) {
-    const deletedPackage = await packagesModel.findByIdAndDelete(packageId).exec();
-    if (!deletedPackage) {
-      throw new ErrorResponse(packageErrors.PACKAGE_NOT_DELETED.message, BAD_REQUEST);
+    try {
+      const isExistPackage = await PackageModel.findOne({ _id: packageId });
+      if (!isExistPackage) {
+        throw new ErrorResponse(
+          packageErrors.PACKAGE_NOT_FOUND.message,
+          BAD_REQUEST,
+          packageErrors.PACKAGE_NOT_FOUND.code
+        );
+      }
+
+      return await PackageModel.delete({ _id: packageId });
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
-    return deletedPackage;
   }
 }
 
