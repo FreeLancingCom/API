@@ -1,71 +1,55 @@
-import _ from 'lodash';
-import { CONTROLLERS } from '../helpers/constants.js';
 import packageService from '../services/packageService.js';
-import logger from '../../../common/utils/logger/index.js';
+import { CONTROLLERS } from '../helpers/constants.js';
 import { StatusCodes } from 'http-status-codes';
+import logger from '../../../common/utils/logger/index.js';
+
+import _ from 'lodash';
 
 export default {
-  [CONTROLLERS.LIST_PACKAGES]: async (req, res) => {
+  [CONTROLLERS.LIST_PACKAGES]: async (req, res, next) => {
     try {
-      const packages = await packageService.listPackages();
-      return res.status(StatusCodes.OK).json(packages);
+      const data = await packageService.listPackages(req.query);
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
 
-  [CONTROLLERS.GET_PACKAGE]: async (req, res) => {
+  [CONTROLLERS.GET_PACKAGE]: async (req, res, next) => {
     try {
-      const packageId = _.get(req, 'params.packageId');
-      const packageData = await packageService.getPackage(packageId);
-      if (!packageData) {
-        return res.status(StatusCodes.NOT_FOUND).json({ message: 'Package not found' });
-      }
-      return res.status(StatusCodes.OK).json(packageData);
+      const data = await packageService.getPackage(req.params.id);
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
 
-  [CONTROLLERS.CREATE_PACKAGE]: async (req, res) => {
+  [CONTROLLERS.CREATE_PACKAGE]: async (req, res, next) => {
     try {
-      const packageData = _.get(req, 'body');
-      const createdPackage = await packageService.createPackage(packageData);
-      if (!createdPackage) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Package not created' });
-      }
-      return res.status(StatusCodes.OK).json(createdPackage);
+      const data = await packageService.createPackage(req.body);
+      return res.status(StatusCodes.CREATED).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
 
-  [CONTROLLERS.UPDATE_PACKAGE]: async (req, res) => {
+  [CONTROLLERS.UPDATE_PACKAGE]: async (req, res, next) => {
     try {
-      const packageId = _.get(req, 'params.packageId');
-      const packageData = _.get(req, 'body');
-      const updatedPackage = await packageService.updatePackage(packageId, packageData);
-      if (!updatedPackage) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Package not updated' });
-      }
-      return res.status(StatusCodes.OK).json(updatedPackage);
+      const data = await packageService.updatePackage(req.params.id, req.body);
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
     }
   },
 
-  [CONTROLLERS.DELETE_PACKAGE]: async (req, res) => {
+  [CONTROLLERS.DELETE_PACKAGE]: async (req, res, next) => {
     try {
-      const packageId = _.get(req, 'params.packageId');
-      const deletedPackage = await packageService.deletePackage(packageId);
-      if (!deletedPackage) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Package not deleted' });
-      }
-      return res.status(StatusCodes.OK).json(deletedPackage);
+      const data = await packageService.deletePackage(req.params.id);
+      return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
       next(error);
