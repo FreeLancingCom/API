@@ -40,6 +40,11 @@ class PackageModel {
     const data = await PackageSchema.countDocuments(selector);
     return data;
   }
+  async countDocuments(selector) {
+    const data = await PackageSchema.countDocuments(selector);
+    return data;
+  }
 }
+
 
 export default new PackageModel();

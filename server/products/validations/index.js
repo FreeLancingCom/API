@@ -35,7 +35,8 @@ export default {
           })
       }),
       images: Joi.array().items(Joi.string()),
-      tags: Joi.array().items(Joi.string())
+      tags: Joi.array().items(Joi.string()),
+
     })
   },
   [CONTROLLERS.UPDATE_PRODUCT]: {
