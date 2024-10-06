@@ -71,6 +71,7 @@ class ProductService {
 
   async createProduct(addedBy,productData) {
     productData['addedBy']=addedBy;
+    productData['totalPrice'] = productData.price.finalPrice * productData.quantity;
     try {
        const isProductExist = await ProductModel.findOne({ name: productData.name });
         if (isProductExist)
@@ -78,7 +79,10 @@ class ProductService {
                 productsErrors.PRODUCT_ALREADY_EXISTS.message,
                 BAD_REQUEST,
                 productsErrors.PRODUCT_ALREADY_EXISTS.code
-            );
+            );  
+
+     
+
       const product = await ProductModel.create(productData);
       return product;
     } catch (e) {
@@ -132,6 +136,21 @@ class ProductService {
   }
 
 
+
+
+  async checkAvailableQuantity(quantity, productId) {
+    try {
+      const product = await ProductModel.findOne({ _id: productId });
+      
+      if (product.availableQuantity < quantity) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 
   // //{productId, quantity}
   // async SubtractAvailableQuantity(purchasedProducts) {

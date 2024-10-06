@@ -1,41 +1,52 @@
 import mongoose from 'mongoose';
 
-const addressSchema = new mongoose.Schema(
-  {
-   
-    userId: {
-      type: String,
-      required: true,
-      ref: 'users'
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-
-    phoneNumber: {
-        type: String,
-        required: true
-    },
-  
-  
-    firstLine: {
-      type: String,
-      required: true
-    },
-    secondLine: {
-      type: String,
-      required: false
-    },
-    googleMapsLink: {
-      type: String,
-      required: false
-    },
-   
+const cartSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+    ref: 'users'
   },
-  { timestamps: true }
-);
+  products: [
+    {
+      productId: {
+        type: String,
+        required: true,
+        ref: 'products'
+      },
+      quantity: {
+        type: Number,
+        required: true
+      },
+      totalPrice: {
+        type: Number,
+        required: true
+      }
+    }
+  ],
+  packages: [
+    {
+      packageId: {
+        type: String,
+        required: true,
+        ref: 'packages'
+      },
+      quantity: {
+        type: Number,
+        required: true
+      },
+      totalPrice: {
+        type: Number,
+        required: true
+      }
+    }
+  ],
 
-const Address = mongoose.model('addresses', addressSchema);
+  totalPrice: {
+    type: Number,
+    required: true,
+    default: 0
+  }
+});
 
-export default Address;
+const Cart = mongoose.model('Cart', cartSchema);
+export default Cart;

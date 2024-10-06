@@ -1,7 +1,8 @@
 import Joi from 'joi';
-import { CONTROLLERS } from '../helper/constant.js';
+import { CONTROLLERS } from '../helpers/constants.js';
+
 export default {
-  [CONTROLLERS.LIST_ADDRESSES]: {
+  [CONTROLLERS.LIST_CART]: {
     query: Joi.object()
       .keys({
         page: Joi.number().optional(),
@@ -9,25 +10,8 @@ export default {
       })
       .optional()
   },
-  [CONTROLLERS.GET_ADDRESS]: {
-    params: Joi.object()
-      .keys({
-        id: Joi.string().required()
-      })
-      .required()
-  },
-  [CONTROLLERS.CREATE_ADDRESS]: {
-    body: Joi.object()
-      .keys({
-        name: Joi.string().required(),
-        firstLine: Joi.string().required(),
-        secondLine: Joi.string().optional(),
-        phoneNumber: Joi.string().required(),
-        googleMapsLink: Joi.string().optional()
-      })
-      .required()
-  },
-  [CONTROLLERS.UPDATE_ADDRESS]: {
+
+  [CONTROLLERS.CREATE_CART_PRODUCT]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()
@@ -35,15 +19,93 @@ export default {
       .required(),
     body: Joi.object()
       .keys({
-        name: Joi.string().optional(),
-        firstLine: Joi.string().optional(),
-        secondLine: Joi.string().optional(),
-        phoneNumber: Joi.string().optional(),
-        googleMapsLink: Joi.string().optional()
+        quantity: Joi.number().min(1).required()
       })
-      .optional()
+      .required()
   },
-  [CONTROLLERS.DELETE_ADDRESS]: {
+
+  [CONTROLLERS.CREATE_CART_PACKAGE]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required(),
+    body: Joi.object()
+      .keys({
+        quantity: Joi.number().min(1).required()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.DELETE_CART_PRODUCT]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.DELETE_CART_PACKAGE]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.UPDATE_CART_PRODUCT]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required(),
+    body: Joi.object()
+      .keys({
+        quantity: Joi.number().min(1).optional(),
+        price: Joi.number().optional()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.UPDATE_CART_PACKAGE]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required(),
+    body: Joi.object()
+      .keys({
+        quantity: Joi.number().min(1).optional(),
+        price: Joi.number().optional()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.INCREASE_PRODUCT_QUANTITY]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.DECREASE_PRODUCT_QUANTITY]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.INCREASE_PACKAGE_QUANTITY]: {
+    params: Joi.object()
+      .keys({
+        id: Joi.string().required()
+      })
+      .required()
+  },
+
+  [CONTROLLERS.DECREASE_PACKAGE_QUANTITY]: {
     params: Joi.object()
       .keys({
         id: Joi.string().required()

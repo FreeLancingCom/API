@@ -27,7 +27,6 @@ export default {
           otherwise: Joi.number().required(),
         }),
       }).required(),
-    
       availableQuantity: Joi.number().required()
     })
   },

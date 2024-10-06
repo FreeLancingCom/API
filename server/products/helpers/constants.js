@@ -13,11 +13,11 @@ export const productsErrors = Object.freeze({
     message: 'product not found'
   },
   INSUFFICIENT_STOCK_WITH_ID: {
-    message: id => `Requested quantity for product with  ${id} exceeds available stock.`,
+    message: product => `Requested quantity for product with  ${product._id} exceeds available stock. only ${product.availableQuantity} available`,
     code: 101
   },
   INSUFFICIENT_STOCK: {
-    message: `Requested quantity for some of products exceeds available stock.`,
+    message: `the quantity exceeds available stock.`,
     code: 102
   },
   MAINTENANCE_CENTER_NOT_FOUND: {
@@ -35,5 +35,9 @@ export const productsErrors = Object.freeze({
   PRODUCT_ALREADY_EXISTS: {
     message: 'Product already exists',
     code: 106
+  },
+  INVALID_QUANTITY :{
+  message: "you can not decrease more than this",
+  code : 107,
   }
 });
