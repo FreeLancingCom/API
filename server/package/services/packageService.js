@@ -9,18 +9,50 @@ const { BAD_REQUEST } = StatusCodes;
 
 import logger from '../../../common/utils/logger/index.js';
 
+import Fuse from 'fuse.js';
+
 class PackageService {
   async listPackages(query) {
-    const { limit, skip, sort, ..._query } = query;
-    const options = getPaginationAndSortingOptions(query);
-    try {
-      const packages = await PackageModel.find(_query, options);
+    try{
+      const { limit, page, sort, sortBy, search, minPrice, maxPrice, ..._query } = query;
+      if (minPrice || maxPrice) {
+      _query['price.finalPrice'] = {};
+      if (minPrice) {
+        _query['price.finalPrice'].$gte = minPrice; 
+      }
+      if (maxPrice) {
+        _query['price.finalPrice'].$lte = maxPrice; 
+      }
+    }
 
-      return { packages, options };
-    } catch (e) {
+    const options = getPaginationAndSortingOptions(query);
+    let packages = await PackageModel.find(_query, options , {}); 
+    const count = await PackageModel.countDocuments(_query); 
+
+    if (search) {
+      const fuse = new Fuse(packages, {
+        keys: ['name', 'description', 'tags'],
+        threshold: 0.3,
+      });
+      packages = fuse.search(search).map(result => result.item);
+    }
+
+    return {
+      packages,
+      options: {
+        ...options,
+        count
+      }
+    };
+
+    }
+
+    catch (e) {
       logger.error(e);
       throw e;
     }
+
+   
   }
 
   async getPackage(packageId) {
@@ -54,6 +86,9 @@ class PackageService {
           packageErrors.PACKAGE_ALREADY_EXISTS.code
         );
       }
+
+      packageData['totalPrice'] = packageData.price.finalPrice * packageData.quantity;
+      
 
       const Package = await PackageModel.create(packageData);
 
@@ -110,6 +145,24 @@ class PackageService {
       throw e;
     }
   }
+
+
+  async checkAvailableQuantity(quantity, packageId) {
+    try {
+      const Package = await PackageModel.findOne({ _id: packageId });
+      if (Package.availableQuantity < quantity) {
+        return false;
+      }
+
+      return true;
+    }
+    catch (e) {
+      logger.error(e);
+      throw e;
+    } 
+
+  }
+
 }
 
 export default new PackageService();

@@ -10,6 +10,8 @@ import userRoutes from './users/routes/index.js';
 import addressesRoutes from './addresses/router/index.js';
 import profileRoutes from './profile/router/index.js'
 import productsRoutes from './products/router/index.js';
+import packagesRoutes from './package/router/index.js';
+import cartRoutes from './cart/router/index.js';
 
 
 
@@ -19,6 +21,8 @@ router.use('/users', userRoutes);
 router.use('/addresses', addressesRoutes);
 router.use('/profile', profileRoutes);
 router.use('/products', productsRoutes);
+router.use('/packages', packagesRoutes);
+router.use('/cart', cartRoutes);
 
 
 router.use('/health', (req, res) => {

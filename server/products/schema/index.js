@@ -36,11 +36,6 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    quantity: {
-      type: Number,
-      required: true
-    },
-
     addedBy: {
       type: String,
       required: true,
@@ -50,6 +45,7 @@ const productSchema = new mongoose.Schema(
       type: pricesDetailsSchema,
       required: true
     },
+
     tags: [{ type: String }]
   },
   { timestamps: true }

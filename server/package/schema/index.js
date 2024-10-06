@@ -37,10 +37,7 @@ const packageSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  quantity: {
-    type: Number,
-    required: true
-  },
+  tags: [{ type: String }]
 });
 
 const Package = mongoose.model('Package', packageSchema);
