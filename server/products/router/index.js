@@ -11,8 +11,6 @@ const router = express.Router();
 
 router.get(
   '/',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.LIST_PRODUCTS]),
   validateRequest(validationSchemas[CONTROLLERS.LIST_PRODUCTS]),
   Controller[CONTROLLERS.LIST_PRODUCTS]
 );
@@ -20,8 +18,6 @@ router.get(
 
 router.get(
   '/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.GET_PRODUCT]),
   validateRequest(validationSchemas[CONTROLLERS.GET_PRODUCT]),
   Controller[CONTROLLERS.GET_PRODUCT]
 );
