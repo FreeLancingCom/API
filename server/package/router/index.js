@@ -11,16 +11,12 @@ const router = express.Router();
 
 router.get(
   '/',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.LIST_PACKAGES]),
   validateRequest(validationSchemas[CONTROLLERS.LIST_PACKAGES]),
   Controller[CONTROLLERS.LIST_PACKAGES]
 );
 
 router.get(
   '/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.GET_PACKAGE]),
   validateRequest(validationSchemas[CONTROLLERS.GET_PACKAGE]),
   Controller[CONTROLLERS.GET_PACKAGE]
 );
