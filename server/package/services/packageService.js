@@ -1,4 +1,5 @@
 import PackageModel from '../model/index.js';
+import Product from '../../products/schema/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 
@@ -59,6 +60,7 @@ class PackageService {
     try {
       
       const Package = await PackageModel.findOne({ _id: packageId });
+      const productsForThatPackage =  await Product.find({packageId : packageId}).select("name description")
 
       if (!Package) {
         throw new ErrorResponse(
@@ -67,8 +69,8 @@ class PackageService {
           packageErrors.PACKAGE_NOT_FOUND.code
         );
       }
-
-      return Package;
+      
+      return {Package , productsForThatPackage};
     } catch (e) {
       logger.error(e);
       throw e;
