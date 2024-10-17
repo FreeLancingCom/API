@@ -60,7 +60,7 @@ class PackageService {
     try {
       
       const Package = await PackageModel.findOne({ _id: packageId });
-      const productsForThatPackage =  await Product.find({packageId : packageId}).select("name description")
+      const productsForThatPackage =  await Product.find({packageId : packageId})
 
       if (!Package) {
         throw new ErrorResponse(
