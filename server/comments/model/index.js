@@ -8,7 +8,8 @@ class Comment {
       .limit(limit)
       .skip(skip || 0)
       .lean()
-      .maxTimeMS(60000);
+      .populate('userId', 'name')
+      .maxTimeMS(60000)
     return result;
   }
 
