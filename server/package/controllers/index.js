@@ -18,7 +18,7 @@ export default {
 
   [CONTROLLERS.GET_PACKAGE]: async (req, res, next) => {
     try {
-      const data = await packageService.getPackage(req.params.id);
+      const data = await packageService.getPackage(req.params.id , req.query);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);
