@@ -2,6 +2,7 @@ import PackageModel from '../model/index.js';
 import Product from '../../products/schema/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
+import commentsService from '../../comments/service/commentsService.js';
 
 import { packageErrors } from '../helpers/constants.js';
 
@@ -56,11 +57,13 @@ class PackageService {
    
   }
 
-  async getPackage(packageId) {
+  async getPackage(packageId , query) {
     try {
       
       const Package = await PackageModel.findOne({ _id: packageId });
       const productsForThatPackage =  await Product.find({packageId : packageId})
+      const packageComments  = await commentsService.listComments(packageId, query);
+
 
       if (!Package) {
         throw new ErrorResponse(
@@ -70,7 +73,7 @@ class PackageService {
         );
       }
       
-      return {Package , productsForThatPackage};
+      return {Package , productsForThatPackage , packageComments };
     } catch (e) {
       logger.error(e);
       throw e;

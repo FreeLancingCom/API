@@ -20,7 +20,7 @@ export default {
   },
   [CONTROLLERS.GET_PRODUCT]: async (req, res, next) => {
     try {
-      const data = await productService.getProduct(req.params.id);
+      const data = await productService.getProduct(req.params.id , req.query);
       return res.status(StatusCodes.OK).json({
         success: true,
         data

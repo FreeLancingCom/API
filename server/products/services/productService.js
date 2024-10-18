@@ -1,6 +1,7 @@
 import ProductModel from '../models/index.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import { productsErrors } from '../helpers/constants.js';
+import commentsService from '../../comments/service/commentsService.js';
 
 import { StatusCodes } from 'http-status-codes';
 import logger from '../../../common/utils/logger/index.js';
@@ -53,16 +54,17 @@ class ProductService {
   
       
 
-  async getProduct(productId) {
+  async getProduct(productId , query) {
     try {
       const product = await ProductModel.findOne({ _id: productId });
+      const productComments  = await commentsService.listComments(productId, query);
       if (!product)
         throw new ErrorResponse(
           productsErrors.PRODUCT_NOT_FOUND.message,
           BAD_REQUEST,
           productsErrors.PRODUCT_NOT_FOUND.code
         );
-      return product;
+      return {product , productComments};
     } catch (e) {
       logger.error(e);
       throw e;
