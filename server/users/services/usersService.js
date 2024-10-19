@@ -88,8 +88,12 @@ class UserService {
 
   async createUser(userData) {
     try {
-      const existingUser = await UserModel.findOne({ email: userData.email });
-
+      const existingUser = await UserModel.findOne({ 
+        $or: [
+          { email: userData.email },
+          { phoneNumber: userData.phoneNumber }
+        ]
+      });
       if (existingUser) {
         throw new ErrorResponse(
           usersErrors.USER_ALREADY_EXISTS.message,
