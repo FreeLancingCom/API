@@ -6,6 +6,17 @@ import logger from '../../../common/utils/logger/index.js';
 import _ from 'lodash';
 
 export default {
+  
+  [CONTROLLERS.LIST_ALL_COMMENTS]: async (req, res, next) => {
+    try {
+      const data = await CommentService.listAllComments(req.query);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+
   [CONTROLLERS.LIST_COMMENTS]: async (req, res, next) => {
      try{
          const data = await CommentService.listComments(req.params.id, req.query);

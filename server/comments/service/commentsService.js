@@ -15,6 +15,21 @@ import logger from '../../../common/utils/logger/index.js';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
 
 class CommentService {
+
+  async listAllComments(query) {
+    const { limit, skip, sort, ..._query } = query;
+    const options = getPaginationAndSortingOptions(query);
+    try {
+      const comments = await Comment.find({}, options);
+
+      return { comments, options };
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  
   async listComments(productId , query) {
     const { limit, skip, sort, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);

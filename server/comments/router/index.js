@@ -9,7 +9,11 @@ import Permissions from '../permission.js';
 
 const router = express.Router();
 
-
+router.get(
+  '/',
+  validateRequest(validationSchemas[CONTROLLERS.LIST_ALL_COMMENTS]),
+  Controller[CONTROLLERS.LIST_ALL_COMMENTS]
+);
 router.get(
   '/:id',
   validateRequest(validationSchemas[CONTROLLERS.LIST_COMMENTS]),
