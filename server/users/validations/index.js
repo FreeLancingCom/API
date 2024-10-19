@@ -11,9 +11,9 @@ export default {
       confirmPassword: Joi.string().required().valid(Joi.ref('password')),
       photo: Joi.string().optional(),
       role: Joi.string().valid(USER_ROLES.OWNER, USER_ROLES.CLIENT).required(),
-      isVerified: Joi.boolean().optional().default(false)
+      isVerified: Joi.boolean().optional().default(false),
+      phoneNumber: Joi.string().required()
     })
-    // query: Joi.object().keys({
   },
 
   [CONTROLLERS.LOGIN]: {
