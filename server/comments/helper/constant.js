@@ -1,4 +1,5 @@
 export const CONTROLLERS = {
+  LIST_ALL_COMMENTS: 'listAllComments',
   LIST_COMMENTS: 'listComment',
   GET_COMMENT: 'getComment',
   ADD_COMMENT: 'addComment',
