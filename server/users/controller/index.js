@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { CONTROLLERS } from '../helpers/constant.js';
 import usersService from '../services/usersService.js';
+import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
 
 export default {
@@ -62,7 +63,7 @@ export default {
       res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
         secure:  process.env.NODE_ENV === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000 ,
         sameSite : 'none' 
       });
  
