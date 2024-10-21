@@ -13,7 +13,7 @@ import cookieParser from 'cookie-parser'; // Parses cookies sent with requests
 const corsOptions = {
     origin: '*',  // Consider restricting this to specific domains in production
     maxAge: 3600, // Cache pre-flight responses for 1 hour
-    Credential : true // Enable passing cookies from client to server
+    credentials : true // Enable passing cookies from client to server
 };
 
 // Helmet configuration for security
