@@ -13,10 +13,11 @@ export default {
 
       
       const cookieOptions = {
-        httpOnly: true,
-        secure: false,
-      };
-      
+        httpOnly: true,   // The cookie is only accessible by the server
+        secure: process.env.NODE_ENV === 'production',  // Requires secure in production (HTTPS)
+        sameSite: 'none'  // Allows the cookie to be sent with cross-site requests
+    };
+    
 
       isPersistent ? cookieOptions['maxAge'] = 7 * 24 * 60 * 60 * 1000 : "";
 
@@ -60,9 +61,9 @@ export default {
 
       res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
-        secure: false,
+        secure:  process.env.NODE_ENV === 'production',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite : 'Lax'  
+        sameSite : 'none' 
       });
  
 
