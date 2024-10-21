@@ -11,7 +11,9 @@ import cookieParser from 'cookie-parser'; // Parses cookies sent with requests
 
 // CORS configuration (adjust 'origin' for production)
 const corsOptions = {
-    origin: '*',  // Consider restricting this to specific domains in production
+    origin: function (origin, callback) {
+        callback(null, true);
+    }, // Allow all origins
     maxAge: 3600, // Cache pre-flight responses for 1 hour
     credentials : true // Enable passing cookies from client to server
 };
