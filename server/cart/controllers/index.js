@@ -139,5 +139,15 @@ export default {
       logger.error(error);
       next(error);
     }
+  },
+  [CONTROLLERS.APPLY_COUPON]: async (req, res, next) => {
+    try {
+      const userId = _.get(req, 'user._id', null);
+      const data = await cartService.applyCoupon(req.body.code, userId);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 };

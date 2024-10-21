@@ -6,6 +6,7 @@ import StatusCodes from 'http-status-codes';
 const { BAD_REQUEST } = StatusCodes;
 
 import logger from '../../../common/utils/logger/index.js';
+import couponService from '../../coupons/services/couponService.js';
 
 import productService from '../../products/services/productService.js';
 import packageService from '../../package/services/packageService.js';
@@ -194,6 +195,7 @@ class CartService {
     }
   }
 
+ 
   async increaseProductQuantity(productId, userId) {
     return this.AddProductToCart(productId, 1, userId);
   }
@@ -444,6 +446,31 @@ class CartService {
     });
     return total;
   };
+
+  async applyCoupon(code, userId) {
+    const cart = await cartModel.findOne({ userId : userId });
+    if (!cart) {
+      throw new ErrorResponse(
+        cartError.CART_NOT_FOUND.message,
+        BAD_REQUEST,
+        cartError.CART_NOT_FOUND.code
+      );
+    }
+
+    const coupon = await couponService.getCoupon(code);
+
+    if (!coupon) {
+      throw new ErrorResponse(
+        cartError.COUPON_NOT_FOUND.message,
+        BAD_REQUEST,
+        cartError.COUPON_NOT_FOUND.code
+      );
+    }
+
+    const discount = await couponService.applyCoupon(code, cart);
+    cart.totalPrice -= discount;
+    await cartModel.update({ userId }, cart);
+  }
 }
 
 export default new CartService();

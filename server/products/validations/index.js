@@ -1,5 +1,6 @@
-import Joi, { valid } from 'joi';
+import Joi from 'joi';
 import { CONTROLLERS } from '../helpers/constants.js';
+
 export default {
   [CONTROLLERS.LIST_PRODUCTS]: {
     query: Joi.object()
@@ -36,7 +37,7 @@ export default {
       }),
       images: Joi.array().items(Joi.string()),
       tags: Joi.array().items(Joi.string()),
-      stars : Joi.number().default(0).valid(0,1,2,3,4,5)
+      stars : Joi.number().default(0).valid(0,1,2,3,4,5),
 
     })
   },
