@@ -10,7 +10,8 @@ export const CONTROLLERS = {
   DECREASE_PRODUCT_QUANTITY: 'DECREASE_PRODUCT_QUANTITY',
   INCREASE_PACKAGE_QUANTITY: 'INCREASE_PACKAGE_QUANTITY',
   DECREASE_PACKAGE_QUANTITY: 'DECREASE_PACKAGE_QUANTITY',
-  CLEAR_CART: 'cart:clear'
+  CLEAR_CART: 'cart:clear',
+  APPLY_COUPON: 'cart:apply-coupon',
 };
 
 export const cartError = Object.freeze({
@@ -49,5 +50,9 @@ export const cartError = Object.freeze({
   PACKAGE_ALREADY_IN_CART: {
     code: 'CART_108',
     message: 'Package already in cart'
+  },
+  COUPON_NOT_FOUND : {
+    code: 'CART_109',
+    message: 'Coupon not found'
   }
 });

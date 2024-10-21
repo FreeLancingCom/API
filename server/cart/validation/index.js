@@ -111,5 +111,10 @@ export default {
         id: Joi.string().required()
       })
       .required()
+  },
+  [CONTROLLERS.APPLY_COUPON]: {
+    body: Joi.object().keys({
+      code: Joi.string().required()
+    })
   }
 };

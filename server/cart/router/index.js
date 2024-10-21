@@ -97,4 +97,14 @@ router.put(
   Controller[CONTROLLERS.UPDATE_CART_PACKAGE]
 );
 
+router.post(
+  '/apply-coupon',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.APPLY_COUPON]),
+  validateRequest(validationSchemas[CONTROLLERS.APPLY_COUPON]),
+  Controller[CONTROLLERS.APPLY_COUPON]
+);
+
+
+
 export default router;
