@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi, { valid } from 'joi';
 import { CONTROLLERS } from '../helpers/constants.js';
 export default {
   [CONTROLLERS.LIST_PRODUCTS]: {
@@ -36,6 +36,7 @@ export default {
       }),
       images: Joi.array().items(Joi.string()),
       tags: Joi.array().items(Joi.string()),
+      stars : Joi.number().default(0).valid(0,1,2,3,4,5)
 
     })
   },
@@ -61,7 +62,8 @@ export default {
           })
       }),
       images: Joi.array().items(Joi.string()),     
-      tags: Joi.array().items(Joi.string())        
+      tags: Joi.array().items(Joi.string()),
+      stars : Joi.number().default(0).valid(0,1,2,3,4,5),
     }).or('name', 'description', 'packageId', 'availableQuantity', 'price', 'images', 'tags') // Ensures at least one field is provided
   },
   

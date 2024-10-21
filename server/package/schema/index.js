@@ -37,7 +37,11 @@ const packageSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  tags: [{ type: String }]
+  tags: [{ type: String }],
+  stars: {
+    type: Number,
+    default: 0
+  }
 });
 
 const Package = mongoose.model('Package', packageSchema);

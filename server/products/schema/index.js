@@ -45,6 +45,10 @@ const productSchema = new mongoose.Schema(
       type: pricesDetailsSchema,
       required: true
     },
+    stars:{
+      type: Number,
+      default: 0 ,
+    },
 
     tags: [{ type: String }]
   },

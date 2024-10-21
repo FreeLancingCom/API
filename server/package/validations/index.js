@@ -27,7 +27,8 @@ export default {
           otherwise: Joi.number().required(),
         }),
       }).required(),
-      availableQuantity: Joi.number().required()
+      availableQuantity: Joi.number().required(),
+      stars : Joi.number().default(0).valid(0,1,2,3,4,5),
     })
   },
   [CONTROLLERS.UPDATE_PACKAGE]: {
@@ -47,7 +48,8 @@ export default {
           otherwise: Joi.number().required(),
         }),
       }).optional(),
-      availableQuantity: Joi.number().optional()
+      availableQuantity: Joi.number().optional(),
+      stars : Joi.number().default(0).valid(0,1,2,3,4,5),
     })
   },
 
