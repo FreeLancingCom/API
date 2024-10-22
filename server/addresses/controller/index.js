@@ -12,7 +12,6 @@ export default {
     [CONTROLLERS.LIST_ADDRESSES]: async (req, res, next) => {
         try {
           const user = _.get(req, 'user', null);
-          console.log(user);
           const data = await addressesService.listAddresses(req.query , user);
           return res.status(StatusCodes.OK).json({ success: true, data });
         } catch (error) {
