@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ['OWNER', 'CLIENT'],
-      default: 'Client'
+      default: 'CLIENT'
     },
     resetPasswordToken: {
       type: String,

@@ -1,6 +1,5 @@
 export default function (params) {
     const { username, link } = params;
-    console.log(link);
   
     return `
       <!DOCTYPE html>
