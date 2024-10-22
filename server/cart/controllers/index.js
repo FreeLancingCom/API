@@ -60,6 +60,7 @@ export default {
     try {
       const userId = _.get(req, 'user._id', null);
       const { quantity } = req.body;
+      console.log(req.params.id);
       const data = await cartService.AddPackageToCart(req.params.id, userId, quantity);
       return res.status(StatusCodes.CREATED).json({ success: true, data });
     } catch (error) {
@@ -72,6 +73,7 @@ export default {
   [CONTROLLERS.DELETE_CART_PACKAGE]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
+      console.log(req.params.id);
       const data = await cartService.removePackageFromCart(req.params.id, userId);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
@@ -144,6 +146,16 @@ export default {
     try {
       const userId = _.get(req, 'user._id', null);
       const data = await cartService.applyCoupon(req.body.code, userId);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.CHECK_OUT]: async (req, res, next) => {
+    try {
+      const userId = _.get(req, 'user._id', null);
+      const data = await cartService.checkOut(userId, req.body);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

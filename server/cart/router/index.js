@@ -105,6 +105,12 @@ router.post(
   Controller[CONTROLLERS.APPLY_COUPON]
 );
 
-
+router.post(
+  '/checkout',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.CHECK_OUT]),
+  validateRequest(validationSchemas[CONTROLLERS.CHECK_OUT]),
+  Controller[CONTROLLERS.CHECK_OUT]
+);
 
 export default router;

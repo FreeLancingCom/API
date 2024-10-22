@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { CONTROLLERS } from '../helpers/constants.js';
+import { PAYMENT_METHODS } from '../../orders/helpers/constants.js';
 
 export default {
   [CONTROLLERS.LIST_CART]: {
@@ -115,6 +116,21 @@ export default {
   [CONTROLLERS.APPLY_COUPON]: {
     body: Joi.object().keys({
       code: Joi.string().required()
+    })
+  },
+  [CONTROLLERS.CHECK_OUT]: {
+    body: Joi.object().keys({
+      paymentMethod: Joi.string()
+        .valid(...Object.keys(PAYMENT_METHODS))
+        .required(),
+      address: Joi.object()
+        .keys({
+          street: Joi.string().required(),
+          city: Joi.string().required(),
+          postalCode: Joi.string().required(),
+          country: Joi.string().required()
+        })
+        .required()
     })
   }
 };

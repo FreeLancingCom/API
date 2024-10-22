@@ -12,6 +12,7 @@ export const CONTROLLERS = {
   DECREASE_PACKAGE_QUANTITY: 'DECREASE_PACKAGE_QUANTITY',
   CLEAR_CART: 'cart:clear',
   APPLY_COUPON: 'cart:apply-coupon',
+  CHECK_OUT: 'cart:check-out' //  when cart/checkout => it added the cart items to the o
 };
 
 export const cartError = Object.freeze({
@@ -51,7 +52,7 @@ export const cartError = Object.freeze({
     code: 'CART_108',
     message: 'Package already in cart'
   },
-  COUPON_NOT_FOUND : {
+  COUPON_NOT_FOUND: {
     code: 'CART_109',
     message: 'Coupon not found'
   }
