@@ -209,10 +209,8 @@ class UserService {
 
     const resetPasswordToken = jwt.sign({ email }, JWT_REFRESH_SECRET, { expiresIn: '10h' });
 
-    // Update user's resetPasswordToken in the database
     await UserModel.update({ email }, { resetPasswordToken });
 
-    // Send password reset email
     await EmailService.sendEmail([email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
       username: user.name,
       link: `${process.env.CLIENT_URL}/users/reset-password?token=${resetPasswordToken}`
