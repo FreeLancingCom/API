@@ -54,7 +54,7 @@ class ProductService {
   
       
 
-  async getProduct(productId , query) {
+  async getProduct(productId , query={}) {
     try {
       const product = await ProductModel.findOne({ _id: productId });
       const productComments  = await commentsService.listComments(productId, query);

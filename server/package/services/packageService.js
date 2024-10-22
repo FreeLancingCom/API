@@ -57,7 +57,7 @@ class PackageService {
    
   }
 
-  async getPackage(packageId , query) {
+  async getPackage(packageId , query={}) {
     try {
       
       const Package = await PackageModel.findOne({ _id: packageId });
