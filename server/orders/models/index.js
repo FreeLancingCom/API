@@ -9,10 +9,19 @@ class Order {
       .limit(limit)
       .skip(skip || 0)
       .lean()
-      .populate('user')
-      .select('name email phoneNumber')
-      .populate('cart')
-      .select('products packages totalPrice')
+      .populate({
+        path: 'user',
+        select: 'name phoneNumber'
+      })
+      .populate({
+        path: 'cart.products.productId',
+        select: 'name'
+      })
+      .populate({
+        path: 'cart.packages.packageId',
+        select: 'name'
+      })
+
       .maxTimeMS(60000);
     return result;
   }

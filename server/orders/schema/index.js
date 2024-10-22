@@ -22,8 +22,44 @@ const orderSchema = new mongoose.Schema(
     },
 
     cart: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Cart'
+      products: [
+        {
+          productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'products',
+            required: true
+          },
+          quantity: {
+            type: Number,
+            required: true
+          },
+          totalPrice: {
+            type: Number,
+            required: true
+          }
+        }
+      ],
+      packages: [
+        {
+          packageId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Package',
+            required: true
+          },
+          quantity: {
+            type: Number,
+            required: true
+          },
+          totalPrice: {
+            type: Number,
+            required: true
+          }
+        }
+      ],
+      totalPrice: {
+        type: Number,
+        required: true
+      }
     },
 
     status: {

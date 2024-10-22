@@ -7,16 +7,14 @@ class Cart {
       .find(selectors, projection || {})
       .sort(sort || '-updatedAt')
       .limit(limit)
-      .populate(
-        {
-          path : "products.productId",
-        }
-      )
       .populate({
-        path : "userId",
-        select : "name phoneNumber "
+        path: 'products.productId'
       })
-      .populate("packages.packageId")
+      .populate({
+        path: 'userId',
+        select: 'name phoneNumber '
+      })
+      .populate('packages.packageId')
       .skip(skip || 0)
       .lean()
       .maxTimeMS(60000);

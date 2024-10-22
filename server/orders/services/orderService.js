@@ -14,7 +14,6 @@ import _ from 'lodash';
 import { USER_ROLES } from '../../../common/helpers/constants.js';
 
 class OrderService {
-
   async listOrders(query, user) {
     const userRole = _.get(user, 'role', null);
     const { limit, skip, sort, ..._query } = query;
@@ -31,10 +30,11 @@ class OrderService {
     }
   }
 
-  async getOrder(orderId , user) {
+  async getOrder(orderId, user) {
     try {
       const userRole = _.get(user, 'role', null);
-      const filter = userRole === USER_ROLES.CLIENT ? { _id: orderId, user: user._id } : { _id: orderId };
+      const filter =
+        userRole === USER_ROLES.CLIENT ? { _id: orderId, user: user._id } : { _id: orderId };
       const order = await OrderModel.findOne(filter);
       if (!order) {
         throw new ErrorResponse(
