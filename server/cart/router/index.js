@@ -41,7 +41,7 @@ router.put(
   Controller[CONTROLLERS.INCREASE_PRODUCT_QUANTITY]
 );
 
-router.patch(
+router.put(
   '/decrease-product/:id',
   Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
@@ -72,6 +72,14 @@ router.put(
   validateRequest(validationSchemas[CONTROLLERS.DECREASE_PACKAGE_QUANTITY]),
   Controller[CONTROLLERS.DECREASE_PACKAGE_QUANTITY]
 );
+
+router.put(
+  '/decrease-product/:id',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
+  validateRequest(validationSchemas[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
+  Controller[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]
+)
 
 router.delete(
   '/remove-package/:id',
