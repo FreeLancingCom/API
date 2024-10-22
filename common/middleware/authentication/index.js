@@ -12,9 +12,6 @@ const Authenticate = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const refreshTokenCookie = req.cookies.refreshToken;
 
-    // Debugging: Check if cookies are available
-    console.log('Cookies:', req.cookies);
-    console.log('Refresh Token:', refreshTokenCookie);
 
     if (!authHeader)
       return res.status(StatusCodes.UNAUTHORIZED).json({
