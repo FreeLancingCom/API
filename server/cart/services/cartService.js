@@ -20,7 +20,7 @@ class CartService {
   async listCart(query = {}, userId) {
     const options = getPaginationAndSortingOptions(query);
     const { limit, page, sort, sortBy, search, minPrice, maxPrice, ..._query } = query;
-    
+
     if (minPrice || maxPrice) {
       _query['price.finalPrice'] = {};
       if (minPrice) {
@@ -113,7 +113,9 @@ class CartService {
         }
         cart = await cartModel.create({
           userId,
-          products: [{ productId, quantity, totalPrice: quantity * product.product.price.finalPrice }],
+          products: [
+            { productId, quantity, totalPrice: quantity * product.product.price.finalPrice }
+          ],
           totalPrice: quantity * product.product.price.finalPrice
         });
       }
@@ -177,13 +179,9 @@ class CartService {
 
         cart.totalPrice = this.calculateTotalPrice(cart);
         await cartModel.update({ userId }, cart);
-      }
-      
-      
-      else {
-
+      } else {
         console.log(Package); // print object of package
-        console.log(Package.Package.price) // undefined
+        console.log(Package.Package.price); // undefined
 
         const canAddToCart = packageService.checkAvailableQuantity(quantity, packageId);
         if (!canAddToCart) {
@@ -195,7 +193,9 @@ class CartService {
         }
         cart = await cartModel.create({
           userId,
-          packages: [{ packageId, quantity, totalPrice: quantity * Package.Package.price.finalPrice }],
+          packages: [
+            { packageId, quantity, totalPrice: quantity * Package.Package.price.finalPrice }
+          ],
           totalPrice: quantity * Package.Package.price.finalPrice
         });
       }
@@ -477,7 +477,7 @@ class CartService {
     await cartModel.update({ userId }, cart);
   }
 
-async checkOut(userId, body) {
+  async checkOut(userId, body) {
     const cart = await cartModel.findOne({ userId });
     if (!cart) {
       throw new ErrorResponse(
@@ -494,14 +494,18 @@ async checkOut(userId, body) {
 
     body.paymentStatus = paymentStatus;
     const order = {
-      userId,
-      cart,
+      user: userId,
+      cart: {
+        products: cart.products,
+        packages: cart.packages,
+        totalPrice: cart.totalPrice
+      },
       ...body
     };
 
     const createdOrder = await orderService.createOrder(order);
+    await cartModel.delete({ userId });
     return createdOrder;
-    // await cartModel.delete({ userId });
   }
 }
 
