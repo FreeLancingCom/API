@@ -1,12 +1,22 @@
 import cartSchema from '../schema/index.js';
 
-class Address {
+class Cart {
   async find(selectors = {}, options = {}) {
     const { limit, skip, sort, projection } = options;
     const result = await cartSchema
       .find(selectors, projection || {})
       .sort(sort || '-updatedAt')
       .limit(limit)
+      .populate(
+        {
+          path : "products.productId",
+        }
+      )
+      .populate({
+        path : "userId",
+        select : "name phoneNumber "
+      })
+      .populate("packages.packageId")
       .skip(skip || 0)
       .lean()
       .maxTimeMS(60000);
@@ -74,4 +84,4 @@ class Address {
   }
 }
 
-export default new Address();
+export default new Cart();

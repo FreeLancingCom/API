@@ -10,13 +10,17 @@ import couponService from '../../coupons/services/couponService.js';
 
 import productService from '../../products/services/productService.js';
 import packageService from '../../package/services/packageService.js';
+import orderService from '../../orders/services/orderService.js';
+import { PAYMENT_STATUS, PAYMENT_METHODS } from '../../orders/helpers/constants.js';
 import { productsErrors } from '../../products/helpers/constants.js';
 import { packageErrors } from '../../package/helpers/constants.js';
 import Fuse from 'fuse.js';
 
 class CartService {
-  async listCart(query, userId) {
+  async listCart(query = {}, userId) {
+    const options = getPaginationAndSortingOptions(query);
     const { limit, page, sort, sortBy, search, minPrice, maxPrice, ..._query } = query;
+    
     if (minPrice || maxPrice) {
       _query['price.finalPrice'] = {};
       if (minPrice) {
@@ -27,7 +31,6 @@ class CartService {
       }
     }
 
-    const options = getPaginationAndSortingOptions(query);
     _query['userId'] = userId;
     let carts = await cartModel.find(_query, options, {});
     const count = await cartModel.countDocuments(_query);
@@ -79,7 +82,7 @@ class CartService {
             );
           }
           cart.products[index].totalPrice =
-            cart.products[index].quantity * product.price.finalPrice;
+            cart.products[index].quantity * product.product.price.finalPrice;
         } else {
           const canAddToCart = await productService.checkAvailableQuantity(quantity, productId);
           if (!canAddToCart) {
@@ -93,11 +96,11 @@ class CartService {
           cart.products.push({
             productId,
             quantity,
-            totalPrice: quantity * product.price.finalPrice
+            totalPrice: quantity * product.product.price.finalPrice
           });
         }
 
-        cart.totalPrice = this.calculateTotalPrice(cart); 
+        cart.totalPrice = this.calculateTotalPrice(cart);
         await cartModel.update({ userId }, cart);
       } else {
         const canAddToCart = productService.checkAvailableQuantity(quantity, productId);
@@ -110,8 +113,8 @@ class CartService {
         }
         cart = await cartModel.create({
           userId,
-          products: [{ productId, quantity, totalPrice: quantity * product.price.finalPrice }],
-          totalPrice: quantity * product.price.finalPrice
+          products: [{ productId, quantity, totalPrice: quantity * product.product.price.finalPrice }],
+          totalPrice: quantity * product.product.price.finalPrice
         });
       }
 
@@ -135,6 +138,8 @@ class CartService {
 
       let cart = await cartModel.findOne({ userId });
 
+      console.log(cart);
+
       if (cart) {
         const index = cart.packages.findIndex(p => p.packageId == packageId);
 
@@ -152,7 +157,7 @@ class CartService {
             );
           }
           cart.packages[index].totalPrice =
-            cart.packages[index].quantity * Package.price.finalPrice;
+            cart.packages[index].quantity * Package.Package.price.finalPrice;
         } else {
           const canAddToCart = await packageService.checkAvailableQuantity(quantity, packageId);
           if (!canAddToCart) {
@@ -166,13 +171,20 @@ class CartService {
           cart.packages.push({
             packageId,
             quantity,
-            totalPrice: quantity * Package.price.finalPrice
+            totalPrice: quantity * Package.Package.price.finalPrice
           });
         }
 
-        cart.totalPrice = this.calculateTotalPrice(cart); 
+        cart.totalPrice = this.calculateTotalPrice(cart);
         await cartModel.update({ userId }, cart);
-      } else {
+      }
+      
+      
+      else {
+
+        console.log(Package); // print object of package
+        console.log(Package.Package.price) // undefined
+
         const canAddToCart = packageService.checkAvailableQuantity(quantity, packageId);
         if (!canAddToCart) {
           throw new ErrorResponse(
@@ -183,8 +195,8 @@ class CartService {
         }
         cart = await cartModel.create({
           userId,
-          packages: [{ packageId, quantity, totalPrice: quantity * Package.price.finalPrice }],
-          totalPrice: quantity * Package.price.finalPrice 
+          packages: [{ packageId, quantity, totalPrice: quantity * Package.Package.price.finalPrice }],
+          totalPrice: quantity * Package.Package.price.finalPrice
         });
       }
 
@@ -195,7 +207,6 @@ class CartService {
     }
   }
 
- 
   async increaseProductQuantity(productId, userId) {
     return this.AddProductToCart(productId, 1, userId);
   }
@@ -224,7 +235,7 @@ class CartService {
       cart.products[index].totalPrice =
         cart.products[index].quantity *
         (await productService.getProduct(productId)).price.finalPrice;
-      cart.totalPrice = this.calculateTotalPrice(cart); 
+      cart.totalPrice = this.calculateTotalPrice(cart);
       await cartModel.update({ userId }, cart);
 
       return cart;
@@ -236,8 +247,6 @@ class CartService {
 
   async removeProductFromCart(productId, userId) {
     try {
-
-      
       const cart = await cartModel.findOne({ userId });
       if (!cart) {
         throw new ErrorResponse(
@@ -249,11 +258,10 @@ class CartService {
 
       const index = cart.products.findIndex(p => p.productId == productId);
       if (index > -1) {
-        cart.products.splice(index, 1); 
+        cart.products.splice(index, 1);
         cart.totalPrice = this.calculateTotalPrice(cart);
         return await cartModel.update({ userId }, cart);
       }
-
     } catch (e) {
       logger.error(e);
       throw e;
@@ -273,11 +281,10 @@ class CartService {
 
       const index = cart.packages.findIndex(p => p.packageId == packageId);
       if (index > -1) {
-        cart.packages.splice(index, 1); 
-        cart.totalPrice = this.calculateTotalPrice(cart); 
+        cart.packages.splice(index, 1);
+        cart.totalPrice = this.calculateTotalPrice(cart);
         return await cartModel.update({ userId }, cart);
       }
-
     } catch (e) {
       logger.error(e);
       throw e;
@@ -396,7 +403,6 @@ class CartService {
     }
   }
 
-
   async decreasePackageQuantity(packageId, userId) {
     try {
       const cart = await cartModel.findOne({ userId });
@@ -407,7 +413,7 @@ class CartService {
           cartError.CART_NOT_FOUND.code
         );
       }
-  
+
       const index = cart.packages.findIndex(p => p.packageId == packageId);
       if (index === -1 || cart.packages[index].quantity <= 1) {
         throw new ErrorResponse(
@@ -416,14 +422,14 @@ class CartService {
           packageErrors.INVALID_QUANTITY.code
         );
       }
-  
+
       cart.packages[index].quantity -= 1;
       cart.packages[index].totalPrice =
         cart.packages[index].quantity *
         (await packageService.getPackage(packageId)).price.finalPrice;
-      cart.totalPrice = this.calculateTotalPrice(cart); 
+      cart.totalPrice = this.calculateTotalPrice(cart);
       await cartModel.update({ userId }, cart);
-  
+
       return cart;
     } catch (e) {
       logger.error(e);
@@ -432,9 +438,8 @@ class CartService {
   }
 
   async increasePackageQuantity(packageId, userId) {
-    return this.AddPackageToCart(packageId, userId, 1); 
+    return this.AddPackageToCart(packageId, userId, 1);
   }
-  
 
   calculateTotalPrice = cart => {
     let total = 0;
@@ -448,7 +453,7 @@ class CartService {
   };
 
   async applyCoupon(code, userId) {
-    const cart = await cartModel.findOne({ userId : userId });
+    const cart = await cartModel.findOne({ userId: userId });
     if (!cart) {
       throw new ErrorResponse(
         cartError.CART_NOT_FOUND.message,
@@ -471,7 +476,33 @@ class CartService {
     cart.totalPrice -= discount;
     await cartModel.update({ userId }, cart);
   }
+
+async checkOut(userId, body) {
+    const cart = await cartModel.findOne({ userId });
+    if (!cart) {
+      throw new ErrorResponse(
+        cartError.CART_NOT_FOUND.message,
+        BAD_REQUEST,
+        cartError.CART_NOT_FOUND.code
+      );
+    }
+
+    let paymentStatus =
+      body['paymentMethod'] === PAYMENT_METHODS['COD']
+        ? PAYMENT_STATUS['PENDING']
+        : PAYMENT_STATUS['SUCCESS'];
+
+    body.paymentStatus = paymentStatus;
+    const order = {
+      userId,
+      cart,
+      ...body
+    };
+
+    const createdOrder = await orderService.createOrder(order);
+    return createdOrder;
+    // await cartModel.delete({ userId });
+  }
 }
 
 export default new CartService();
-
