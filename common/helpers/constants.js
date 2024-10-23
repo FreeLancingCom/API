@@ -14,6 +14,10 @@ export const errorCodes = Object.freeze({
   USER_NOT_FOUND : {
     message: 'User not found',
     code: 4
+  },
+  INVALID_REFRESH_TOKEN : {
+    message: 'Invalid refresh token',
+    code: 5
   }
 });
 const OWNER = 'OWNER';
