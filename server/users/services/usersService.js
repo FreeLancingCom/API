@@ -126,7 +126,7 @@ class UserService {
     console.log(userData.email);
      const result =  await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
         username: userData.name,
-        link: `${process.env.CLIENT_URL}/users/verify-account?token=${VerifyAccountToken}`
+        link: `${process.env.CLIENT_URL}/verify-account?token=${VerifyAccountToken}`
       });
 
       console.log(result);
@@ -217,7 +217,7 @@ class UserService {
 
     await EmailService.sendEmail([email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
       username: user.name,
-      link: `${process.env.CLIENT_URL}/users/reset-password?token=${resetPasswordToken}`
+      link: `${process.env.CLIENT_URL}/reset-password?token=${resetPasswordToken}`
     });
 
     return { message: 'Reset password link sent successfully' };
