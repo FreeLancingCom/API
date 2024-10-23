@@ -10,6 +10,10 @@ export const errorCodes = Object.freeze({
   VERIFY_YOUR_EMAIL: {
     message: 'Please verify your email first.',
     code: 3
+  },
+  USER_NOT_FOUND : {
+    message: 'User not found',
+    code: 4
   }
 });
 const OWNER = 'OWNER';
