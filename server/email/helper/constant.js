@@ -1,6 +1,6 @@
 
 import TEMPLATES from '../template/index.js';
-const BEAUTY_CENTER = 'Beauty Center';
+const HER_STYLE = 'Her Style';
 
 
 
@@ -23,11 +23,11 @@ export const EMAIL_TEMPLATES_DETAILS = {
   VERIFY_EMAIL: {
     template: TEMPLATES.activateAccount,
     subject: 'Email Verification',
-    sender: BEAUTY_CENTER
+    sender: HER_STYLE
   },
   RESET_PASSWORD: {
     template: TEMPLATES.resetPassword,
     subject: 'Reset Password',
-    sender: BEAUTY_CENTER
+    sender: HER_STYLE
   }
 };

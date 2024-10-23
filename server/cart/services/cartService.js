@@ -233,8 +233,7 @@ class CartService {
 
       cart.products[index].quantity -= 1;
       cart.products[index].totalPrice =
-        cart.products[index].quantity *
-        (await productService.getProduct(productId)).price.finalPrice;
+      cart.products[index].quantity * ((await productService.getProduct(productId)).product.price.finalPrice)
       cart.totalPrice = this.calculateTotalPrice(cart);
       await cartModel.update({ userId }, cart);
 

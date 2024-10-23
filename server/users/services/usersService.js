@@ -122,10 +122,14 @@ class UserService {
 
       userData['verifyPasswordToken'] = VerifyAccountToken;
 
-      await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
+
+    console.log(userData.email);
+     const result =  await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
         username: userData.name,
         link: `${process.env.CLIENT_URL}/users/verify-account?token=${VerifyAccountToken}`
       });
+
+      console.log(result);
 
       const _user = await UserModel.create({ ...userData });
       const { password, ...user } = _user.toObject();
