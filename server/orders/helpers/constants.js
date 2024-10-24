@@ -20,7 +20,7 @@ export const PAYMENT_STATUS = {
 
 export const PAYMENT_METHODS = {
   COD: 'COD',
-  CARD: 'CARD'
+  INSTANT : 'INSTANT'
 };
 
 export const ordersErrors = {

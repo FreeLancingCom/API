@@ -491,7 +491,7 @@ class CartService {
     await cartModel.update({ userId }, cart);
   }
 
-  async checkOut(userId, body) {
+async checkOut(userId, body) {
     const cart = await cartModel.findOne({ userId });
     if (!cart) {
       throw new ErrorResponse(

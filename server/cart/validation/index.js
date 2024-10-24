@@ -125,12 +125,16 @@ export default {
         .required(),
       address: Joi.object()
         .keys({
+          firstLine: Joi.string().required(),
+          secondLine: Joi.string().optional(),
+          googleLocation: Joi.string().required(),
           street: Joi.string().required(),
           city: Joi.string().required(),
           postalCode: Joi.string().required(),
           country: Joi.string().required()
         })
         .required()
-    })
+    }),
+    paymentId : Joi.string().optional()
   }
 };

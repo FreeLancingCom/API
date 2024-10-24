@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 import { ORDER_STATUS, PAYMENT_STATUS, PAYMENT_METHODS } from '../helpers/constants.js';
 
 const addressSchema = new mongoose.Schema({
+  firstLine : String,
+  secondLine: String,
   street: String,
+  googleLocation: String,
   city: String,
   postalCode: String,
   country: String
@@ -78,6 +81,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: Object.keys(PAYMENT_STATUS),
       default: PAYMENT_STATUS['PENDING']
+    },
+    paymentId: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }
