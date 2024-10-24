@@ -33,62 +33,26 @@ router.post(
   Controller[CONTROLLERS.CREATE_CART_PACKAGE]
 );
 
-router.put(
-  '/increase-product/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.INCREASE_PRODUCT_QUANTITY]),
-  validateRequest(validationSchemas[CONTROLLERS.INCREASE_PRODUCT_QUANTITY]),
-  Controller[CONTROLLERS.INCREASE_PRODUCT_QUANTITY]
-);
 
-router.put(
-  '/decrease-product/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
-  validateRequest(validationSchemas[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
-  Controller[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]
-);
-
+// remove product from the cart
 router.delete(
   '/remove-product/:id',
   Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DELETE_CART_PRODUCT]),
-  validateRequest(validationSchemas[CONTROLLERS.DELETE_CART_PRODUCT]),
-  Controller[CONTROLLERS.DELETE_CART_PRODUCT]
+  Authorization.Authorize(Permissions[CONTROLLERS.REMOVE_PRODUCT_FROM_CART]),
+  validateRequest(validationSchemas[CONTROLLERS.REMOVE_PRODUCT_FROM_CART]),
+  Controller[CONTROLLERS.REMOVE_PRODUCT_FROM_CART]
 );
 
-router.put(
-  '/increase-package/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.INCREASE_PACKAGE_QUANTITY]),
-  validateRequest(validationSchemas[CONTROLLERS.INCREASE_PACKAGE_QUANTITY]),
-  Controller[CONTROLLERS.INCREASE_PACKAGE_QUANTITY]
-);
-
-router.put(
-  '/decrease-package/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DECREASE_PACKAGE_QUANTITY]),
-  validateRequest(validationSchemas[CONTROLLERS.DECREASE_PACKAGE_QUANTITY]),
-  Controller[CONTROLLERS.DECREASE_PACKAGE_QUANTITY]
-);
-
-router.put(
-  '/decrease-product/:id',
-  Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
-  validateRequest(validationSchemas[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]),
-  Controller[CONTROLLERS.DECREASE_PRODUCT_QUANTITY]
-)
 
 router.delete(
   '/remove-package/:id',
   Authenticate,
-  Authorization.Authorize(Permissions[CONTROLLERS.DELETE_CART_PACKAGE]),
-  validateRequest(validationSchemas[CONTROLLERS.DELETE_CART_PACKAGE]),
-  Controller[CONTROLLERS.DELETE_CART_PACKAGE]
+  Authorization.Authorize(Permissions[CONTROLLERS.REMOVE_PACKAGE_FROM_CART]),
+  validateRequest(validationSchemas[CONTROLLERS.REMOVE_PACKAGE_FROM_CART]),
+  Controller[CONTROLLERS.REMOVE_PACKAGE_FROM_CART]
 );
 
+// update product in the cart
 router.put(
   '/update-product/:id',
   Authenticate,
@@ -96,6 +60,7 @@ router.put(
   validateRequest(validationSchemas[CONTROLLERS.UPDATE_CART_PRODUCT]),
   Controller[CONTROLLERS.UPDATE_CART_PRODUCT]
 );
+
 
 router.put(
   '/update-package/:id',
@@ -105,6 +70,7 @@ router.put(
   Controller[CONTROLLERS.UPDATE_CART_PACKAGE]
 );
 
+// apply coupon
 router.post(
   '/apply-coupon',
   Authenticate,
@@ -113,6 +79,7 @@ router.post(
   Controller[CONTROLLERS.APPLY_COUPON]
 );
 
+// checkout
 router.post(
   '/checkout',
   Authenticate,
@@ -120,5 +87,6 @@ router.post(
   validateRequest(validationSchemas[CONTROLLERS.CHECK_OUT]),
   Controller[CONTROLLERS.CHECK_OUT]
 );
+
 
 export default router;

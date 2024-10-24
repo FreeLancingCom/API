@@ -81,7 +81,7 @@ export default {
 
   [CONTROLLERS.VERIFY_EMAIL]: async (req, res, next) => {
     try {
-      const data = await usersService.verifyAccount(req.query.token);
+      const data = await usersService.verifyAccount(req.body.token);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

@@ -140,7 +140,6 @@ class CartService {
 
       let cart = await cartModel.findOne({ userId });
 
-      console.log(cart);
 
       if (cart) {
         const index = cart.packages.findIndex(p => p.packageId == packageId);
@@ -180,8 +179,6 @@ class CartService {
         cart.totalPrice = this.calculateTotalPrice(cart);
         await cartModel.update({ userId }, cart);
       } else {
-        console.log(Package); // print object of package
-        console.log(Package.Package.price); // undefined
 
         const canAddToCart = packageService.checkAvailableQuantity(quantity, packageId);
         if (!canAddToCart) {
@@ -246,6 +243,14 @@ class CartService {
 
   async removeProductFromCart(productId, userId) {
     try {
+      const isProductIdValid = await productService.getProduct(productId);
+      if (!isProductIdValid) {
+        throw new ErrorResponse(
+          productsErrors.PRODUCT_NOT_FOUND.message,
+          BAD_REQUEST,
+          productsErrors.PRODUCT_NOT_FOUND.code
+        );
+      }
       const cart = await cartModel.findOne({ userId });
       if (!cart) {
         throw new ErrorResponse(
@@ -259,7 +264,7 @@ class CartService {
       if (index > -1) {
         cart.products.splice(index, 1);
         cart.totalPrice = this.calculateTotalPrice(cart);
-        return await cartModel.update({ userId }, cart);
+        return await cartModel.update({ userId }, cart)
       }
     } catch (e) {
       logger.error(e);
@@ -269,6 +274,16 @@ class CartService {
 
   async removePackageFromCart(packageId, userId) {
     try {
+
+      const isPackageIdValid = await packageService.getPackage(packageId);
+      if (!isPackageIdValid) {
+        throw new ErrorResponse(
+          packageErrors.PACKAGE_NOT_FOUND.message,
+          BAD_REQUEST,
+          packageErrors.PACKAGE_NOT_FOUND.code
+        );
+      }
+
       const cart = await cartModel.findOne({ userId });
       if (!cart) {
         throw new ErrorResponse(
@@ -325,7 +340,7 @@ class CartService {
             cart.products[index].totalPrice = cart.products[index].quantity * newPrice;
           } else {
             cart.products[index].totalPrice =
-              cart.products[index].quantity * product.price.finalPrice;
+              cart.products[index].quantity * product.product.price.finalPrice;
           }
 
           cart.totalPrice = this.calculateTotalPrice(cart);
@@ -374,14 +389,14 @@ class CartService {
                 packageErrors.INSUFFICIENT_STOCK_WITH_ID.code
               );
             }
-            cart.packages[index].quantity = newQuantity;
+            cart.packages[index].quantity = newQuantuity;
           }
 
           if (newPrice) {
             cart.packages[index].totalPrice = cart.packages[index].quantity * newPrice;
           } else {
             cart.packages[index].totalPrice =
-              cart.packages[index].quantity * Package.price.finalPrice;
+              cart.packages[index].quantity * Package.Package.price.finalPrice;
           }
 
           cart.totalPrice = this.calculateTotalPrice(cart);

@@ -46,7 +46,7 @@ export default {
   [CONTROLLERS.UPDATE_CART_PRODUCT]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
-      const { quantity, price } = req.body; // Assuming these are the fields we can update
+      const { quantity, price } = req.body; 
       const data = await cartService.updateProductInCart(req.params.id, userId, quantity, price);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
@@ -60,7 +60,6 @@ export default {
     try {
       const userId = _.get(req, 'user._id', null);
       const { quantity } = req.body;
-      console.log(req.params.id);
       const data = await cartService.AddPackageToCart(req.params.id, userId, quantity);
       return res.status(StatusCodes.CREATED).json({ success: true, data });
     } catch (error) {
@@ -73,7 +72,6 @@ export default {
   [CONTROLLERS.DELETE_CART_PACKAGE]: async (req, res, next) => {
     try {
       const userId = _.get(req, 'user._id', null);
-      console.log(req.params.id);
       const data = await cartService.removePackageFromCart(req.params.id, userId);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
@@ -156,6 +154,16 @@ export default {
     try {
       const userId = _.get(req, 'user._id', null);
       const data = await cartService.checkOut(userId, req.body);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.REMOVE_PRODUCT_FROM_CART]: async (req, res, next) => {
+    try {
+      const userId = _.get(req, 'user._id', null);
+      const data = await cartService.removeProductFromCart(req.params.id, userId);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

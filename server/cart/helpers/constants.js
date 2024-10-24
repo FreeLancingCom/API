@@ -12,7 +12,9 @@ export const CONTROLLERS = {
   DECREASE_PACKAGE_QUANTITY: 'DECREASE_PACKAGE_QUANTITY',
   CLEAR_CART: 'cart:clear',
   APPLY_COUPON: 'cart:apply-coupon',
-  CHECK_OUT: 'cart:check-out' //  when cart/checkout => it added the cart items to the o
+  CHECK_OUT: 'cart:check-out', //  when cart/checkout => it added the cart items to the o
+  REMOVE_PRODUCT_FROM_CART: 'cart:remove-product',
+  REMOVE_PACKAGE_FROM_CART: 'cart:remove-package'
 };
 
 export const cartError = Object.freeze({
