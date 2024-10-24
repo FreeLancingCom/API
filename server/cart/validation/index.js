@@ -118,23 +118,35 @@ export default {
       code: Joi.string().required()
     })
   },
+ 
   [CONTROLLERS.CHECK_OUT]: {
     body: Joi.object().keys({
       paymentMethod: Joi.string()
-        .valid(...Object.keys(PAYMENT_METHODS))
+        .valid(...Object.keys(PAYMENT_METHODS)) 
         .required(),
-      address: Joi.object()
-        .keys({
-          firstLine: Joi.string().required(),
-          secondLine: Joi.string().optional(),
-          googleLocation: Joi.string().required(),
-          street: Joi.string().required(),
-          city: Joi.string().required(),
-          postalCode: Joi.string().required(),
-          country: Joi.string().required()
-        })
-        .required()
-    }),
-    paymentId : Joi.string().optional()
+      address: Joi.object().keys({
+        firstLine: Joi.string().required(), 
+        secondLine: Joi.string().optional(),
+        googleLocation: Joi.string().required(),
+        street: Joi.string().required(),
+        city: Joi.string().required(),
+        postalCode: Joi.string().required(),
+        country: Joi.string().required(),
+      }).required(), 
+
+      
+    paymentId: Joi.when('paymentMethod', {
+      is: PAYMENT_METHODS.INSTANT,
+      then: Joi.string().required(),
+      otherwise: Joi.forbidden() 
+    })
+      
+    })
   }
+  
+  
+  
+  
+  
+  
 };
