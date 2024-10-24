@@ -11,7 +11,7 @@ class Order {
       .lean()
       .populate({
         path: 'user',
-        select: 'name phoneNumber'
+        select: 'name phoneNumber email'
       })
       .populate({
         path: 'cart.products.productId',

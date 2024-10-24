@@ -12,7 +12,7 @@ class Cart {
       })
       .populate({
         path: 'userId',
-        select: 'name phoneNumber '
+        select: 'name phoneNumber email '
       })
       .populate('packages.packageId')
       .skip(skip || 0)
