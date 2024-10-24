@@ -389,7 +389,7 @@ class CartService {
                 packageErrors.INSUFFICIENT_STOCK_WITH_ID.code
               );
             }
-            cart.packages[index].quantity = newQuantuity;
+            cart.packages[index].quantity = newQuantity;
           }
 
           if (newPrice) {

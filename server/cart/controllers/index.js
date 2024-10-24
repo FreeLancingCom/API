@@ -54,6 +54,18 @@ export default {
       next(error);
     }
   },
+  // Update package in the cart (quantity or price)
+  [CONTROLLERS.UPDATE_CART_PACKAGE]: async (req, res, next) => {
+    try {
+      const userId = _.get(req, 'user._id', null);
+      const { quantity, price } = req.body; 
+      const data = await cartService.updatePackageInCart(req.params.id, userId, quantity, price);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
 
   // Add package to the cart
   [CONTROLLERS.CREATE_CART_PACKAGE]: async (req, res, next) => {
@@ -80,18 +92,7 @@ export default {
     }
   },
 
-  // Update package in the cart (quantity or price)
-  [CONTROLLERS.UPDATE_CART_PACKAGE]: async (req, res, next) => {
-    try {
-      const userId = _.get(req, 'user._id', null);
-      const { quantity, price } = req.body; // Assuming these are the fields we can update
-      const data = await cartService.updatePackageInCart(req.params.id, userId, quantity, price);
-      return res.status(StatusCodes.OK).json({ success: true, data });
-    } catch (error) {
-      logger.error(error);
-      next(error);
-    }
-  },
+  
 
   // Increase the quantity of a product in the cart
   [CONTROLLERS.INCREASE_PRODUCT_QUANTITY]: async (req, res, next) => {
