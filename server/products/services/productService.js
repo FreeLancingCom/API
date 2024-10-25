@@ -7,6 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 import logger from '../../../common/utils/logger/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import Fuse from 'fuse.js';
+import PackageModel from '../../package/model/index.js';
 
 
 const { BAD_REQUEST } = StatusCodes;
@@ -76,13 +77,23 @@ class ProductService {
     productData['totalPrice'] = productData.price.finalPrice * productData.quantity;
     try {
        const isProductExist = await ProductModel.findOne({ name: productData.name });
-        if (isProductExist)
-            throw new ErrorResponse(
-                productsErrors.PRODUCT_ALREADY_EXISTS.message,
-                BAD_REQUEST,
-                productsErrors.PRODUCT_ALREADY_EXISTS.code
-            );  
+       const isExistPackage = await PackageModel.findOne({ packageId: productData.packageId });
 
+       if (isProductExist)
+        throw new ErrorResponse(
+            productsErrors.PRODUCT_ALREADY_EXISTS.message,
+            BAD_REQUEST,
+            productsErrors.PRODUCT_ALREADY_EXISTS.code
+      );  
+
+
+       if(!isExistPackage && productData.packageId !== 'undefined')
+        throw new ErrorResponse(
+          productsErrors.PACKAGE_NOT_FOUND.message,
+          BAD_REQUEST,
+          productsErrors.PACKAGE_NOT_FOUND.code
+        );
+       
      
 
       const product = await ProductModel.create(productData);
@@ -103,9 +114,19 @@ class ProductService {
           productsErrors.PRODUCT_NOT_FOUND.code
         );
        
-        // make sure addedBy is added 
         productData['addedBy'] = addedBy
-        // 
+        
+
+        if(productData.packageId){
+          const isExistPackage = await PackageModel.findOne({ packageId: productData.packageId });
+          if(!isExistPackage && productData.packageId !== 'undefined')
+            throw new ErrorResponse(
+              productsErrors.PACKAGE_NOT_FOUND.message,
+              BAD_REQUEST,
+              productsErrors.PACKAGE_NOT_FOUND.code
+            );
+        } // 
+
       const updatedProduct = await ProductModel.update(
         { _id: productId},
         productData

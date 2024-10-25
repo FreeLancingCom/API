@@ -39,5 +39,9 @@ export const productsErrors = Object.freeze({
   INVALID_QUANTITY :{
   message: "you can not decrease more than this",
   code : 107,
-  }
+  },
+  PACKAGE_NOT_FOUND : {
+    message : "package not found",
+    code : 108
+  },
 });

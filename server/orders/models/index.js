@@ -31,7 +31,7 @@ class Order {
       .findOne(selector)
       .select(projection)
       .populate('user')
-      .select('name email')
+      .select('name email phoneNumber')
       .populate('cart')
       .select('products packages totalPrice')
       .lean();
