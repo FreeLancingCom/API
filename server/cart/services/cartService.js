@@ -486,7 +486,7 @@ class CartService {
       );
     }
 
-    const discount = await couponService.applyCoupon(code, cart);
+    const discount = await couponService.applyCoupon(code, cart , userId);
     cart.totalPrice -= discount;
     await cartModel.update({ userId }, cart);
   }

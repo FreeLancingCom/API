@@ -42,7 +42,11 @@ const userSchema = new mongoose.Schema(
     verifyPasswordToken: {
       type: String,
       default: null
-    }
+    },
+    AppliedCoupons: {
+      type: [String],
+      default: []
+    },
   },
   {
     timestamps: true

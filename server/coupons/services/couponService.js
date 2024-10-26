@@ -2,6 +2,8 @@ import Coupon from '../models/index.js';
 import { getPaginationAndSortingOptions } from '../../../common/utils/pagination/index.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 
+import usersService from '../../users/services/usersService.js';
+
 import moment from 'moment';
 
 import { COUPON_STATUS, couponsErrors , COUPON_TYPES } from '../helpers/constants.js';
@@ -129,8 +131,10 @@ class CouponService {
     }
   }
 
-  async applyCoupon(code , cart) {
+  async applyCoupon(code , cart , userId) {
     try {
+      const user = await usersService.getUser(userId);
+
       const coupon = await Coupon.findOne({ code });
         if (!coupon) {
             throw new ErrorResponse(
@@ -139,6 +143,18 @@ class CouponService {
             couponsErrors.COUPON_NOT_FOUND.code
             );
         }
+
+        if(user.AppliedCoupons.includes(coupon.code)) {
+
+            throw new ErrorResponse(
+            couponsErrors.COUPON_ALREADY_APPLIED.message,
+            BAD_REQUEST,
+            couponsErrors.COUPON_ALREADY_APPLIED.code
+            );
+
+        }
+
+
         if (moment(coupon.expiryDate).isBefore(moment())) {
             throw new ErrorResponse(
             couponsErrors.COUPON_NOT_FOUND.message,
@@ -167,10 +183,9 @@ class CouponService {
         } else {
             discount = coupon.discount.value;
         }
-
+        user.AppliedCoupons.push(coupon.code);
+        await usersService.updateUser(userId, user);
         return discount;
-
-        
     }
     catch (e) {
       logger.error(e);

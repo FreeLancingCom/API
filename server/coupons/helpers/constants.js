@@ -49,5 +49,10 @@ export const couponsErrors = {
   COUPON_ALREADY_EXIST_AND_NOT_EXPIRED: {
     message: 'Coupon already exists and has not expired',
     code: 108
+  },
+  COUPON_ALREADY_APPLIED:{
+    message: 'Coupon already applied',
+    code: 109
+
   }
 };
