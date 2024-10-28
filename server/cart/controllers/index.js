@@ -16,7 +16,7 @@ export default {
       next(error);
     }
   },
-
+ 
   // Add product to the cart
   [CONTROLLERS.CREATE_CART_PRODUCT]: async (req, res, next) => {
     try {
