@@ -82,16 +82,7 @@ class PackageService {
 
   async createPackage(packageData) {
     try {
-      const isPackageExist = await PackageModel.findOne({ name: packageData.name });
-
-      if (isPackageExist) {
-        throw new ErrorResponse(
-          packageErrors.PACKAGE_ALREADY_EXISTS.message,
-          BAD_REQUEST,
-          packageErrors.PACKAGE_ALREADY_EXISTS.code
-        );
-      }
-
+   
       packageData['totalPrice'] = packageData.price.finalPrice * packageData.quantity;
       
 
