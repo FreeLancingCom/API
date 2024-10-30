@@ -102,7 +102,7 @@ export default {
   [CONTROLLERS.VERIFY_TOKEN_AND_RESET_PASSWORD]: async (req, res, next) => {
     try {
       const data = await usersService.verifyTokenAndResetPassword(
-        req.query.token,
+        req.body.token,
         req.body.newPassword
       );
       res.status(StatusCodes.OK).json({ success: true, data });
