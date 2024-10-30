@@ -227,7 +227,6 @@ class UserService {
       const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
       const email = _.get(decoded, 'email', null);
 
-
       if (!email) {
         throw new ErrorResponse('Invalid reset token', StatusCodes.FORBIDDEN);
       }

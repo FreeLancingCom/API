@@ -77,19 +77,14 @@ class User {
   }
 
   async create(payload) {
-    const projection = {
-      verifyPasswordToken : 0,
-      resetPasswordToken : 0,
-      AppliedCoupons : 0,
-    };
+
     const newUser = await UserSchema.create(payload);
 
     const result = await UserSchema.findOne({ _id: newUser._id }).select(projection);
     return result;
 }
   async update(selector, newParams, options = {}) {
-    passwordProjection['resetPasswordToken'] = 0;
-    passwordProjection['verifyPasswordToken'] = 0;
+   
 
     const result = await UserSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
