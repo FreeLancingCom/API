@@ -198,7 +198,7 @@ class UserService {
   }
 
   async generateForgetMyPasswordTokenLink(body) {
-    const { email } = body;
+    const { email  } = body;
 
     if (!email) {
       throw new ErrorResponse('Email not found', StatusCodes.FORBIDDEN, 'EMAIL_NOT_FOUND');

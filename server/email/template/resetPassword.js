@@ -102,7 +102,7 @@ export default function (params) {
             <h1>${lang.title}</h1>
             <p>${lang.greeting}</p>
             <p>${lang.body}</p>
-            <p style="color:red !important">reset password link <a href=${link}>Rest your Password</a></p>
+            <p style="color:red !important">reset password link <a style="color:red;" href=${link}>Rest your Password</a></p>
             <p>${lang.warning}</p>
             <p>${lang.thanks}<br>${lang.team}</p>
             <div class="footer">
