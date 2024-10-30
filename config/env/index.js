@@ -14,7 +14,7 @@ export const EMAIL_CONFIG = {
   emailPassword: process.env.EMAIL_PASSWORD
 };
 
-export const JWT_SHORT_EXPIRY = process.env.JWT_SHORT_EXPIRY || '10m'
+export const JWT_SHORT_EXPIRY = process.env.JWT_SHORT_EXPIRY || '3d'
 export const JWT_LONG_EXPIRY = process.env.JWT_LONG_EXPIRY || '30d'
 
 export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refreshSecret';
