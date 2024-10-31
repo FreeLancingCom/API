@@ -118,7 +118,7 @@ class ProductService {
         
 
         if(productData.packageId){
-          const isExistPackage = await PackageModel.findOne({ packageId: productData.packageId });
+          const isExistPackage = await PackageModel.findOne({ _id: productData.packageId });
           if(!isExistPackage && productData.packageId !== 'undefined')
             throw new ErrorResponse(
               productsErrors.PACKAGE_NOT_FOUND.message,

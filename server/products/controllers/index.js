@@ -46,7 +46,7 @@ export default {
   [CONTROLLERS.UPDATE_PRODUCT]: async (req, res, next) => {
     try {
       const usedId = _.get(req, 'user._id', null);
-      const data = await productService.updateProduct(req.params.id,usedId ,  req.body);
+      const data = await productService.updateProduct(req.params.id, usedId ,  req.body);
       return res.status(StatusCodes.OK).json({
         success: true,
         data
