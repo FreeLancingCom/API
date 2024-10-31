@@ -30,6 +30,9 @@ class EmailService{
                 service: "Gmail",
                 host: "smtp.gmail.com",
                 port: 465,
+                pool : true,
+                maxConnections : 5,
+                maxMessages : 100,
                 secure: true,
                 auth: {
                     user: this.EMAILS_USER,
