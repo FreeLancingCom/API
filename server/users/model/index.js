@@ -80,7 +80,7 @@ class User {
 
     const newUser = await UserSchema.create(payload);
 
-    const result = await UserSchema.findOne({ _id: newUser._id }).select(projection);
+    const result = await UserSchema.findOne({ _id: newUser._id })
     return result;
 }
   async update(selector, newParams, options = {}) {
