@@ -30,7 +30,7 @@ class EmailService{
                 service: "Gmail",
                 host: "smtp.gmail.com",
                 port: 465,
-                secure: false,
+                secure: true,
                 auth: {
                     user: this.EMAILS_USER,
                     pass: this.EMAILS_PASSWORD
