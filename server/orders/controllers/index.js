@@ -55,5 +55,14 @@ export default {
       logger.error(error);
       next(error);
     }
+  },
+  [CONTROLLERS.REFUND_ORDER]: async (req, res, next) => {
+    try {
+      const data = await orderService.refundOrder(req.body.orderId);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 };

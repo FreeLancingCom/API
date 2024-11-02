@@ -29,7 +29,7 @@ class Order {
   async findOne(selector = {}, projection = {}, populationList = []) {
     const result = await orderSchema
       .findOne(selector)
-      .select(projection)
+      .select("paymentMethod paymentStatus address user cart status paymentId")
       .populate('user')
       .select('name email phoneNumber')
       .populate('cart')

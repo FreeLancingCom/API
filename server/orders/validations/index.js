@@ -37,8 +37,8 @@ export default {
         .default(PAYMENT_STATUS['PENDING']),
       address: Joi.object()
         .keys({
-          firstLine : Joi.string().required(),
-          secondLine : Joi.string().optional(),
+          firstLine: Joi.string().required(),
+          secondLine: Joi.string().optional(),
           googleLocation: Joi.string().required(),
           street: Joi.string().required(),
           city: Joi.string().required(),
@@ -91,5 +91,14 @@ export default {
           .regex(/^[0-9a-fA-F]{24}$/)
       })
       .required()
+  },
+
+  [CONTROLLERS.REFUND_ORDER]: {
+    body: Joi.object().keys({
+      orderId: Joi.string()
+        .required()
+        .regex(/^[0-9a-fA-F]{24}$/)
+    })
   }
+
 };

@@ -3,7 +3,8 @@ export const CONTROLLERS = {
   GET_ORDER: 'GET_ORDER',
   CREATE_ORDER: 'CREATE_ORDER',
   UPDATE_ORDER: 'UPDATE_ORDER',
-  DELETE_ORDER: 'DELETE_ORDER'
+  DELETE_ORDER: 'DELETE_ORDER',
+  REFUND_ORDER: 'REFUND_ORDER'
 };
 
 export const ORDER_STATUS = {
@@ -11,17 +12,18 @@ export const ORDER_STATUS = {
   PLACED: 'PLACED',
   SHIPPED: 'SHIPPED',
   DELIVERED: 'DELIVERED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
 };
 
 export const PAYMENT_STATUS = {
   PENDING: 'PENDING',
-  SUCCESS: 'SUCCESS'
+  SUCCESS: 'SUCCESS',
+  REFUNDED : 'REFUNDED',
 };
 
 export const PAYMENT_METHODS = {
   COD: 'COD',
-  INSTANT : 'INSTANT'
+  INSTANT: 'INSTANT'
 };
 
 export const ordersErrors = {
@@ -92,5 +94,9 @@ export const ordersErrors = {
   INVALID_ORDER_PAYMENT: {
     message: 'Invalid order payment',
     code: 117
+  },
+  ORDER_REFUND_FAILED: {
+    message: 'Order refund failed',
+    code: 118
   }
 };

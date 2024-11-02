@@ -49,4 +49,12 @@ router.delete(
   Controller[CONTROLLERS.DELETE_ORDER]
 );
 
+router.post(
+  '/refund',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.REFUND_ORDER]),
+  validateRequest(validationSchemas[CONTROLLERS.REFUND_ORDER]),
+  Controller[CONTROLLERS.REFUND_ORDER]
+)
+
 export default router;

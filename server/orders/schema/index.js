@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { ORDER_STATUS, PAYMENT_STATUS, PAYMENT_METHODS } from '../helpers/constants.js';
 
 const addressSchema = new mongoose.Schema({
-  firstLine : String,
+  firstLine: String,
   secondLine: String,
   street: String,
   googleLocation: String,
