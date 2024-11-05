@@ -105,17 +105,6 @@ class PackageService {
           packageErrors.PACKAGE_NOT_FOUND.code
         );
       }
-
-     const isTherePackageWithSameName = await PackageModel.findOne({ name: packageData.name });
-
-     if(isTherePackageWithSameName){
-        throw new ErrorResponse(
-          packageErrors.PACKAGE_ALREADY_EXISTS.message,
-          BAD_REQUEST,
-          packageErrors.PACKAGE_ALREADY_EXISTS.code
-        );
-     }
-
       const Package = await PackageModel.update({ _id: packageId }, packageData);
       return Package;
     } catch (e) {

@@ -76,16 +76,10 @@ class ProductService {
     productData['addedBy']=addedBy;
     productData['totalPrice'] = productData.price.finalPrice * productData.quantity;
     try {
-       const isProductExist = await ProductModel.findOne({ name: productData.name });
-       const isExistPackage = await PackageModel.findOne({ packageId: productData.packageId });
 
-       if (isProductExist)
-        throw new ErrorResponse(
-            productsErrors.PRODUCT_ALREADY_EXISTS.message,
-            BAD_REQUEST,
-            productsErrors.PRODUCT_ALREADY_EXISTS.code
-      );  
+      const isExistPackage = await PackageModel.findOne({ packageId: productData.packageId });
 
+  
 
        if(!isExistPackage && productData.packageId !== 'undefined')
         throw new ErrorResponse(
