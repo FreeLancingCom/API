@@ -1,12 +1,7 @@
-import { StatusCodes } from "http-status-codes";
-import ErrorResponse from "../../../common/utils/errorResponse/index.js";
-import { emailError } from "../helper/constant.js";
-
 export default function (params) {
-
     const { username, link, language } = params;
 
-    if(!username || !link) {
+    if (!username || !link) {
         throw new ErrorResponse(
             emailError.EMAIL_DETAILS_NOT_PROVIDED.message,
             StatusCodes.BAD_REQUEST,
@@ -18,18 +13,18 @@ export default function (params) {
         en: {
             title: "Reset Your Password",
             greeting: `Dear ${username},`,
-            body: "We received a request to reset your password. Use the Link below to reset your password:",
+            body: "We received a request to reset your password. Click the button below to reset your password:",
             button: "Reset Password",
             warning: "If you did not request a password reset, please ignore this email or contact support if you have questions.",
             thanks: "Thanks,",
             team: "The Her Style Team",
             footer: "© 2024 Her Style. All rights reserved.",
-            address: "Her Style Address" // TODO: add the real address here 
+            address: "Her Style Address" // TODO: add the real address here
         },
         ar: {
             title: "إعادة تعيين كلمة المرور",
             greeting: `عزيزي ${username},`,
-            body: "لقد تلقينا طلبًا لإعادة تعيين كلمة مرورك. استخدم رمز OTP أدناه لإعادة تعيين كلمة مرورك:",
+            body: "لقد تلقينا طلبًا لإعادة تعيين كلمة مرورك. انقر على الزر أدناه لإعادة تعيين كلمة مرورك:",
             button: "إعادة تعيين كلمة المرور",
             warning: "إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد الإلكتروني أو الاتصال بالدعم إذا كان لديك أي أسئلة.",
             thanks: "شكرا،",
@@ -39,7 +34,6 @@ export default function (params) {
         }
     };
 
-    // Select the correct translation based on the provided language
     const lang = language === 'ar' ? translations.ar : translations.en;
 
     return `
@@ -63,10 +57,12 @@ export default function (params) {
                 padding: 30px;
                 border-radius: 8px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                text-align: ${language === 'ar' ? 'right' : 'left'};
             }
             h1 {
-                font-size: 28px;
+                font-size: 24px;
                 color: #333333;
+                margin-top: 0;
             }
             p {
                 font-size: 16px;
@@ -75,7 +71,7 @@ export default function (params) {
             }
             .button {
                 display: inline-block;
-                margin-top: 20px;
+                margin: 20px 0;
                 padding: 12px 24px;
                 font-size: 16px;
                 color: #ffffff;
@@ -83,26 +79,27 @@ export default function (params) {
                 text-decoration: none;
                 border-radius: 5px;
             }
-            a {
-                color: white !important;
-            }
             .footer {
                 margin-top: 20px;
                 font-size: 14px;
                 color: #777777;
                 text-align: center;
             }
+            .header img {
+                max-width: 100px;
+                margin-bottom: 20px;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
-            <img src="https://freeimage.host/i/dDgAIBn" alt="Her Style Logo">
+                <img src="https://iili.io/dDgAIBn.png" alt="Her Style Logo">
             </div>
             <h1>${lang.title}</h1>
             <p>${lang.greeting}</p>
             <p>${lang.body}</p>
-            <p style="color:red !important">reset password link <a style="color:red;" href=${link}>Rest your Password</a></p>
+            <a href="${link}" class="button">${lang.button}</a>
             <p>${lang.warning}</p>
             <p>${lang.thanks}<br>${lang.team}</p>
             <div class="footer">
