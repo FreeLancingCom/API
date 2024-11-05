@@ -29,8 +29,7 @@ class EmailService{
 
 
             const transporter = nodeMailer.createTransport({
-                service : 'gmail',
-                host: "smtp.gmail.com",
+                host: "smtp.hostinger.com",
                 port: 465,
                 pool : true,
                 secure: true,
@@ -38,6 +37,7 @@ class EmailService{
                     user: this.EMAILS_USER,
                     pass: this.EMAILS_PASSWORD
                 },
+            
             });
 
             await transporter.sendMail({
