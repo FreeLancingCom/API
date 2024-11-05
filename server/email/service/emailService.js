@@ -26,8 +26,11 @@ class EmailService{
 
             const content = template(dynamicVars);
 
+
+
             const transporter = nodeMailer.createTransport({
-                host: "smtp.her-style.com",
+                service : 'gmail',
+                host: "smtp.gmail.com",
                 port: 465,
                 pool : true,
                 secure: true,
@@ -38,7 +41,7 @@ class EmailService{
             });
 
             await transporter.sendMail({
-            from: `${sender} ${this.EMAILS_USER}`,
+            from: `${sender} <${this.EMAILS_USER}>`,
             to: targets,
             subject: subject,
             html: content
@@ -50,8 +53,7 @@ class EmailService{
                 emailError.EMAIL_NOT_SENT.message,
                 StatusCodes.INTERNAL_SERVER_ERROR,
                 emailError.EMAIL_NOT_SENT.code
-            );
-         
+            ); 
         }
     }
 

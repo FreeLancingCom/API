@@ -137,6 +137,7 @@ class UserService {
       return { user, token };
     } catch (e) {
       logger.error(e);
+      console.log("error", e);
       throw e;
     }
   }
