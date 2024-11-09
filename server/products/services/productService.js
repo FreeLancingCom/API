@@ -17,6 +17,13 @@ class ProductService {
   async listProducts(query) {
     try {
       const { limit, page, sort, sortBy, search, minPrice, maxPrice, ..._query } = query;
+
+    for (const key in _query) {
+      if (_query[key] === 'null') {
+        _query[key] = null;
+      }
+    }
+
         if (minPrice || maxPrice) {
         _query['price.finalPrice'] = {};
         if (minPrice) {
@@ -109,7 +116,11 @@ class ProductService {
         );
        
         productData['addedBy'] = addedBy
-        
+
+        if (productData.packageId === "undefined") {
+          productData.packageId = null;
+        }
+      
 
         if(productData.packageId){
           const isExistPackage = await PackageModel.findOne({ _id: productData.packageId });

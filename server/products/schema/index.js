@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema(
     },
     packageId: {
       type: String,
-      required: true,
+      required: false,
       default: 'undefined',
       ref: 'packages'
     },
