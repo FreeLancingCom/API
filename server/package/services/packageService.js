@@ -28,6 +28,7 @@ class PackageService {
     }
 
     const options = getPaginationAndSortingOptions(query);
+    options.sort =  { ['createdAt']: 'asc' }
     let packages = await PackageModel.find(_query, options , {}); 
     const count = await PackageModel.countDocuments(_query); 
 

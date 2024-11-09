@@ -35,6 +35,7 @@ class ProductService {
       }
   
       const options = getPaginationAndSortingOptions(query);
+      options.sort =  { ['createdAt']: 'asc' }
       let products = await ProductModel.find(_query, options , {}); 
       const count = await ProductModel.countDocuments(_query); 
   
