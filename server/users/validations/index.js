@@ -13,7 +13,7 @@ export default {
       role: Joi.string().valid(USER_ROLES.OWNER, USER_ROLES.CLIENT).default(USER_ROLES['CLIENT']),
       isVerified: Joi.boolean().optional().default(false),
       phoneNumber: Joi.string().required()
-    })
+    }),
   },
 
   [CONTROLLERS.LOGIN]: {

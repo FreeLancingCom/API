@@ -5,6 +5,9 @@ import usersService from '../services/usersService.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
 
+
+
+
 export default {
   // AUTH FOR CLIENT
   [CONTROLLERS.LOGIN]: async (req, res, next) => {
@@ -18,8 +21,6 @@ export default {
         secure: process.env.NODE_ENV === 'production',  // Requires secure in production (HTTPS)
         sameSite: 'none'  // Allows the cookie to be sent with cross-site requests
     };
-    
-
       isPersistent ? cookieOptions['maxAge'] = 7 * 24 * 60 * 60 * 1000 : "";
 
     

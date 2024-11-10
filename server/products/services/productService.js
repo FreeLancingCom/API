@@ -63,22 +63,39 @@ class ProductService {
   
       
 
-  async getProduct(productId , query={}) {
+  async  getProduct(productId, query = {}) {
     try {
       const product = await ProductModel.findOne({ _id: productId });
-      const productComments  = await commentsService.listComments(productId, query);
-      if (!product)
+  
+      if (!product) {
         throw new ErrorResponse(
           productsErrors.PRODUCT_NOT_FOUND.message,
           BAD_REQUEST,
           productsErrors.PRODUCT_NOT_FOUND.code
         );
-      return {product , productComments};
+      }
+  
+      const averageStars = await commentsService.calculateAverageStarsForProduct(productId);
+  
+      if (product.stars !== averageStars) {
+        product.stars = averageStars;
+        await ProductModel.update({_id:productId},{ stars: averageStars });
+        console.log("Updated Product Stars:", product.stars);
+      }
+  
+      const productComments = await commentsService.listComments(productId, query);
+  
+      return { product, productComments };
+  
     } catch (e) {
-      logger.error(e);
+      console.error(e);
       throw e;
     }
   }
+  
+  
+  
+  
 
   async createProduct(addedBy,productData) {
     productData['addedBy']=addedBy;

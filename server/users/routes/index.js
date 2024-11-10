@@ -39,7 +39,7 @@ router.put(
 //DELETE USER
 router.delete(
   '/:id',
-  Authenticate,
+  Authenticate, 
   Authorization.Authorize(Permissions[CONTROLLERS.DELETE_USER]),
   validateRequest(validationSchemas[CONTROLLERS.DELETE_USER]),
   Controller[CONTROLLERS.DELETE_USER]

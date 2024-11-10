@@ -60,6 +60,7 @@ const Authenticate = async (req, res, next) => {
           res.setHeader('Authorization', `Bearer ${newAccessToken}`);
 
           req.user = user;
+
           return next();
         } catch (refreshError) {
           logger.error(`Error verifying refresh token: ${refreshError.message}`);

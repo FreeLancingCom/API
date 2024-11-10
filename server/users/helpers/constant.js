@@ -1,6 +1,6 @@
 export const CONTROLLERS = {
   // AUTH
-  LOGIN: 'login',
+  LOGIN: 'loginUser',
   SIGNUP: 'register',
   // USER
   GENERATE_EMAIL_VERIFICATION_TOKEN: 'generateEmailVerificationToken',

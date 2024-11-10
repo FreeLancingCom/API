@@ -1,5 +1,4 @@
 import CommentSchema from '../schema/index.js';
-
 class Comment {
   async find(selectors = {}, options = {}) {
     const { limit, skip, sort, projection } = options;
@@ -48,15 +47,30 @@ class Comment {
     const result = await CommentSchema.deleteOne(selector, options);
     return result;
   }
-
   async aggregate(pipeline, options = {}) {
-    const result = await CommentSchema.aggregate(pipeline, { maxTimeMS: 60000 })
-      .sort(options.sort || 'createdAt')
-      .skip(options.skip || 0)
-      .limit(options.limit || 200);
+    // Add sorting, skipping, and limiting as stages in the pipeline
+
+    if (options.sort) {
+      pipeline.push({ $sort: options.sort });
+    } else {
+      pipeline.push({ $sort: { createdAt: -1 } }); // Default sorting by createdAt descending
+    }
+  
+    if (options.skip) {
+      pipeline.push({ $skip: options.skip });
+    }
+  
+    if (options.limit) {
+      pipeline.push({ $limit: options.limit });
+    } else {
+      pipeline.push({ $limit: 200 }); // Default limit if none specified
+    }
+  
+    // Execute the aggregation with a maxTimeMS option
+    const result = await CommentSchema.aggregate(pipeline).option({ maxTimeMS: 60000 });
     return result;
   }
-
+  
   async distinct(field, selector = {}) {
     const result = await CommentSchema.distinct(field, selector);
     return result;
@@ -64,6 +78,10 @@ class Comment {
 
   async deleteMany(selector, options = {}) {
     const result = await CommentSchema.deleteMany(selector, options);
+    return result;
+  }
+  async countDocuments(selector) {
+    const result = await CommentSchema.countDocuments(selector);
     return result;
   }
 }

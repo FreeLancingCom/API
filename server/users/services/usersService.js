@@ -130,6 +130,7 @@ class UserService {
     
 
 
+
       const _user = await UserModel.create({ ...userData });
       const { password, ...user } = _user.toObject();
       const token = await generateToken(user, JWT_SHORT_EXPIRY);
