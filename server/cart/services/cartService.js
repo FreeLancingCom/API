@@ -70,29 +70,9 @@ class CartService {
 
         if (index > -1) {
           cart.products[index].quantity += quantity;
-          const canAddToCart = await productService.checkAvailableQuantity(
-            cart.products[index].quantity,
-            productId
-          );
-          if (!canAddToCart) {
-            throw new ErrorResponse(
-              productsErrors.INSUFFICIENT_STOCK_WITH_ID.message(product),
-              BAD_REQUEST,
-              productsErrors.INSUFFICIENT_STOCK_WITH_ID.code
-            );
-          }
           cart.products[index].totalPrice =
             cart.products[index].quantity * product.product.price.finalPrice;
         } else {
-          const canAddToCart = await productService.checkAvailableQuantity(quantity, productId);
-          if (!canAddToCart) {
-            throw new ErrorResponse(
-              productsErrors.INSUFFICIENT_STOCK_WITH_ID.message(product),
-              BAD_REQUEST,
-              productsErrors.INSUFFICIENT_STOCK_WITH_ID.code
-            );
-          }
-
           cart.products.push({
             productId,
             quantity,
@@ -103,14 +83,6 @@ class CartService {
         cart.totalPrice = this.calculateTotalPrice(cart);
         await cartModel.update({ userId }, cart);
       } else {
-        const canAddToCart = productService.checkAvailableQuantity(quantity, productId);
-        if (!canAddToCart) {
-          throw new ErrorResponse(
-            productsErrors.INSUFFICIENT_STOCK_WITH_ID.message(product),
-            BAD_REQUEST,
-            productsErrors.INSUFFICIENT_STOCK_WITH_ID.code
-          );
-        }
         cart = await cartModel.create({
           userId,
           products: [
@@ -146,29 +118,10 @@ class CartService {
 
         if (index > -1) {
           cart.packages[index].quantity += quantity;
-          const canAddThatQuantity = await packageService.checkAvailableQuantity(
-            cart.packages[index].quantity,
-            packageId
-          );
-          if (!canAddThatQuantity) {
-            throw new ErrorResponse(
-              packageErrors.INSUFFICIENT_STOCK_WITH_ID.message(Package),
-              BAD_REQUEST,
-              packageErrors.INSUFFICIENT_STOCK_WITH_ID.code
-            );
-          }
           cart.packages[index].totalPrice =
             cart.packages[index].quantity * Package.Package.price.finalPrice;
         } else {
-          const canAddToCart = await packageService.checkAvailableQuantity(quantity, packageId);
-          if (!canAddToCart) {
-            throw new ErrorResponse(
-              packageErrors.INSUFFICIENT_STOCK_WITH_ID.message(Package),
-              BAD_REQUEST,
-              packageErrors.INSUFFICIENT_STOCK_WITH_ID.code
-            );
-          }
-
+          
           cart.packages.push({
             packageId,
             quantity,
@@ -180,14 +133,6 @@ class CartService {
         await cartModel.update({ userId }, cart);
       } else {
 
-        const canAddToCart = packageService.checkAvailableQuantity(quantity, packageId);
-        if (!canAddToCart) {
-          throw new ErrorResponse(
-            packageErrors.INSUFFICIENT_STOCK_WITH_ID.message(Package),
-            BAD_REQUEST,
-            packageErrors.INSUFFICIENT_STOCK_WITH_ID.code
-          );
-        }
         cart = await cartModel.create({
           userId,
           packages: [
@@ -322,17 +267,6 @@ class CartService {
         const index = cart.products.findIndex(p => p.productId == productId);
         if (index > -1) {
           if (newQuantity) {
-            const canUpdateQuantity = await productService.checkAvailableQuantity(
-              newQuantity,
-              productId
-            );
-            if (!canUpdateQuantity) {
-              throw new ErrorResponse(
-                productsErrors.INSUFFICIENT_STOCK_WITH_ID.message(product),
-                BAD_REQUEST,
-                productsErrors.INSUFFICIENT_STOCK_WITH_ID.code
-              );
-            }
             cart.products[index].quantity = newQuantity;
           }
 
@@ -378,17 +312,6 @@ class CartService {
         const index = cart.packages.findIndex(p => p.packageId == packageId);
         if (index > -1) {
           if (newQuantity) {
-            const canUpdateQuantity = await packageService.checkAvailableQuantity(
-              newQuantity,
-              packageId
-            );
-            if (!canUpdateQuantity) {
-              throw new ErrorResponse(
-                packageErrors.INSUFFICIENT_STOCK_WITH_ID.message(Package),
-                BAD_REQUEST,
-                packageErrors.INSUFFICIENT_STOCK_WITH_ID.code
-              );
-            }
             cart.packages[index].quantity = newQuantity;
           }
 
