@@ -23,7 +23,8 @@ export const PAYMENT_STATUS = {
 
 export const PAYMENT_METHODS = {
   COD: 'COD',
-  INSTANT: 'INSTANT'
+  INSTANT: 'INSTANT',
+  BANKAK: 'BANKAK',
 };
 
 export const ordersErrors = {

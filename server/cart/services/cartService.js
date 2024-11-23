@@ -15,6 +15,7 @@ import { PAYMENT_STATUS, PAYMENT_METHODS } from '../../orders/helpers/constants.
 import { productsErrors } from '../../products/helpers/constants.js';
 import { packageErrors } from '../../package/helpers/constants.js';
 import Fuse from 'fuse.js';
+import axios from 'axios';
 
 class CartService {
   async listCart(query = {}, userId) {
@@ -414,36 +415,130 @@ class CartService {
     await cartModel.update({ userId }, cart);
   }
 
+
+
+
+
+
+
+
+
+
 async checkOut(userId, body) {
-    const cart = await cartModel.findOne({ userId });
-    if (!cart) {
-      throw new ErrorResponse(
-        cartError.CART_NOT_FOUND.message,
-        BAD_REQUEST,
-        cartError.CART_NOT_FOUND.code
-      );
-    }
-
-    let paymentStatus =
-      body['paymentMethod'] === PAYMENT_METHODS['COD']
-        ? PAYMENT_STATUS['PENDING']
-        : PAYMENT_STATUS['SUCCESS'];
-
-    body.paymentStatus = paymentStatus;
-    const order = {
-      user: userId,
-      cart: {
-        products: cart.products,
-        packages: cart.packages,
-        totalPrice: cart.totalPrice
-      },
-      ...body
-    };
-
-    const createdOrder = await orderService.createOrder(order);
-    await cartModel.delete({ userId });
-    return createdOrder;
+  // Retrieve the user's cart
+  const cart = await cartModel.findOne({ userId });
+  if (!cart) {
+    throw new ErrorResponse(
+      cartError.CART_NOT_FOUND.message,
+      BAD_REQUEST,
+      cartError.CART_NOT_FOUND.code
+    );
   }
+
+  // Determine the payment status based on the method
+  let paymentStatus =
+    body['paymentMethod'] === PAYMENT_METHODS['COD'] || body['paymentMethod'] === PAYMENT_METHODS['BANKAK']
+      ? PAYMENT_STATUS['PENDING']
+      : PAYMENT_STATUS['SUCCESS'];
+
+  body.paymentStatus = paymentStatus;
+
+  // Prepare the order data
+  const order = {
+    user: userId,
+    cart: {
+      products: cart.products,
+      packages: cart.packages,
+      totalPrice: cart.totalPrice
+    },
+    ...body
+  };
+
+  // Create the order in your system
+  const createdOrder = await orderService.createOrder(order);
+
+  // Prepare shipment data
+  const shipmentData = {
+    serviceId: 1, // Example service ID, replace with actual service ID if needed
+    recipientZoneId: 123, // Replace with correct zone ID
+    recipientSubzoneId: 456, // Replace with correct subzone ID
+    recipientPhone: "123456789", // Replace with the recipient's phone number
+    recipientMobile: "987654321", // Replace with the recipient's mobile number
+    recipientAddress: body.address.street + ", " + body.address.city, // Format the address as needed
+    // Adjusting the delivery date format (only date part)
+    deliveryDate: new Date().toISOString().split('T')[0], // Format to 'YYYY-MM-DD'
+    weight: cart.totalWeight || 0, // Assuming numeric weight value
+    price: cart.totalPrice, // Using "price" instead of "totalPrice"
+    // Adjust orderId and products fields based on the API schema
+    shipmentProducts: [
+      ...cart.products.map(product => ({
+        productId: parseInt(product._id, 10), // Ensure the productId is an integer (if required)
+        quantity: product.quantity,
+        price: product.totalPrice // Assuming price is the total price of the product
+      })),
+      ...cart.packages.map(P => ({
+        packageId: P._id, // Use packageId if needed
+        quantity: P.quantity,
+        price: P.totalPrice // Assuming price is the total price of the package
+      }))
+    ], // Example, replace 'shipmentProducts' with correct field name if needed
+    notes: "Special handling required", // Example if 'notes' is required or other extra info
+  };
+
+  // Make an API call to the shipment company (example using GraphQL)
+  try {
+    const response = await axios.post('https://barq.accuratess.com:8001/graphql', {
+      query: `
+        mutation SaveShipment($input: ShipmentInput!) {
+          saveShipment(input: $input) {
+            status {
+              code
+              name
+            }
+            trackingUrl
+          }
+        }
+      `,
+      variables: {
+        input: shipmentData
+      }
+    });
+
+    // Handle the response from the shipment company
+    if (response.data && response.data.data && response.data.data.saveShipment) {
+      if (response.data.data.saveShipment.status) {
+        console.log('Shipment successfully created with status:', response.data.data.saveShipment.status.name);
+      } else {
+        console.error('Failed to create shipment:', response.data.data.saveShipment);
+      }
+
+      if (response.data.data.saveShipment.trackingUrl) {
+        console.log('Tracking URL:', response.data.data.saveShipment.trackingUrl);
+      } else {
+        console.error('No tracking URL available');
+      }
+    } else {
+      console.error('Unexpected response format from shipment company:', response.data);
+    }
+  } catch (error) {
+    console.error('Error sending order to shipment company:', error);
+  }
+
+  // Clean up the cart after the order is placed
+  await cartModel.delete({ userId });
+
+  // Return the created order
+  return createdOrder;
+}
+
+  
+  
+
+  
+  
+  
+
+  
 }
 
 export default new CartService();
