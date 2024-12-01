@@ -114,30 +114,30 @@ class OrderService {
       }
   
       if (order.status === ORDER_STATUS.PENDING && order.paymentMethod != PAYMENT_METHODS.COD) {
-        const paymentId = order.paymentId;
-        const amountToSmallestCurrency = Math.round(order.totalPrice * 100);
+        // const paymentId = order.paymentId;
+        // const amountToSmallestCurrency = Math.round(order.totalPrice * 100);
         
-        const refundResponse = await axios.post(
-          `https://api.moyasar.com/v1/payments/${paymentId}/refund`,
-          { amount: amountToSmallestCurrency },
-          {
-            headers: {
-              Authorization: `Basic ${Buffer.from(process.env.MOYASAR_API_KEY + ':').toString('base64')}`
-            }
-          }
-        );
+        // const refundResponse = await axios.post(
+        //   `https://api.moyasar.com/v1/payments/${paymentId}/refund`,
+        //   { amount: amountToSmallestCurrency },
+        //   {
+        //     headers: {
+        //       Authorization: `Basic ${Buffer.from(process.env.MOYASAR_API_KEY + ':').toString('base64')}`
+        //     }
+        //   }
+        // );
   
-        if (refundResponse.status === 200) {
-          console.log(`sucess${refundResponse}`); 
-          await OrderModel.update({ _id: id }, { status: ORDER_STATUS.CANCELLED } , {paymentStatus : PAYMENT_STATUS.REFUNDED});
-          return `Order ${id} has been refunded successfully`;
-        } else {
-          throw new ErrorResponse(
-            ordersErrors.ORDER_REFUND_FAILED.message,
-            BAD_REQUEST,
-            ordersErrors.ORDER_REFUND_FAILED.code
-          );
-        }
+        // if (refundResponse.status === 200) {
+        //   console.log(`sucess${refundResponse}`); 
+        //   await OrderModel.update({ _id: id }, { status: ORDER_STATUS.CANCELLED } , {paymentStatus : PAYMENT_STATUS.REFUNDED});
+        //   return `Order ${id} has been refunded successfully`;
+        // } else {
+        //   throw new ErrorResponse(
+        //     ordersErrors.ORDER_REFUND_FAILED.message,
+        //     BAD_REQUEST,
+        //     ordersErrors.ORDER_REFUND_FAILED.code
+        //   );
+        // }
       }
     } catch (e) {
       logger.error(e);

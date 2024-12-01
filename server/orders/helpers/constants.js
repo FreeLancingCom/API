@@ -5,6 +5,7 @@ export const CONTROLLERS = {
   UPDATE_ORDER: 'UPDATE_ORDER',
   DELETE_ORDER: 'DELETE_ORDER',
   REFUND_ORDER: 'REFUND_ORDER'
+  
 };
 
 export const ORDER_STATUS = {
@@ -13,6 +14,7 @@ export const ORDER_STATUS = {
   SHIPPED: 'SHIPPED',
   DELIVERED: 'DELIVERED',
   CANCELLED: 'CANCELLED',
+  NOT_PAID: 'NOT_PAID',
 };
 
 export const PAYMENT_STATUS = {
