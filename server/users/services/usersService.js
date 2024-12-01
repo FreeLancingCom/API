@@ -255,7 +255,7 @@ class UserService {
   // ADMIN services
 
   async listUsers(query) {
-    const { limit, skip, sort, ..._query } = query;
+    const { limit, skip, sort, page , ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
 
     try {

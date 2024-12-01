@@ -13,7 +13,7 @@ import { USER_ROLES } from '../../../common/helpers/constants.js';
 class AddressesService {
   async listAddresses(query , user) {
     let role = user.role;
-    const { limit, skip, sort, ..._query } = query;
+    const { limit, skip, sort, page ,  ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
     

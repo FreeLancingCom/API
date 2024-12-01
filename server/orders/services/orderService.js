@@ -16,7 +16,7 @@ import { USER_ROLES } from '../../../common/helpers/constants.js';
 class OrderService {
   async listOrders(query, user) {
     const userRole = _.get(user, 'role', null);
-    const { limit, skip, sort, ..._query } = query;
+    const { limit, skip, sort,  page ,  ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
       if (userRole === USER_ROLES.CLIENT) {

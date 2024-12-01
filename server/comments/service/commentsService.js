@@ -18,7 +18,7 @@ import { USER_ROLES } from '../../../common/helpers/constants.js';
 class CommentService {
 
   async listAllComments(query) {
-    const { limit, skip, sort, ..._query } = query;
+    const { limit, skip, sort,page, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
       const comments = await Comment.find({}, options);

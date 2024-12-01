@@ -17,7 +17,7 @@ import _ from 'lodash';
 
 class CouponService {
   async listCoupons(query) {
-    const { limit, skip, sort, ..._query } = query;
+    const { limit, skip, sort, page , ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
       const coupons = await Coupon.find(_query, options);
