@@ -26,13 +26,23 @@ class UserService {
       const { email, password  } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
-      if (!user || !user.isVerified) {
+      if (!user) {
         throw new ErrorResponse(
           usersErrors.USER_NOT_FOUND.message,
           BAD_REQUEST,
           usersErrors.USER_NOT_FOUND.code
         );
       }
+
+      if(!user.isVerified){
+        throw new ErrorResponse(
+          usersErrors.VERIFY_EMAIL.message,
+          403,
+          usersErrors.VERIFY_EMAIL.code
+        );
+      }
+
+
 
 
       const isMatch = await bcrypt.compare(password, user.password);

@@ -62,6 +62,10 @@ export const usersErrors = Object.freeze({
   COUNTRY_NOT_FOUND: {
     code: 109,
     message: 'Country not found.'
+  },
+  VERIFY_EMAIL:{
+    code:403,
+    message: 'Email not verified'
   }
 });
 
