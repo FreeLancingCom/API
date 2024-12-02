@@ -37,7 +37,7 @@ class UserService {
       if(!user.isVerified){
         throw new ErrorResponse(
           usersErrors.VERIFY_EMAIL.message,
-          403,
+          BAD_REQUEST,
           usersErrors.VERIFY_EMAIL.code
         );
       }

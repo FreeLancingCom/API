@@ -3,8 +3,8 @@ class ErrorResponse extends Error {
     super(message);
     this.status = status;
     this.errorCode = errorCode;
-    this.errors = errors;
-    this.data = data;
+    this.errors = errors || null;
+    this.data = data || null;
   }
 }
 
