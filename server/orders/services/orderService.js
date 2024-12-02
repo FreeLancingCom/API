@@ -59,25 +59,34 @@ class OrderService {
       throw e;
     }
   }
-
   async updateOrder(orderId, body) {
     try {
-      const order = await OrderModel.update({ _id: orderId }, body, {
-        new: true
-      });
-      if (!order) {
-        throw new ErrorResponse(
-          ordersErrors.ORDER_NOT_FOUND.message,
-          BAD_REQUEST,
-          ordersErrors.ORDER_NOT_FOUND.code
-        );
+
+
+      if(body['status'] === ORDER_STATUS['NOT_PAID']){
+        body['paymentStatus'] = PAYMENT_STATUS['NOT_PAID'];
       }
+      else if(body['status'] === ORDER_STATUS['DELIVERED']){
+        body['paymentStatus'] = PAYMENT_STATUS['SUCCESS'];
+      }
+      else if(body['status'] === ORDER_STATUS['CANCELLED']){
+        body['paymentStatus'] = PAYMENT_STATUS['REFUNDED'];
+      }
+      console.log(body);
+      const order = await OrderModel.update(
+        { _id: orderId },
+        { ...body },
+        { new: true }
+      )
+  
+    
       return order;
     } catch (e) {
       logger.error(e);
       throw e;
     }
   }
+  
 
   async deleteOrder(orderId) {
     try {
