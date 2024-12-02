@@ -21,6 +21,7 @@ export const PAYMENT_STATUS = {
   PENDING: 'PENDING',
   SUCCESS: 'SUCCESS',
   REFUNDED : 'REFUNDED',
+  NOT_PAID: 'NOT_PAID',
 };
 
 export const PAYMENT_METHODS = {
