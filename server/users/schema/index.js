@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      required : true,
+      required: true
     },
     role: {
       type: String,
@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
     AppliedCoupons: {
       type: [String],
       default: []
-    },
+    }
   },
   {
     timestamps: true

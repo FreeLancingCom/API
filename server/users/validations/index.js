@@ -13,7 +13,7 @@ export default {
       role: Joi.string().valid(USER_ROLES.OWNER, USER_ROLES.CLIENT).default(USER_ROLES['CLIENT']),
       isVerified: Joi.boolean().optional().default(false),
       phoneNumber: Joi.string().required()
-    }),
+    })
   },
 
   [CONTROLLERS.LOGIN]: {
@@ -21,8 +21,7 @@ export default {
       email: Joi.string().email().required(),
       password: Joi.string().required()
     })
-  }
-  ,
+  },
   [CONTROLLERS.LIST_USERS]: {
     query: Joi.object()
       .keys({
@@ -45,20 +44,26 @@ export default {
       name: Joi.string().optional(),
       email: Joi.string().email().optional(),
       photo: Joi.string().optional(),
-      role: Joi.string().valid(...Object.values(USER_ROLES)).optional(),
+      role: Joi.string()
+        .valid(...Object.values(USER_ROLES))
+        .optional(),
       isVerified: Joi.boolean().optional().valid(true, false)
     })
   },
-
+  [CONTROLLERS.VERIFY_EMAIL]: {
+    body: Joi.object().keys({
+      token: Joi.string().required()
+    })
+  },
 
   [CONTROLLERS.DELETE_USER]: {
     params: Joi.object().keys({
       id: Joi.string().required()
     })
   },
-
-
-
-
+  [CONTROLLERS.RESEND_VERIFICATION_EMAIL]: {
+    body: Joi.object().keys({
+      email: Joi.string().email().required()
+    })
   }
-
+};

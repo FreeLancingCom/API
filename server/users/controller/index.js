@@ -5,27 +5,21 @@ import usersService from '../services/usersService.js';
 import ErrorResponse from '../../../common/utils/errorResponse/index.js';
 import logger from '../../../common/utils/logger/index.js';
 
-
-
-
 export default {
   // AUTH FOR CLIENT
   [CONTROLLERS.LOGIN]: async (req, res, next) => {
     try {
-      const {isPersistent} = req.body;
+      const { isPersistent } = req.body;
       const { user, accessToken, refreshToken } = await usersService.login(req.body);
 
-      
       const cookieOptions = {
-        httpOnly: true,   // The cookie is only accessible by the server
-        secure: process.env.NODE_ENV === 'production',  // Requires secure in production (HTTPS)
-        sameSite: 'none'  // Allows the cookie to be sent with cross-site requests
-    };
-      isPersistent ? cookieOptions['maxAge'] = 7 * 24 * 60 * 60 * 1000 : "";
+        httpOnly: true, // The cookie is only accessible by the server
+        secure: process.env.NODE_ENV === 'production', // Requires secure in production (HTTPS)
+        sameSite: 'none' // Allows the cookie to be sent with cross-site requests
+      };
+      isPersistent ? (cookieOptions['maxAge'] = 7 * 24 * 60 * 60 * 1000) : '';
 
-    
-
-      res.cookie('refreshToken', refreshToken , cookieOptions);
+      res.cookie('refreshToken', refreshToken, cookieOptions);
 
       res.status(StatusCodes.OK).json({
         success: true,
@@ -63,11 +57,10 @@ export default {
 
       res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
-        secure:  process.env.NODE_ENV === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000 ,
-        sameSite : 'none' 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: 'none'
       });
- 
 
       res.status(StatusCodes.OK).json({
         success: true,
@@ -146,6 +139,16 @@ export default {
   [CONTROLLERS.DELETE_USER]: async (req, res, next) => {
     try {
       const data = await usersService.deleteUser(req.params.id);
+      res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  },
+  [CONTROLLERS.RESEND_VERIFICATION_EMAIL]: async (req, res, next) => {
+    try {
+      console.log(req.body.email);
+      const data = await usersService.resendVerificationEmail(req.body);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

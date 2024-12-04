@@ -23,7 +23,7 @@ const { BAD_REQUEST } = StatusCodes;
 class UserService {
   async login(body) {
     try {
-      const { email, password  } = body;
+      const { email, password } = body;
 
       const user = await UserModel.findOneAndIncludePassword({ email });
       if (!user) {
@@ -34,16 +34,13 @@ class UserService {
         );
       }
 
-      if(!user.isVerified){
+      if (!user.isVerified) {
         throw new ErrorResponse(
           usersErrors.VERIFY_EMAIL.message,
           BAD_REQUEST,
           usersErrors.VERIFY_EMAIL.code
         );
       }
-
-
-
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
@@ -57,7 +54,6 @@ class UserService {
       const accessToken = await generateToken(user, JWT_SHORT_EXPIRY);
       const refreshToken = await generateRefreshToken(user, JWT_LONG_EXPIRY);
 
-
       delete user.password;
 
       return { user, accessToken, refreshToken };
@@ -67,42 +63,10 @@ class UserService {
     }
   }
 
-  // Request reset password service
-  async sendResetPasswordEmail(email) {
-    try {
-      const user = await UserModel.findOne({ email });
-      if (!user) {
-        throw new ErrorResponse(
-          usersErrors.USER_NOT_FOUND.message,
-          BAD_REQUEST,
-          usersErrors.USER_NOT_FOUND.code
-        );
-      }
-
-      const resetPasswordToken = jwt.sign({ email: user.email }, JWT_REFRESH_SECRET, {
-        expiresIn: '10h'
-      });
-      user['resetPasswordToken'] = resetPasswordToken;
-
-      await EmailService.sendEmail([user.email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
-        username: user.name,
-        link: `${process.env.CLIENT_URL}/users/reset-password?token=${resetPasswordToken}`
-      });
-
-      await UserModel.update({ email }, { resetPasswordToken });
-    } catch (e) {
-      logger.error(e);
-      throw e;
-    }
-  }
-
   async createUser(userData) {
     try {
-      const existingUser = await UserModel.findOne({ 
-        $or: [
-          { email: userData.email },
-          { phoneNumber: userData.phoneNumber }
-        ]
+      const existingUser = await UserModel.findOne({
+        $or: [{ email: userData.email }, { phoneNumber: userData.phoneNumber }]
       });
       if (existingUser) {
         throw new ErrorResponse(
@@ -132,14 +96,10 @@ class UserService {
 
       userData['verifyPasswordToken'] = VerifyAccountToken;
 
-
-        await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
+      await EmailService.sendEmail([userData.email], EMAIL_TEMPLATES_DETAILS.VERIFY_EMAIL, {
         username: userData.name,
         link: `${process.env.CLIENT_URL}/verify-account?token=${VerifyAccountToken}`
       });
-    
-
-
 
       const _user = await UserModel.create({ ...userData });
       const { password, ...user } = _user.toObject();
@@ -148,7 +108,7 @@ class UserService {
       return { user, token };
     } catch (e) {
       logger.error(e);
-      console.log("error", e);
+      console.log('error', e);
       throw e;
     }
   }
@@ -210,7 +170,7 @@ class UserService {
   }
 
   async generateForgetMyPasswordTokenLink(body) {
-    const { email} = body;
+    const { email } = body;
 
     if (!email) {
       throw new ErrorResponse('Email not found', StatusCodes.FORBIDDEN, 'EMAIL_NOT_FOUND');
@@ -219,7 +179,15 @@ class UserService {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      throw new ErrorResponse('User not found', StatusCodes.FORBIDDEN, 'USER_NOT_FOUND');
+      throw new ErrorResponse(
+        usersErrors.USER_NOT_FOUND.message,
+        404,
+        usersErrors.USER_NOT_FOUND.code
+      );
+    }
+
+    if (!user.isVerified) {
+      throw new ErrorResponse(usersErrors.VERIFY_EMAIL.message, 403, usersErrors.VERIFY_EMAIL.code);
     }
 
     const resetPasswordToken = jwt.sign({ email }, JWT_REFRESH_SECRET, { expiresIn: '10h' });
@@ -232,6 +200,42 @@ class UserService {
     });
 
     return { message: 'Reset password link sent successfully' };
+  }
+
+  async resendVerificationEmail(body) {
+    const { email } = body;
+    const userData = await UserModel.findOne({ email });
+
+    console.log(userData, email);
+
+    if (!userData) {
+      throw new ErrorResponse(
+        usersErrors.USER_NOT_FOUND.message,
+        404,
+        usersErrors.USER_NOT_FOUND.code
+      );
+    }
+
+    if (userData.isVerified) {
+      throw new ErrorResponse(
+        usersErrors.ALREADY_VERIFIED.message,
+        400,
+        usersErrors.ALREADY_VERIFIED.code
+      );
+    }
+
+    const VerifyAccountToken = jwt.sign({ email: userData.email }, JWT_REFRESH_SECRET, {
+      expiresIn: '10h'
+    });
+
+    userData['verifyPasswordToken'] = VerifyAccountToken;
+
+    await EmailService.sendEmail([email], EMAIL_TEMPLATES_DETAILS.RESET_PASSWORD, {
+      username: userData.name,
+      link: `${process.env.CLIENT_URL}/verify-account?token=${VerifyAccountToken}`
+    });
+
+    return { message: 'Verification email sent successfully' };
   }
 
   async verifyTokenAndResetPassword(token, newPassword) {
@@ -265,7 +269,7 @@ class UserService {
   // ADMIN services
 
   async listUsers(query) {
-    const { limit, skip, sort, page , ..._query } = query;
+    const { limit, skip, sort, page, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
 
     try {
@@ -289,54 +293,47 @@ class UserService {
         );
       }
       return user;
-    }
-    catch (e) {
+    } catch (e) {
       logger.error(e);
       throw e;
     }
-
-}
-
-async updateUser(id, body) {
-  try {
-    const user = await UserModel.findOne({ _id: id });
-    if (!user) {
-      throw new ErrorResponse(
-        usersErrors.USER_NOT_FOUND.message,
-        BAD_REQUEST,
-        usersErrors.USER_NOT_FOUND.code
-      );
-    }
-
-    const updatedUser = await UserModel.update({ _id: id }, body);
-    return updatedUser;
-  } catch (e) {
-    logger.error(e);
-    throw e;
   }
 
+  async updateUser(id, body) {
+    try {
+      const user = await UserModel.findOne({ _id: id });
+      if (!user) {
+        throw new ErrorResponse(
+          usersErrors.USER_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.USER_NOT_FOUND.code
+        );
+      }
 
-}
-
-
-async deleteUser(id) {
-  try {
-    const user = await UserModel.findOne({ _id: id });
-    if (!user) {
-      throw new ErrorResponse(
-        usersErrors.USER_NOT_FOUND.message,
-        BAD_REQUEST,
-        usersErrors.USER_NOT_FOUND.code
-      );
+      const updatedUser = await UserModel.update({ _id: id }, body);
+      return updatedUser;
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
-
-    return await UserModel.delete({ _id: id });
-  } catch (e) {
-    logger.error(e);
-    throw e;
   }
 
-}
+  async deleteUser(id) {
+    try {
+      const user = await UserModel.findOne({ _id: id });
+      if (!user) {
+        throw new ErrorResponse(
+          usersErrors.USER_NOT_FOUND.message,
+          BAD_REQUEST,
+          usersErrors.USER_NOT_FOUND.code
+        );
+      }
 
+      return await UserModel.delete({ _id: id });
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 export default new UserService();

@@ -37,7 +37,7 @@ class User {
   async findOne(selector = {}, projection = {}, populationList = []) {
     projection = {
       ...passwordProjection,
-     ...projection
+      ...projection
     };
     const result = await UserSchema.findOne(selector)
       .select(projection)
@@ -77,15 +77,12 @@ class User {
   }
 
   async create(payload) {
-
     const newUser = await UserSchema.create(payload);
 
-    const result = await UserSchema.findOne({ _id: newUser._id })
+    const result = await UserSchema.findOne({ _id: newUser._id });
     return result;
-}
+  }
   async update(selector, newParams, options = {}) {
-   
-
     const result = await UserSchema.findOneAndUpdate(selector, newParams, {
       runValidators: true,
       new: true,
@@ -113,18 +110,6 @@ class User {
       .limit(options.limit || 200);
     return result;
   }
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 export default new User();

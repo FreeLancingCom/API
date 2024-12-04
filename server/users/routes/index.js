@@ -9,7 +9,6 @@ import Permissions from '../permission.js';
 
 const router = express.Router();
 
-
 router.get(
   '/',
   Authenticate,
@@ -17,7 +16,6 @@ router.get(
   validateRequest(validationSchemas[CONTROLLERS.LIST_USERS]),
   Controller[CONTROLLERS.LIST_USERS]
 );
-
 
 router.get(
   '/:id',
@@ -39,7 +37,7 @@ router.put(
 //DELETE USER
 router.delete(
   '/:id',
-  Authenticate, 
+  Authenticate,
   Authorization.Authorize(Permissions[CONTROLLERS.DELETE_USER]),
   validateRequest(validationSchemas[CONTROLLERS.DELETE_USER]),
   Controller[CONTROLLERS.DELETE_USER]
@@ -57,11 +55,20 @@ router.post(
   Controller[CONTROLLERS.SIGNUP]
 );
 router.post('/refresh-token', Controller[CONTROLLERS.REFRESH_TOKEN]);
-router.post('/verify-account', Controller[CONTROLLERS.VERIFY_EMAIL]);
+router.post(
+  '/verify-account',
+  validateRequest(validationSchemas[CONTROLLERS.VERIFY_EMAIL]),
+  Controller[CONTROLLERS.VERIFY_EMAIL]
+);
 
 // Password reset routes
 router.post('/reset-password-link', Controller[CONTROLLERS.RESET_PASSWORD_CODE_TOKEN]); // Request password reset link
-router.post('/reset-password', Controller[CONTROLLERS.VERIFY_TOKEN_AND_RESET_PASSWORD]); // Update password using the token
+router.post('/reset-password',  validateRequest(validationSchemas[CONTROLLERS.VERIFY_EMAIL]) , Controller[CONTROLLERS.VERIFY_TOKEN_AND_RESET_PASSWORD]); // Update password using the token
 
+router.post(
+  '/resend-verification-email',
+  validateRequest(validationSchemas[CONTROLLERS.RESEND_VERIFICATION_EMAIL]),
+  Controller[CONTROLLERS.RESEND_VERIFICATION_EMAIL]
+);
 
 export default router;

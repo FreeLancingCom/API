@@ -20,11 +20,12 @@ export const CONTROLLERS = {
   REFRESH_TOKEN: 'refresh_token',
 
   // AUTH Using email
-  GENERATE_VERIFY_ACCOUNT_LINK: 'generateVieriifiyAccountLink'
+  GENERATE_VERIFY_ACCOUNT_LINK: 'generateVieriifiyAccountLink',
+  RESEND_VERIFICATION_EMAIL: 'resendVerificationEmail'
 };
 export const usersErrors = Object.freeze({
   USER_NOT_FOUND: {
-    code: 100,
+    code: 404,
     message: 'User not found'
   },
   USER_ALREADY_EXISTS: {
@@ -63,9 +64,13 @@ export const usersErrors = Object.freeze({
     code: 109,
     message: 'Country not found.'
   },
-  VERIFY_EMAIL:{
-    code:403,
+  VERIFY_EMAIL: {
+    code: 403,
     message: 'Email not verified'
+  },
+  ALREADY_VERIFIED: {
+    code: 400,
+    message: 'Account has already verified'
   }
 });
 
