@@ -13,6 +13,7 @@ import productsRoutes from './products/router/index.js';
 import packagesRoutes from './package/router/index.js';
 import cartRoutes from './cart/router/index.js';
 import commentsRoutes from './comments/router/index.js';
+import sliderRoutes from './sliders/router/index.js';
 
 import couponsRoutes from './coupons/router/index.js';
 import orderRoutes from './orders/router/index.js';
@@ -29,6 +30,7 @@ router.use('/cart', cartRoutes);
 router.use('/comments', commentsRoutes);
 router.use('/coupons' , couponsRoutes);
 router.use('/orders', orderRoutes);
+router.use('/sliders', sliderRoutes);
 
 router.use('/health', (req, res) => {
   const data = {
