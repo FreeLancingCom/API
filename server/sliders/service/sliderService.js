@@ -52,7 +52,7 @@ class SliderService {
 
     async updateSlider(sliderId, body) {
         try {
-            const slider = await sliderModel.findOneAndUpdate({ _id: sliderId }, body, { new: true });
+            const slider = await sliderModel.update({ _id: sliderId }, body, { new: true });
             if (!slider) {
                 throw new ErrorResponse(
                     slidersErrors.SLIDER_NOT_FOUND.message,
@@ -69,7 +69,7 @@ class SliderService {
 
     async deleteSlider(sliderId) {
         try {
-            const slider = await sliderModel.findOneAndDelete({ _id: sliderId });
+            const slider = await sliderModel.delete({ _id: sliderId });
             if (!slider) {
                 throw new ErrorResponse(
                     slidersErrors.SLIDER_NOT_FOUND.message,
