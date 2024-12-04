@@ -29,5 +29,12 @@ export const EMAIL_TEMPLATES_DETAILS = {
     template: TEMPLATES.resetPassword,
     subject: 'Reset Password',
     sender: HER_STYLE
+  },
+  CREATE_ORDER: {
+    template: TEMPLATES.cretedOrder,
+    subject: 'Order Confirmation',
+    sender: HER_STYLE
   }
+
+  
 };

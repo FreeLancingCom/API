@@ -9,6 +9,7 @@ const serviceName = 'emails.services.index'
 
 class EmailService{
      async sendEmail(targets, templateData, dynamicVars) {
+        console.log(templateData)
         const functionName = 'sendEmail';
         logger.info(serviceName, functionName, `Sending email to ${targets.length} targets.`);
         try {
@@ -20,6 +21,8 @@ class EmailService{
                 );
 
             const { template, subject, sender } = templateData;
+
+            console.log(sender,subject,template);
 
             this.EMAILS_USER = EMAIL_CONFIG.emailUser
             this.EMAILS_PASSWORD = EMAIL_CONFIG.emailPassword

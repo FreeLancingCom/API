@@ -16,6 +16,11 @@ import { productsErrors } from '../../products/helpers/constants.js';
 import { packageErrors } from '../../package/helpers/constants.js';
 import Fuse from 'fuse.js';
 import axios from 'axios';
+import emailService from '../../email/service/emailService.js';
+import usersService from '../../users/services/usersService.js';
+import { CLIENT_URL } from '../../../config/env/index.js';
+import { EMAIL_TEMPLATES_DETAILS } from '../../email/helper/constant.js';
+
 
 class CartService {
   async listCart(query = {}, userId) {
@@ -435,7 +440,8 @@ async checkOut(userId, body) {
     );
   }
 
-  // Determine the payment status based on the method
+ 
+
   let paymentStatus =
     body['paymentMethod'] === PAYMENT_METHODS['COD']
       ? PAYMENT_STATUS['NOT_PAID']
@@ -446,6 +452,7 @@ async checkOut(userId, body) {
   body.paymentStatus = paymentStatus;
 
   // Prepare the order data
+  const userEmail = (await usersService.getUser(userId)).email;
   const order = {
     user: userId,
     cart: {
@@ -456,80 +463,44 @@ async checkOut(userId, body) {
     ...body
   };
 
-  // Create the order in your system
+   
+
   const createdOrder = await orderService.createOrder(order);
 
-  // Prepare shipment data
-  const shipmentData = {
-    serviceId: 1, // Example service ID, replace with actual service ID if needed
-    recipientZoneId: 123, // Replace with correct zone ID
-    recipientSubzoneId: 456, // Replace with correct subzone ID
-    recipientPhone: "123456789", // Replace with the recipient's phone number
-    recipientMobile: "987654321", // Replace with the recipient's mobile number
-    recipientAddress: body.address.street + ", " + body.address.city, // Format the address as needed
-    // Adjusting the delivery date format (only date part)
-    deliveryDate: new Date().toISOString().split('T')[0], // Format to 'YYYY-MM-DD'
-    weight: cart.totalWeight || 0, // Assuming numeric weight value
-    price: cart.totalPrice, // Using "price" instead of "totalPrice"
-    // Adjust orderId and products fields based on the API schema
-    shipmentProducts: [
-      ...cart.products.map(product => ({
-        productId: parseInt(product._id, 10), // Ensure the productId is an integer (if required)
-        quantity: product.quantity,
-        price: product.totalPrice // Assuming price is the total price of the product
-      })),
-      ...cart.packages.map(P => ({
-        packageId: P._id, // Use packageId if needed
-        quantity: P.quantity,
-        price: P.totalPrice // Assuming price is the total price of the package
-      }))
-    ], // Example, replace 'shipmentProducts' with correct field name if needed
-    notes: "Special handling required", // Example if 'notes' is required or other extra info
-  };
 
-  // Make an API call to the shipment company (example using GraphQL)
-  try {
-    const response = await axios.post('https://barq.accuratess.com:8001/graphql', {
-      query: `
-        mutation SaveShipment($input: ShipmentInput!) {
-          saveShipment(input: $input) {
-            status {
-              code
-              name
-            }
-            trackingUrl
-          }
-        }
-      `,
-      variables: {
-        input: shipmentData
-      }
-    });
+const orderId = createdOrder.id;  
+const orderLink = `${CLIENT_URL}/orders/${orderId}`;  
 
-    // Handle the response from the shipment company
-    if (response.data && response.data.data && response.data.data.saveShipment) {
-      if (response.data.data.saveShipment.status) {
-        console.log('Shipment successfully created with status:', response.data.data.saveShipment.status.name);
-      } else {
-        console.error('Failed to create shipment:', response.data.data.saveShipment);
-      }
+const orderDetails = await Promise.all(
+  [...cart.products, ...cart.packages].map(async (item) => {
 
-      if (response.data.data.saveShipment.trackingUrl) {
-        console.log('Tracking URL:', response.data.data.saveShipment.trackingUrl);
-      } else {
-        console.error('No tracking URL available');
-      }
-    } else {
-      console.error('Unexpected response format from shipment company:', response.data);
-    }
-  } catch (error) {
-    console.error('Error sending order to shipment company:', error);
-  }
+    const itemName = item.productId ? (await productService.getProduct(item.productId)).product.name : (await packageService.getPackage(item.packageId)).Package.name;
+    const productPrice = item.productId ? (await productService.getProduct(item.productId)).product.price.finalPrice : (await packageService.getPackage(item.packageId)).Package.price.finalPrice;
+    
+    return {
+      name: itemName,
+      quantity: item.quantity,
+      price: productPrice,
+      total: item.totalPrice,
+    };
+  })
+);
 
-  // Clean up the cart after the order is placed
-  await cartModel.delete({ userId });
 
-  // Return the created order
+
+await emailService.sendEmail([userEmail], EMAIL_TEMPLATES_DETAILS['CREATE_ORDER'], {
+  username: (await usersService.getUser(userId)).name, 
+  orderId,
+  orderLink,
+  orderDetails,
+  totalPrice: cart.totalPrice
+});
+
+
+
+  
+  // await cartModel.delete({ userId });
+
   return createdOrder;
 }
 

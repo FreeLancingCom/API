@@ -117,7 +117,6 @@ class CommentService {
       ];
   
       const result = await Comment.aggregate(pipeline);
-      console.log("Aggregation Pipeline Result:", result);
   
       // Return the rounded average or 0 if no comments matched
       return result[0]?.averageStars || 0;
