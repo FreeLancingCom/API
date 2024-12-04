@@ -16,7 +16,7 @@ export const EMAIL_CONFIG = {
 
 export const JWT_SHORT_EXPIRY = process.env.JWT_SHORT_EXPIRY || '3d'
 export const JWT_LONG_EXPIRY = process.env.JWT_LONG_EXPIRY || '30d'
-
+export const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000'
 export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refreshSecret';
 
 export const API_BASE_URL = '/api';
