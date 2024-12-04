@@ -437,9 +437,11 @@ async checkOut(userId, body) {
 
   // Determine the payment status based on the method
   let paymentStatus =
-    body['paymentMethod'] === PAYMENT_METHODS['COD'] || body['paymentMethod'] === PAYMENT_METHODS['BANKAK']
-      ? PAYMENT_STATUS['PENDING']
-      : PAYMENT_STATUS['SUCCESS'];
+    body['paymentMethod'] === PAYMENT_METHODS['COD']
+      ? PAYMENT_STATUS['NOT_PAID']
+      : body['paymentMethod'] === PAYMENT_METHODS['INSTANT']
+      ? PAYMENT_STATUS['SUCCESS']
+      : PAYMENT_STATUS['PENDING'];
 
   body.paymentStatus = paymentStatus;
 
