@@ -13,13 +13,11 @@ const router = express.Router();
 
 router.get(
     '/',
-    Authorization.Authorize(Permissions[CONTROLLERS.LIST_SLIDERS]),
     Controller[CONTROLLERS.LIST_SLIDERS],
 );
 
 router.get(
     '/:id',
-    Authorization.Authorize(Permissions[CONTROLLERS.GET_SLIDER]),
     Controller[CONTROLLERS.GET_SLIDER],
 );
 
