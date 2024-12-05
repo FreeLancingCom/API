@@ -34,7 +34,12 @@ export const EMAIL_TEMPLATES_DETAILS = {
     template: TEMPLATES.cretedOrder,
     subject: 'Order Confirmation',
     sender: HER_STYLE
+  },
+  DELIVERY_CREATE_ORDER: {
+    template: TEMPLATES.deliveryOrder,
+    subject: 'Order Confirmation for delivery',
+    sender: HER_STYLE
   }
 
-  
+
 };

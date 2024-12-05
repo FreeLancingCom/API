@@ -99,6 +99,14 @@ export default {
         .required()
         .regex(/^[0-9a-fA-F]{24}$/)
     })
+  },
+  [CONTROLLERS.SEND_ORDER_EMAIL]: {
+    body: Joi.object().keys({
+      email: Joi.string().email().required(),
+      orderId: Joi.string()
+        .required()
+        .regex(/^[0-9a-fA-F]{24}$/)
+    })
   }
 
 };

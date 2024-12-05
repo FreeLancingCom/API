@@ -12,6 +12,11 @@ import logger from '../../../common/utils/logger/index.js';
 import _ from 'lodash';
 
 import { USER_ROLES } from '../../../common/helpers/constants.js';
+import emailService from '../../email/service/emailService.js';
+import { EMAIL_TEMPLATES_DETAILS } from '../../email/helper/constant.js';
+import usersService from '../../users/services/usersService.js';
+import productService from '../../products/services/productService.js';
+import packageService from '../../package/services/packageService.js';
 
 class OrderService {
   async listOrders(query, user) {
@@ -53,6 +58,7 @@ class OrderService {
   async createOrder(body) {
     try {
       const order = await OrderModel.create(body);
+      console.log("order", order);
       return order;
     } catch (e) {
       logger.error(e);
@@ -153,6 +159,80 @@ class OrderService {
       throw e;
     }
   }
+
+  async sendOrderEmail(email, orderId) {
+    console.log('Sending email to:', email, 'with orderId:', orderId); // Log for debugging
+    try {
+        const order = await OrderModel.findOne({ _id: orderId });
+        if (!order) {
+            throw new ErrorResponse(
+                ordersErrors.ORDER_NOT_FOUND.message,
+                BAD_REQUEST,
+                ordersErrors.ORDER_NOT_FOUND.code
+            );
+        }
+        const cart = order.cart;
+
+
+        const orderDetails = await Promise.all(
+          [...cart.products, ...cart.packages].map(async (item) => {
+        
+            const itemName = item.productId ? (await productService.getProduct(item.productId)).product.name : (await packageService.getPackage(item.packageId)).Package.name;
+            const productPrice = item.productId ? (await productService.getProduct(item.productId)).product.price.finalPrice : (await packageService.getPackage(item.packageId)).Package.price.finalPrice;
+            const intemQuantity = item.productId ? (await productService.getProduct(item.productId)).product.quantity : (await packageService.getPackage(item.packageId)).Package.quantity;
+            
+            return {
+              name: itemName,
+              quantity:intemQuantity ,
+              price: productPrice,
+              total: item.totalPrice,
+            };
+          })
+        );
+
+        let manger = {...orderDetails};
+
+        console.log(orderDetails);
+
+        // Build the data object
+        let Data = {};
+        Data.username = (await usersService.getUser(order.user)).name;
+        Data.phoneNumber = (await usersService.getUser(order.user)).phoneNumber;
+        Data.addressFirstLine = order.address.firstLine;
+        Data.street = order.address.street; 
+        Data.city = order.address.city;
+        Data.googleLocation = order.address.googleLocation;
+        Data.postalCode = order.address.postalCode;
+        Data.country = order.address.country;
+        Data.totalPrice = order.cart.totalPrice;
+        Data.paymentMethod = order.paymentMethod;
+        Data.paymentStatus = order.paymentStatus;
+        Data.orderId = orderId;
+
+        let currentDate = new Date();
+        const customFormattedDate = currentDate.getFullYear() + '-' 
+            + (currentDate.getMonth() + 1).toString().padStart(2, '0') + '-' 
+            + currentDate.getDate().toString().padStart(2, '0') + ' ' 
+            + currentDate.getHours().toString().padStart(2, '0') + ':' 
+            + currentDate.getMinutes().toString().padStart(2, '0') + ':' 
+            + currentDate.getSeconds().toString().padStart(2, '0');
+
+        Data.requestReceived = customFormattedDate;
+        Data.status = order.status;
+        Data.orderDetails = orderDetails;
+
+
+        console.log();
+        // Log the data being passed to the template
+        console.log('Sending email with data:', Data);
+
+        await emailService.sendEmail([email], EMAIL_TEMPLATES_DETAILS['DELIVERY_CREATE_ORDER'], Data);
+
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+}
+
 
 
 }

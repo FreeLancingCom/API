@@ -64,5 +64,14 @@ export default {
       logger.error(error);
       next(error);
     }
+  },
+  [CONTROLLERS.SEND_ORDER_EMAIL]: async (req, res, next) => {
+    try {
+      const data = await orderService.sendOrderEmail(req.body.email, req.body.orderId);
+      return res.status(StatusCodes.OK).json({ success: true, data });
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 };

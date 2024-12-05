@@ -5,11 +5,11 @@ import logger from '../../../common/utils/logger/index.js';
 import { EMAIL_CONFIG } from '../../../config/env/index.js'; 
 import nodeMailer from 'nodemailer'
 import { emailError } from "../helper/constant.js";
+import TEMPLATES from "../template/index.js";
 const serviceName = 'emails.services.index'
 
 class EmailService{
      async sendEmail(targets, templateData, dynamicVars) {
-        console.log(templateData)
         const functionName = 'sendEmail';
         logger.info(serviceName, functionName, `Sending email to ${targets.length} targets.`);
         try {
@@ -22,12 +22,12 @@ class EmailService{
 
             const { template, subject, sender } = templateData;
 
-            console.log(sender,subject,template);
 
             this.EMAILS_USER = EMAIL_CONFIG.emailUser
             this.EMAILS_PASSWORD = EMAIL_CONFIG.emailPassword
 
             const content = template(dynamicVars);
+
 
 
 

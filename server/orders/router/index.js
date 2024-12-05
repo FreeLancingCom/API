@@ -56,5 +56,12 @@ router.post(
   validateRequest(validationSchemas[CONTROLLERS.REFUND_ORDER]),
   Controller[CONTROLLERS.REFUND_ORDER]
 )
+router.post(
+  '/send-order',
+  Authenticate,
+  Authorization.Authorize(Permissions[CONTROLLERS.SEND_ORDER_EMAIL]),
+  validateRequest(validationSchemas[CONTROLLERS.SEND_ORDER_EMAIL]),
+  Controller[CONTROLLERS.SEND_ORDER_EMAIL]
+)
 
 export default router;
