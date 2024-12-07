@@ -23,12 +23,13 @@ class OrderService {
     const userRole = _.get(user, 'role', null);
     const { limit, skip, sort,  page ,  ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
-    const count = await OrderModel.countDocuments(_query); 
+    
     try {
       if (userRole === USER_ROLES.CLIENT) {
         _query.user = user._id;
       }
       const orders = await OrderModel.find(_query, options);
+      const count = await OrderModel.countDocuments(_query); 
       return { orders, {...options,count} };
     } catch (e) {
       logger.error(e);
