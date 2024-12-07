@@ -30,7 +30,7 @@ class OrderService {
       }
       const orders = await OrderModel.find(_query, options);
       const count = await OrderModel.countDocuments(_query); 
-      return { orders, {...options,count} };
+      return { orders, options:{...options,count} };
     } catch (e) {
       logger.error(e);
       throw e;
