@@ -17,9 +17,9 @@ export default function (params) {
             button: "Reset Password",
             warning: "If you did not request a password reset, please ignore this email or contact support if you have questions.",
             thanks: "Thanks,",
-            team: "The Her Style Team",
-            footer: "© 2024 Her Style. All rights reserved.",
-            address: "Her Style Address" // TODO: add the real address here
+            team: "The Hawaak Team",
+            footer: "© 2024  Hawaak. All rights reserved.",
+            address: "Republic of Sudan - Khartoum - Jabra" // TODO: add the real address here
         },
         ar: {
             title: "إعادة تعيين كلمة المرور",
@@ -28,9 +28,9 @@ export default function (params) {
             button: "إعادة تعيين كلمة المرور",
             warning: "إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد الإلكتروني أو الاتصال بالدعم إذا كان لديك أي أسئلة.",
             thanks: "شكرا،",
-            team: "فريق Her Style",
-            footer: "© 2024 Her Style. جميع الحقوق محفوظة.",
-            address: "عنوان Her Style"
+            team: "فريق هواك ",
+            footer: "© 2024 Hawaak . جميع الحقوق محفوظة.",
+            address: "جمهورية السودان - الخرطوم - جبرة"
         }
     };
 

@@ -97,7 +97,7 @@ export default function (params) {
       <body>
           <div class="container">
               <div class="header">
-                  <img src="https://iili.io/2MYmN0g.png" alt="Hawwak Logo">
+                  <img src="https://iili.io/2MYmN0g.png" alt="Hawaak Logo">
               </div>
               <h1>Activate Your Account</h1>
               <p>Dear ${username},</p>
@@ -106,7 +106,7 @@ export default function (params) {
               <p>If you did not sign up for this account, please ignore this email.</p>
               <p>Thanks,<br>HerStyle Team</p>
               <div class="footer">
-                  <p>&copy; 2024 Her Style. All rights reserved.</p>
+                  <p>&copy; 2024  Hawaak. All rights reserved.</p>
               </div>
           </div>
       </body>
