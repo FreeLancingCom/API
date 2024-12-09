@@ -6,7 +6,7 @@ import usersService from '../../users/services/usersService.js';
 
 import moment from 'moment';
 
-import { COUPON_STATUS, couponsErrors , COUPON_TYPES } from '../helpers/constants.js';
+import { COUPON_STATUS, couponsErrors, COUPON_TYPES } from '../helpers/constants.js';
 
 import StatusCodes from 'http-status-codes';
 const { BAD_REQUEST } = StatusCodes;
@@ -17,11 +17,13 @@ import _ from 'lodash';
 
 class CouponService {
   async listCoupons(query) {
-    const { limit, skip, sort, page , ..._query } = query;
+    const { limit, skip, sort, page, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
       const coupons = await Coupon.find(_query, options);
-      return { coupons, options };
+      const count = await Coupon.count(_query);
+
+      return { coupons, options: { ...options, count } };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -31,21 +33,21 @@ class CouponService {
   async getCoupon(code) {
     try {
       const coupon = await Coupon.findOne({ code });
-        if (!coupon) {
-            throw new ErrorResponse(
-            couponsErrors.COUPON_NOT_FOUND.message,
-            BAD_REQUEST,
-            couponsErrors.COUPON_NOT_FOUND.code
-            );
-        }
+      if (!coupon) {
+        throw new ErrorResponse(
+          couponsErrors.COUPON_NOT_FOUND.message,
+          BAD_REQUEST,
+          couponsErrors.COUPON_NOT_FOUND.code
+        );
+      }
 
-        if(moment(coupon.expiryDate).isBefore(moment())) {
-            throw new ErrorResponse(
-            couponsErrors.INVALID_COUPON_EXPIRY_DATE.message,
-            BAD_REQUEST,
-            couponsErrors.INVALID_COUPON_EXPIRY_DATE.code,
-            );
-        }
+      if (moment(coupon.expiryDate).isBefore(moment())) {
+        throw new ErrorResponse(
+          couponsErrors.INVALID_COUPON_EXPIRY_DATE.message,
+          BAD_REQUEST,
+          couponsErrors.INVALID_COUPON_EXPIRY_DATE.code,
+        );
+      }
 
       return coupon;
     } catch (e) {
@@ -56,19 +58,19 @@ class CouponService {
 
   async createCoupon(body) {
     try {
-        const isCouponExists = await Coupon.findOne({ code: body.code });
+      const isCouponExists = await Coupon.findOne({ code: body.code });
 
-        if (isCouponExists) {
-          if (moment(isCouponExists.expiryDate).isAfter(moment())) {
-            throw new ErrorResponse(
-              couponsErrors.COUPON_ALREADY_EXIST_AND_NOT_EXPIRED.message,
-              BAD_REQUEST,
+      if (isCouponExists) {
+        if (moment(isCouponExists.expiryDate).isAfter(moment())) {
+          throw new ErrorResponse(
+            couponsErrors.COUPON_ALREADY_EXIST_AND_NOT_EXPIRED.message,
+            BAD_REQUEST,
             couponsErrors.COUPON_ALREADY_EXIST_AND_NOT_EXPIRED.code
-            );
-          }
-        }     
-        
-        if (!moment(body.expiryDate).isValid() || moment(body.expiryDate).isBefore(moment())) {
+          );
+        }
+      }
+
+      if (!moment(body.expiryDate).isValid() || moment(body.expiryDate).isBefore(moment())) {
         throw new ErrorResponse(
           couponsErrors.INVALID_COUPON_EXPIRY_DATE.message,
           BAD_REQUEST,
@@ -86,14 +88,14 @@ class CouponService {
 
   async updateCoupon(id, body) {
     try {
-        const isCouponExist = await Coupon.findOne({ _id: id });
-        if (!isCouponExist) {
-            throw new ErrorResponse(
-            couponsErrors.COUPON_NOT_FOUND.message,
-            BAD_REQUEST,
-            couponsErrors.COUPON_NOT_FOUND.code
-            );
-        }
+      const isCouponExist = await Coupon.findOne({ _id: id });
+      if (!isCouponExist) {
+        throw new ErrorResponse(
+          couponsErrors.COUPON_NOT_FOUND.message,
+          BAD_REQUEST,
+          couponsErrors.COUPON_NOT_FOUND.code
+        );
+      }
 
       if (body.expiryDate) {
         if (!moment(body.expiryDate).isValid() || moment(body.expiryDate).isBefore(moment())) {
@@ -116,13 +118,13 @@ class CouponService {
   async deleteCoupon(id) {
     try {
       const isCouponExist = await Coupon.findOne({ _id: id });
-        if (!isCouponExist) {
-            throw new ErrorResponse(
-            couponsErrors.COUPON_NOT_FOUND.message,
-            BAD_REQUEST,
-            couponsErrors.COUPON_NOT_FOUND.code
-            );
-        }
+      if (!isCouponExist) {
+        throw new ErrorResponse(
+          couponsErrors.COUPON_NOT_FOUND.message,
+          BAD_REQUEST,
+          couponsErrors.COUPON_NOT_FOUND.code
+        );
+      }
       const coupon = await Coupon.delete({ _id: id });
       return coupon;
     } catch (e) {
@@ -131,68 +133,68 @@ class CouponService {
     }
   }
 
-  async applyCoupon(code , cart , userId) {
+  async applyCoupon(code, cart, userId) {
     try {
       const user = await usersService.getUser(userId);
 
       const coupon = await Coupon.findOne({ code });
-        if (!coupon) {
-            throw new ErrorResponse(
-            couponsErrors.COUPON_NOT_FOUND.message,
-            BAD_REQUEST,
-            couponsErrors.COUPON_NOT_FOUND.code
-            );
-        }
+      if (!coupon) {
+        throw new ErrorResponse(
+          couponsErrors.COUPON_NOT_FOUND.message,
+          BAD_REQUEST,
+          couponsErrors.COUPON_NOT_FOUND.code
+        );
+      }
 
-        if(user.AppliedCoupons.includes(coupon.code)) {
+      if (user.AppliedCoupons.includes(coupon.code)) {
 
-            throw new ErrorResponse(
-            couponsErrors.COUPON_ALREADY_APPLIED.message,
-            BAD_REQUEST,
-            couponsErrors.COUPON_ALREADY_APPLIED.code
-            );
+        throw new ErrorResponse(
+          couponsErrors.COUPON_ALREADY_APPLIED.message,
+          BAD_REQUEST,
+          couponsErrors.COUPON_ALREADY_APPLIED.code
+        );
 
-        }
+      }
 
 
-        if (moment(coupon.expiryDate).isBefore(moment())) {
-            throw new ErrorResponse(
-            couponsErrors.COUPON_NOT_FOUND.message,
-            BAD_REQUEST,
-            couponsErrors.COUPON_NOT_FOUND.code
-            );
-        }
-        if (coupon.status !== COUPON_STATUS.ACTIVE) {
-            throw new ErrorResponse(
-            couponsErrors.INVALID_COUPON_STATUS.message,
-            BAD_REQUEST,
-            couponsErrors.INVALID_COUPON_STATUS.code
-            );
-        }
-        if (coupon.code !== code) {
-            throw new ErrorResponse(
-            couponsErrors.INVALID_COUPON_CODE.message,
-            BAD_REQUEST,
-            couponsErrors.INVALID_COUPON_CODE.code
-            );
-        }
+      if (moment(coupon.expiryDate).isBefore(moment())) {
+        throw new ErrorResponse(
+          couponsErrors.COUPON_NOT_FOUND.message,
+          BAD_REQUEST,
+          couponsErrors.COUPON_NOT_FOUND.code
+        );
+      }
+      if (coupon.status !== COUPON_STATUS.ACTIVE) {
+        throw new ErrorResponse(
+          couponsErrors.INVALID_COUPON_STATUS.message,
+          BAD_REQUEST,
+          couponsErrors.INVALID_COUPON_STATUS.code
+        );
+      }
+      if (coupon.code !== code) {
+        throw new ErrorResponse(
+          couponsErrors.INVALID_COUPON_CODE.message,
+          BAD_REQUEST,
+          couponsErrors.INVALID_COUPON_CODE.code
+        );
+      }
 
-        let discount = 0;
-        if (coupon.discount.type === COUPON_TYPES.PERCENTAGE) {
-            discount = (coupon.discount.value / 100) * cart.totalPrice;
-        } else {
-            discount = coupon.discount.value;
-        }
-        user.AppliedCoupons.push(coupon.code);
-        await usersService.updateUser(userId, user);
-        return discount;
+      let discount = 0;
+      if (coupon.discount.type === COUPON_TYPES.PERCENTAGE) {
+        discount = (coupon.discount.value / 100) * cart.totalPrice;
+      } else {
+        discount = coupon.discount.value;
+      }
+      user.AppliedCoupons.push(coupon.code);
+      await usersService.updateUser(userId, user);
+      return discount;
     }
     catch (e) {
       logger.error(e);
       throw e;
     }
 
-}
+  }
 
 }
 

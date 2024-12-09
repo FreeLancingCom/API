@@ -33,7 +33,7 @@ class UserService {
           usersErrors.USER_NOT_FOUND.code
         );
       }
-
+      // console.log(user.isVerified)
       if (!user.isVerified) {
         throw new ErrorResponse(
           usersErrors.VERIFY_EMAIL.message,
@@ -206,7 +206,6 @@ class UserService {
     const { email } = body;
     const userData = await UserModel.findOne({ email });
 
-    console.log(userData, email);
 
     if (!userData) {
       throw new ErrorResponse(

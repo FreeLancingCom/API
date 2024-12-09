@@ -3,6 +3,7 @@ import { CONTROLLERS } from '../helpers/constants.js';
 import { StatusCodes } from 'http-status-codes';
 import logger from '../../../common/utils/logger/index.js';
 import _ from 'lodash';
+import { EMAIL_CONFIG } from '../../../config/env/index.js';
 
 export default {
   [CONTROLLERS.LIST_ORDERS]: async (req, res, next) => {
@@ -30,6 +31,7 @@ export default {
   [CONTROLLERS.CREATE_ORDER]: async (req, res, next) => {
     try {
       const data = await orderService.createOrder(req.body);
+      // await sendOrderEmail(EMAIL_CONFIG.emailUser, data._id);
       return res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {
       logger.error(error);

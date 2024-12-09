@@ -1,6 +1,6 @@
 
 import TEMPLATES from '../template/index.js';
-const HER_STYLE = 'Her Style';
+const HER_STYLE = 'Hawaak Store';
 
 
 
@@ -13,7 +13,7 @@ export const emailError = Object.freeze({
     code: 100,
     message: 'Email not sent'
   },
-  EMAIL_DETAILS_NOT_PROVIDED : {
+  EMAIL_DETAILS_NOT_PROVIDED: {
     code: 101,
     message: 'Email details not provided'
   }
@@ -32,12 +32,12 @@ export const EMAIL_TEMPLATES_DETAILS = {
   },
   CREATE_ORDER: {
     template: TEMPLATES.cretedOrder,
-    subject: 'Order Confirmation',
+    subject: 'شكراً لك على إختيار متجرنا - متجر هواك',
     sender: HER_STYLE
   },
   DELIVERY_CREATE_ORDER: {
     template: TEMPLATES.deliveryOrder,
-    subject: 'Order Confirmation for delivery',
+    subject: 'طلب جديد للتوصيل - متجر هواك',
     sender: HER_STYLE
   }
 

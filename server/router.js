@@ -17,6 +17,7 @@ import sliderRoutes from './sliders/router/index.js';
 
 import couponsRoutes from './coupons/router/index.js';
 import orderRoutes from './orders/router/index.js';
+import deliveryEmailRoutes from './deliveryEmails/router/index.js';
 
 
 
@@ -28,9 +29,10 @@ router.use('/products', productsRoutes);
 router.use('/packages', packagesRoutes);
 router.use('/cart', cartRoutes);
 router.use('/comments', commentsRoutes);
-router.use('/coupons' , couponsRoutes);
+router.use('/coupons', couponsRoutes);
 router.use('/orders', orderRoutes);
 router.use('/sliders', sliderRoutes);
+router.use('/deliver-emails', deliveryEmailRoutes);
 
 router.use('/health', (req, res) => {
   const data = {

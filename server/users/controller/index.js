@@ -147,7 +147,7 @@ export default {
   },
   [CONTROLLERS.RESEND_VERIFICATION_EMAIL]: async (req, res, next) => {
     try {
-      console.log(req.body.email);
+      // console.log(req.body.email);
       const data = await usersService.resendVerificationEmail(req.body);
       res.status(StatusCodes.OK).json({ success: true, data });
     } catch (error) {

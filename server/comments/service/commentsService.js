@@ -18,7 +18,7 @@ import { USER_ROLES } from '../../../common/helpers/constants.js';
 class CommentService {
 
   async listAllComments(query) {
-    const { limit, skip, sort,page, ..._query } = query;
+    const { limit, skip, sort, page, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
       const comments = await Comment.find({}, options);
@@ -30,12 +30,12 @@ class CommentService {
     }
   }
 
-  
-  async listComments(productId , query) {
+
+  async listComments(productId, query) {
     const { limit, skip, sort, ..._query } = query;
     const options = getPaginationAndSortingOptions(query);
     try {
-      const comments = await Comment.find({productId:productId}, options);
+      const comments = await Comment.find({ productId: productId }, options);
 
       return { comments, options };
     } catch (e) {
@@ -44,40 +44,40 @@ class CommentService {
     }
   }
 
-  async addComment(body , userId) {
+  async addComment(body, userId) {
     try {
-       const isUserExist = await USER.findOne({ _id: userId });
-        await this.calculateAndUpdateProductStars(body['productId']);
-        if (!isUserExist) {
-          throw new ErrorResponse(
-            commentsError.USER_NOT_FOUND.message,
-            BAD_REQUEST,
-            commentsError.USER_NOT_FOUND.code
-          );
-        }
+      const isUserExist = await USER.findOne({ _id: userId });
+      await this.calculateAndUpdateProductStars(body['productId']);
+      if (!isUserExist) {
+        throw new ErrorResponse(
+          commentsError.USER_NOT_FOUND.message,
+          BAD_REQUEST,
+          commentsError.USER_NOT_FOUND.code
+        );
+      }
 
-        const isProductExist = await Product.findOne({ _id: body['productId'] }) || await Package.findOne({ _id: body['productId'] });
+      const isProductExist = await Product.findOne({ _id: body['productId'] }) || await Package.findOne({ _id: body['productId'] });
 
-        if(!isProductExist){
-          throw new ErrorResponse(
-            commentsError.PRODUCT_NOT_FOUND.message,
-            BAD_REQUEST,
-            commentsError.PRODUCT_NOT_FOUND.code
-          );
-        }
+      if (!isProductExist) {
+        throw new ErrorResponse(
+          commentsError.PRODUCT_NOT_FOUND.message,
+          BAD_REQUEST,
+          commentsError.PRODUCT_NOT_FOUND.code
+        );
+      }
 
-        body['userId'] = userId;
-        const comment = await Comment.create(body);
-        return comment;
+      body['userId'] = userId;
+      const comment = await Comment.create(body);
+      return comment;
     }
     catch (e) {
       logger.error(e);
       throw e;
-    } 
+    }
   }
   async countComments(productId) {
     try {
-      const count = await Comment.countDocuments({productId:productId});
+      const count = await Comment.countDocuments({ productId: productId });
       return count;
     } catch (e) {
       logger.error(e);
@@ -86,9 +86,9 @@ class CommentService {
   }
 
 
-  async  calculateAverageStarsForProduct(productId) {
+  async calculateAverageStarsForProduct(productId) {
     try {
-      const objectId =  new mongoose.Types.ObjectId(productId);
+      const objectId = new mongoose.Types.ObjectId(productId);
       const pipeline = [
         {
           $match: {
@@ -115,9 +115,9 @@ class CommentService {
           }
         }
       ];
-  
+
       const result = await Comment.aggregate(pipeline);
-  
+
       // Return the rounded average or 0 if no comments matched
       return result[0]?.averageStars || 0;
     } catch (e) {
@@ -126,24 +126,23 @@ class CommentService {
     }
   }
 
-  async  calculateAndUpdateProductStars(productId) {
+  async calculateAndUpdateProductStars(productId) {
     const comments = await Comment.find({ productId });
     if (comments.length === 0) {
-      await ProductModel.update({_id:productId}, { stars: 0 });
+      await ProductModel.update({ _id: productId }, { stars: 0 });
       return;
     }
-    else{
+    else {
       const averageStars = await this.calculateAverageStarsForProduct(productId);
-      await ProductModel.update({_id:productId},{ stars: averageStars });
-      await Package.update({_id:productId},{ stars: averageStars });
-      console.log("Updated Product Stars:", averageStars);
+      await ProductModel.update({ _id: productId }, { stars: averageStars });
+      await Package.update({ _id: productId }, { stars: averageStars });
     }
-  
+
   }
-  
-  
-  
-  
+
+
+
+
 }
 
 export default new CommentService();

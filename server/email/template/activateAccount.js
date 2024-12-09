@@ -1,6 +1,6 @@
 export default function (params) {
     const { username, link } = params;
-  
+
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -97,7 +97,7 @@ export default function (params) {
       <body>
           <div class="container">
               <div class="header">
-                  <img src="https://iili.io/dDgAIBn.png" alt="HerStyle Logo">
+                  <img src="https://iili.io/2MYmN0g.png" alt="Hawwak Logo">
               </div>
               <h1>Activate Your Account</h1>
               <p>Dear ${username},</p>

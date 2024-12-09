@@ -30,7 +30,7 @@ export const usersErrors = Object.freeze({
   },
   USER_ALREADY_EXISTS: {
     code: 101,
-    message: 'User already exists'
+    message: 'المستخدم موجود ، يرجى تسجيل الدخول'
   },
   INVALID_CREDENTIALS: {
     code: 102,

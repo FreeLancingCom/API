@@ -18,7 +18,7 @@ import Fuse from 'fuse.js';
 import axios from 'axios';
 import emailService from '../../email/service/emailService.js';
 import usersService from '../../users/services/usersService.js';
-import { CLIENT_URL } from '../../../config/env/index.js';
+import { CLIENT_URL, EMAIL_CONFIG } from '../../../config/env/index.js';
 import { EMAIL_TEMPLATES_DETAILS } from '../../email/helper/constant.js';
 
 
@@ -127,7 +127,7 @@ class CartService {
           cart.packages[index].totalPrice =
             cart.packages[index].quantity * Package.Package.price.finalPrice;
         } else {
-          
+
           cart.packages.push({
             packageId,
             quantity,
@@ -181,7 +181,7 @@ class CartService {
 
       cart.products[index].quantity -= 1;
       cart.products[index].totalPrice =
-      cart.products[index].quantity * ((await productService.getProduct(productId)).product.price.finalPrice)
+        cart.products[index].quantity * ((await productService.getProduct(productId)).product.price.finalPrice)
       cart.totalPrice = this.calculateTotalPrice(cart);
       await cartModel.update({ userId }, cart);
 
@@ -415,7 +415,7 @@ class CartService {
       );
     }
 
-    const discount = await couponService.applyCoupon(code, cart , userId);
+    const discount = await couponService.applyCoupon(code, cart, userId);
     cart.totalPrice -= discount;
     await cartModel.update({ userId }, cart);
   }
@@ -429,89 +429,90 @@ class CartService {
 
 
 
-async checkOut(userId, body) {
-  // Retrieve the user's cart
-  const cart = await cartModel.findOne({ userId });
-  if (!cart) {
-    throw new ErrorResponse(
-      cartError.CART_NOT_FOUND.message,
-      BAD_REQUEST,
-      cartError.CART_NOT_FOUND.code
+  async checkOut(userId, body) {
+    // Retrieve the user's cart
+    const cart = await cartModel.findOne({ userId });
+    if (!cart) {
+      throw new ErrorResponse(
+        cartError.CART_NOT_FOUND.message,
+        BAD_REQUEST,
+        cartError.CART_NOT_FOUND.code
+      );
+    }
+
+
+
+    let paymentStatus =
+      body['paymentMethod'] === PAYMENT_METHODS['COD']
+        ? PAYMENT_STATUS['NOT_PAID']
+        : body['paymentMethod'] === PAYMENT_METHODS['INSTANT']
+          ? PAYMENT_STATUS['SUCCESS']
+          : PAYMENT_STATUS['PENDING'];
+
+    body.paymentStatus = paymentStatus;
+
+    // Prepare the order data
+    const userEmail = (await usersService.getUser(userId)).email;
+    const order = {
+      user: userId,
+      cart: {
+        products: cart.products,
+        packages: cart.packages,
+        totalPrice: cart.totalPrice
+      },
+      ...body
+    };
+
+
+
+    const createdOrder = await orderService.createOrder(order);
+    await orderService.sendOrderEmail(EMAIL_CONFIG.emailUser, createdOrder._id)
+
+
+    const orderId = createdOrder.id;
+    const orderLink = `${CLIENT_URL}/orders/${orderId}`;
+
+    const orderDetails = await Promise.all(
+      [...cart.products, ...cart.packages].map(async (item) => {
+
+        const itemName = item.productId ? (await productService.getProduct(item.productId)).product.name : (await packageService.getPackage(item.packageId)).Package.name;
+        const productPrice = item.productId ? (await productService.getProduct(item.productId)).product.price.finalPrice : (await packageService.getPackage(item.packageId)).Package.price.finalPrice;
+
+        return {
+          name: itemName,
+          quantity: item.quantity,
+          price: productPrice,
+          total: item.totalPrice,
+        };
+      })
     );
+
+
+
+    await emailService.sendEmail([userEmail], EMAIL_TEMPLATES_DETAILS['CREATE_ORDER'], {
+      username: (await usersService.getUser(userId)).name,
+      orderId,
+      orderLink,
+      orderDetails,
+      totalPrice: cart.totalPrice
+    });
+
+
+
+
+    // await cartModel.delete({ userId });
+
+    return createdOrder;
   }
 
- 
-
-  let paymentStatus =
-    body['paymentMethod'] === PAYMENT_METHODS['COD']
-      ? PAYMENT_STATUS['NOT_PAID']
-      : body['paymentMethod'] === PAYMENT_METHODS['INSTANT']
-      ? PAYMENT_STATUS['SUCCESS']
-      : PAYMENT_STATUS['PENDING'];
-
-  body.paymentStatus = paymentStatus;
-
-  // Prepare the order data
-  const userEmail = (await usersService.getUser(userId)).email;
-  const order = {
-    user: userId,
-    cart: {
-      products: cart.products,
-      packages: cart.packages,
-      totalPrice: cart.totalPrice
-    },
-    ...body
-  };
-
-   
-
-  const createdOrder = await orderService.createOrder(order);
-
-
-const orderId = createdOrder.id;  
-const orderLink = `${CLIENT_URL}/orders/${orderId}`;  
-
-const orderDetails = await Promise.all(
-  [...cart.products, ...cart.packages].map(async (item) => {
-
-    const itemName = item.productId ? (await productService.getProduct(item.productId)).product.name : (await packageService.getPackage(item.packageId)).Package.name;
-    const productPrice = item.productId ? (await productService.getProduct(item.productId)).product.price.finalPrice : (await packageService.getPackage(item.packageId)).Package.price.finalPrice;
-    
-    return {
-      name: itemName,
-      quantity: item.quantity,
-      price: productPrice,
-      total: item.totalPrice,
-    };
-  })
-);
 
 
 
-await emailService.sendEmail([userEmail], EMAIL_TEMPLATES_DETAILS['CREATE_ORDER'], {
-  username: (await usersService.getUser(userId)).name, 
-  orderId,
-  orderLink,
-  orderDetails,
-  totalPrice: cart.totalPrice
-});
 
 
 
-  
-  // await cartModel.delete({ userId });
 
-  return createdOrder;
-}
 
-  
-  
-
-  
-  
-  
-
-  
 }
 
 export default new CartService();
