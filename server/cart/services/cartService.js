@@ -500,7 +500,7 @@ class CartService {
 
 
 
-    // await cartModel.delete({ userId });
+    await cartModel.delete({ userId });
 
     return createdOrder;
   }
