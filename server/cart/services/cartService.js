@@ -470,7 +470,7 @@ class CartService {
 
 
     const orderId = createdOrder.id;
-    const orderLink = `${CLIENT_URL}/orders/${orderId}`;
+    const orderLink = `${CLIENT_URL}/profile?tab=orders&orderId=${orderId}`;
 
     const orderDetails = await Promise.all(
       [...cart.products, ...cart.packages].map(async (item) => {
